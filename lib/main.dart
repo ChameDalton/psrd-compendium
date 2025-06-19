@@ -5,7 +5,7 @@ import 'package:psrd_compendium/screens/details_screen.dart';
 import 'package:psrd_compendium/screens/search_screen.dart';
 
 void main() {
-  runApp(PathfinderApp()); // Removed 'const'
+  runApp(PathfinderApp());
 }
 
 class PathfinderApp extends StatelessWidget {
@@ -51,7 +51,7 @@ class PathfinderApp extends StatelessWidget {
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  final categories = const ['Spells', 'Feats', 'Creatures', 'Classes']; // Added 'const'
+  final categories = const ['Spells', 'Feats', 'Creatures', 'Classes'];
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +61,7 @@ class HomeScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
-            onPressed: () => context.go('/search'),
+            onPressed: () => context.push('/search'),
           ),
         ],
       ),
@@ -72,7 +72,7 @@ class HomeScreen extends StatelessWidget {
           return ListTile(
             title: Text(category),
             trailing: const Icon(Icons.arrow_forward),
-            onTap: () => context.go('/category/${category.toLowerCase()}'),
+            onTap: () => context.push('/category/${category.toLowerCase()}'),
           );
         },
       ),

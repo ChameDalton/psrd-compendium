@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart'; // Added import
+import 'package:go_router/go_router.dart';
 import 'package:psrd_compendium/services/database_helper.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -19,12 +19,14 @@ class SearchScreenState extends State<SearchScreen> {
       return;
     }
     final db = await DatabaseHelper().getDatabase('book-cr.db');
+    print('Searching sections for query: $query');
     final results = await db.query(
-      'section_id',
+      'sections', // Changed from 'section_id' to 'sections'
       where: 'name LIKE ?',
       whereArgs: ['%$query%'],
       columns: ['section_id', 'name', 'description', 'body', 'source', 'type'],
     );
+    print('Search results: $results');
     setState(() => _results = results);
   }
 

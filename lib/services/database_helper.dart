@@ -26,7 +26,10 @@ class DatabaseHelper {
   ];
 
   Future<Database> getDatabase(String dbName) async {
-    if (_databases.containsKey(dbName)) return _databases[dbName]!;
+    if (_databases.containsKey(dbName)) {
+      print('Returning cached database: $dbName');
+      return _databases[dbName]!;
+    }
     _databases[dbName] = await _initDatabase(dbName);
     return _databases[dbName]!;
   }
@@ -37,32 +40,39 @@ class DatabaseHelper {
     }
     final dir = await getApplicationDocumentsDirectory();
     final path = '${dir.path}/$dbName';
+    print('Database path: $path');
     final file = File(path);
 
     if (!await file.exists()) {
+      print('Copying $dbName from assets to $path');
       final data = await rootBundle.load('assets/$dbName');
       final bytes = data.buffer.asUint8List();
       await file.writeAsBytes(bytes);
+      print('$dbName copied successfully');
+    } else {
+      print('$dbName already exists at $path');
     }
 
-    return await openDatabase(path);
+    final db = await openDatabase(path);
+    print('Database opened: $dbName');
+    return db;
   }
 
   Future<List<Map<String, dynamic>>> getItemsByType(String type, {String dbName = defaultDbName}) async {
     final db = await getDatabase(dbName);
-    if (type == 'spell') {
-      return await db.rawQuery('''
-        SELECT s.name, s.description, s.body, s.source, sd.school, sd.level_text
-        FROM section_id s
-        LEFT JOIN spell_details sd ON s.section_id = sd.section_id
-        WHERE s.type = ?
-      ''', [type]);
+    print('Querying sections for type: $type in $dbName');
+    try {
+      final results = await db.query(
+        'sections', // Changed from 'section_id' to 'sections'
+        columns: ['section_id', 'name', 'description', 'body', 'source', 'type'],
+        where: 'type = ?',
+        whereArgs: [type],
+      );
+      print('Query results for $type: $results');
+      return results;
+    } catch (e) {
+      print('Query error: $e');
+      rethrow;
     }
-    return await db.query(
-      'section_id',
-      columns: ['name', 'description', 'body', 'source'],
-      where: 'type = ?',
-      whereArgs: [type],
-    );
   }
 }

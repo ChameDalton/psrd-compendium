@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:go_router/go_router.dart';
 import 'package:psrd_compendium/services/database_helper.dart';
 
 class DetailsScreen extends StatelessWidget {
@@ -11,8 +10,12 @@ class DetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('DetailsScreen: type=$type, sectionId=$sectionId');
     return Scaffold(
-      appBar: AppBar(title: const Text('Details')),
+      appBar: AppBar(
+        title: const Text('Details'),
+        automaticallyImplyLeading: true,
+      ),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: DatabaseHelper().getItemsByType(type, dbName: 'book-cr.db'),
         builder: (context, snapshot) {
@@ -20,6 +23,7 @@ class DetailsScreen extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
+            print('DetailsScreen error: ${snapshot.error}');
             return Center(child: Text('Error: ${snapshot.error}'));
           }
           final item = snapshot.data?.firstWhere(
@@ -27,6 +31,7 @@ class DetailsScreen extends StatelessWidget {
             orElse: () => {},
           );
           if (item == null || item.isEmpty) {
+            print('No item found for sectionId: $sectionId, type: $type');
             return const Center(child: Text('Item not found'));
           }
           return SingleChildScrollView(
