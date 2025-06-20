@@ -10,15 +10,17 @@ class DetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Map 'creatures' to 'monster'
+    final queryType = type.toLowerCase() == 'creature' ? 'monster' : type.toLowerCase();
     // ignore: avoid_print
-    print('DetailsScreen: type=$type, sectionId=$sectionId');
+    print('DetailsScreen: type=$queryType, sectionId=$sectionId');
     return Scaffold(
       appBar: AppBar(
         title: const Text('Details'),
         automaticallyImplyLeading: true,
       ),
       body: FutureBuilder<Map<String, dynamic>?>(
-        future: DatabaseHelper().getItemBySectionId(sectionId, dbName: 'book-cr.db'),
+        future: _getItemDetails(queryType, sectionId),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -31,7 +33,7 @@ class DetailsScreen extends StatelessWidget {
           final item = snapshot.data;
           if (item == null) {
             // ignore: avoid_print
-            print('No item found for sectionId: $sectionId, type: $type');
+            print('No item found for sectionId: $sectionId, type: $queryType');
             return const Center(child: Text('Item not found'));
           }
           return SingleChildScrollView(
@@ -44,17 +46,25 @@ class DetailsScreen extends StatelessWidget {
                     item['name']?.toString() ?? 'Unknown',
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
-                  if (item['school'] != null) ...[
+                  if (queryType == 'spell' && item['school'] != null) ...[
                     const SizedBox(height: 8),
                     Text('School: ${item['school']}'),
                   ],
-                  if (item['level_text'] != null) ...[
+                  if (queryType == 'spell' && item['level_text'] != null) ...[
                     const SizedBox(height: 8),
                     Text('Level: ${item['level_text']}'),
+                  ],
+                  if (queryType == 'skill' && item['attribute'] != null) ...[
+                    const SizedBox(height: 8),
+                    Text('Attribute: ${item['attribute']}'),
                   ],
                   if (item['source'] != null) ...[
                     const SizedBox(height: 8),
                     Text('Source: ${item['source']}'),
+                  ],
+                  if (item['description'] != null && item['description'].toString().isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    Text('Description: ${item['description']}'),
                   ],
                   const SizedBox(height: 16),
                   Html(
@@ -72,5 +82,35 @@ class DetailsScreen extends StatelessWidget {
         },
       ),
     );
+  }
+
+  Future<Map<String, dynamic>?> _getItemDetails(String type, String sectionId) async {
+    final db = await DatabaseHelper().getDatabase('book-cr.db');
+    String query;
+    if (type == 'spell') {
+      query = '''
+        SELECT s.section_id, s.name, s.description, s.body, s.source, s.type, 
+               sd.school, sd.level_text
+        FROM sections s
+        LEFT JOIN spell_details sd ON s.section_id = sd.section_id
+        WHERE s.section_id = ?
+      ''';
+    } else if (type == 'skill') {
+      query = '''
+        SELECT s.section_id, s.name, s.description, s.body, s.source, s.type, 
+               sa.attribute, sa.armor_check_penalty, sa.trained_only
+        FROM sections s
+        LEFT JOIN skill_attributes sa ON s.section_id = sa.section_id
+        WHERE s.section_id = ?
+      ''';
+    } else {
+      query = '''
+        SELECT section_id, name, description, body, source, type
+        FROM sections
+        WHERE section_id = ?
+      ''';
+    }
+    final results = await db.rawQuery(query, [sectionId]);
+    return results.isNotEmpty ? results.first : null;
   }
 }

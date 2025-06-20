@@ -1,4 +1,4 @@
-import 'package:flutter/services.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
@@ -42,7 +42,7 @@ class DatabaseHelper {
     if (!await File(dbPath).exists()) {
       // ignore: avoid_print
       print('Copying $dbName from assets to $dbPath');
-      final data = await DefaultAssetBundle.of(rootBundle).load('assets/$dbName');
+      final data = await rootBundle.load('assets/$dbName');
       final bytes = data.buffer.asUint8List();
       await File(dbPath).writeAsBytes(bytes);
       // ignore: avoid_print
@@ -61,12 +61,32 @@ class DatabaseHelper {
     // ignore: avoid_print
     print('Querying sections for type: $type in $dbName');
     try {
-      final results = await db.query(
-        'sections',
-        columns: ['section_id', 'name', 'description', 'body', 'source', 'type', 'school', 'level_text'],
-        where: 'type = ?',
-        whereArgs: [type],
-      );
+      String query;
+      List<dynamic> whereArgs = [type];
+      if (type == 'spell') {
+        query = '''
+          SELECT s.section_id, s.name, s.description, s.body, s.source, s.type, 
+                 sd.school, sd.level_text
+          FROM sections s
+          LEFT JOIN spell_details sd ON s.section_id = sd.section_id
+          WHERE s.type = ?
+        ''';
+      } else if (type == 'skill') {
+        query = '''
+          SELECT s.section_id, s.name, s.description, s.body, s.source, s.type, 
+                 sa.attribute, sa.armor_check_penalty, sa.trained_only
+          FROM sections s
+          LEFT JOIN skill_attributes sa ON s.section_id = sa.section_id
+          WHERE s.type = ?
+        ''';
+      } else {
+        query = '''
+          SELECT section_id, name, description, body, source, type
+          FROM sections
+          WHERE type = ?
+        ''';
+      }
+      final results = await db.rawQuery(query, whereArgs);
       // ignore: avoid_print
       print('Query results for $type: ${results.length} items');
       return results;
@@ -84,7 +104,7 @@ class DatabaseHelper {
     try {
       final results = await db.query(
         'sections',
-        columns: ['section_id', 'name', 'description', 'body', 'source', 'type', 'school', 'level_text'],
+        columns: ['section_id', 'name', 'description', 'body', 'source', 'type'],
         where: 'section_id = ?',
         whereArgs: [sectionId],
       );
@@ -96,5 +116,13 @@ class DatabaseHelper {
       print('Query error for section_id $sectionId in $dbName: $e');
       rethrow;
     }
+  }
+
+  Future<void> logSchema() async {
+    final db = await getDatabase(defaultDbName);
+    final tables = await db.rawQuery('SELECT name FROM sqlite_master WHERE type="table";');
+    print('Tables: $tables');
+    final columns = await db.rawQuery('PRAGMA table_info(sections);');
+    print('Sections columns: $columns');
   }
 }

@@ -1,5 +1,4 @@
 // lib/services/feat_service.dart
-import 'package:sqflite/sqflite.dart';
 import '../models/feat_reference.dart';
 import 'database_loader.dart';
 
