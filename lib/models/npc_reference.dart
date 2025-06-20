@@ -1,43 +1,35 @@
-// lib/models/npc_reference.dart
-import 'reference_item_base.dart';
+import 'package:pathfinder_athenaeum/models/reference_item_base.dart';
 
 class NpcReference extends ReferenceItemBase {
-  final String alignment;
-  final String size;
-  final String type;
-  final String? superRace;
-
-  const NpcReference({
-    required super.sectionId,
+  NpcReference({
     required super.database,
-    required super.name,
+    required super.sectionId,
     required super.url,
-    required this.alignment,
-    required this.size,
-    required this.type,
-    this.superRace,
-  });
+    required super.name,
+    required String description,
+  }) : super(
+          shortDescription: description.length > 50 ? description.substring(0, 50) : description,
+          qualities: '',
+        );
 
-  String get typeLine =>
-      superRace != null ? '$type/$superRace' : type;
+  factory NpcReference.fromMap(Map<String, dynamic> map) {
+    return NpcReference(
+      database: map['database'] as String? ?? 'book-cr.db',
+      sectionId: map['section_id']?.toString() ?? '',
+      url: map['url'] as String? ?? '',
+      name: map['name'] as String? ?? 'Unknown',
+      description: map['description'] as String? ?? '',
+    );
+  }
 
   @override
-  Map<String, dynamic> toMap() => {
-        ...super.toMap(),
-        'alignment': alignment,
-        'size': size,
-        'type': type,
-        'superRace': superRace,
-      };
-
-  factory NpcReference.fromMap(Map<String, dynamic> map) => NpcReference(
-        sectionId: map['sectionId'],
-        database: map['database'],
-        name: map['name'],
-        url: map['url'],
-        alignment: map['alignment'],
-        size: map['size'],
-        type: map['type'],
-        superRace: map['superRace'],
-      );
+  Map<String, dynamic> toMap() {
+    return {
+      'database': database,
+      'section_id': sectionId,
+      'url': url,
+      'name': name,
+      'description': shortDescription,
+    };
+  }
 }

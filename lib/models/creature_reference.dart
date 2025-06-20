@@ -1,51 +1,35 @@
-// lib/models/creature_reference.dart
-import 'reference_item_base.dart';
+import 'package:pathfinder_athenaeum/models/reference_item_base.dart';
 
 class CreatureReference extends ReferenceItemBase {
-  final int challengeRating;
-  final int experience;
-  final String size;
-  final String alignment;
-  final String type;
-  final String? subtype;
-
-  const CreatureReference({
-    required super.sectionId,
+  CreatureReference({
     required super.database,
-    required super.name,
+    required super.sectionId,
     required super.url,
-    required this.challengeRating,
-    required this.experience,
-    required this.size,
-    required this.alignment,
-    required this.type,
-    this.subtype,
-  });
+    required super.name,
+    required String description,
+  }) : super(
+          shortDescription: description.length > 50 ? description.substring(0, 50) : description,
+          qualities: '',
+        );
 
-  String get typeLine => subtype != null ? '$type/$subtype' : type;
+  factory CreatureReference.fromMap(Map<String, dynamic> map) {
+    return CreatureReference(
+      database: map['database'] as String? ?? 'book-cr.db',
+      sectionId: map['section_id']?.toString() ?? '',
+      url: map['url'] as String? ?? '',
+      name: map['name'] as String? ?? 'Unknown',
+      description: map['description'] as String? ?? '',
+    );
+  }
 
   @override
-  Map<String, dynamic> toMap() => {
-        ...super.toMap(),
-        'challengeRating': challengeRating,
-        'experience': experience,
-        'size': size,
-        'alignment': alignment,
-        'type': type,
-        'subtype': subtype,
-      };
-
-  factory CreatureReference.fromMap(Map<String, dynamic> map) =>
-      CreatureReference(
-        sectionId: map['sectionId'],
-        database: map['database'],
-        name: map['name'],
-        url: map['url'],
-        challengeRating: map['challengeRating'],
-        experience: map['experience'],
-        size: map['size'],
-        alignment: map['alignment'],
-        type: map['type'],
-        subtype: map['subtype'],
-      );
+  Map<String, dynamic> toMap() {
+    return {
+      'database': database,
+      'section_id': sectionId,
+      'url': url,
+      'name': name,
+      'description': shortDescription,
+    };
+  }
 }

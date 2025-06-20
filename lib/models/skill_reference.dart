@@ -7,24 +7,26 @@ class SkillReference extends ReferenceItemBase {
   final String? trainedOnly;
 
   SkillReference({
-    required int id,
-    required String name,
+    required super.database,
+    required super.sectionId,
+    required super.url,
+    required super.name,
     required String description,
     required this.source,
     this.attribute,
     this.armorCheckPenalty,
     this.trainedOnly,
   }) : super(
-          categoryId: id,
-          name: name,
           shortDescription: description.length > 50 ? description.substring(0, 50) : description,
           qualities: attribute ?? '',
         );
 
   factory SkillReference.fromMap(Map<String, dynamic> map) {
     return SkillReference(
-      id: map['section_id'] as int,
-      name: map['name'] as String,
+      database: map['database'] as String? ?? 'book-cr.db',
+      sectionId: map['section_id']?.toString() ?? '',
+      url: map['url'] as String? ?? '',
+      name: map['name'] as String? ?? 'Unknown',
       description: map['description'] as String? ?? '',
       source: map['source'] as String? ?? '',
       attribute: map['attribute'] as String?,
@@ -34,5 +36,20 @@ class SkillReference extends ReferenceItemBase {
   }
 
   @override
-  String toString() => '$name ($categoryId)';
+  Map<String, dynamic> toMap() {
+    return {
+      'database': database,
+      'section_id': sectionId,
+      'url': url,
+      'name': name,
+      'description': shortDescription,
+      'source': source,
+      'attribute': attribute,
+      'armor_check_penalty': armorCheckPenalty,
+      'trained_only': trainedOnly,
+    };
+  }
+
+  @override
+  String toString() => '$name ($sectionId)';
 }

@@ -1,22 +1,19 @@
-// lib/models/reference_item_base.dart
 abstract class ReferenceItemBase {
-  final int sectionId;
   final String database;
-  final String name;
+  final String sectionId;
   final String url;
+  final String name;
+  final String shortDescription;
+  final String qualities;
 
-  const ReferenceItemBase({
-    required this.sectionId,
+  ReferenceItemBase({
     required this.database,
-    required this.name,
+    required this.sectionId,
     required this.url,
+    required this.name,
+    required this.shortDescription,
+    required this.qualities,
   });
 
-  // This should no longer be abstract:
-  Map<String, dynamic> toMap() => {
-        'sectionId': sectionId,
-        'database': database,
-        'name': name,
-        'url': url,
-      };
+  Map<String, dynamic> toMap();
 }

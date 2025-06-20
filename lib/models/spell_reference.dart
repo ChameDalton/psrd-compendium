@@ -6,28 +6,44 @@ class SpellReference extends ReferenceItemBase {
   final String? levelText;
 
   SpellReference({
-    required int id,
-    required String name,
+    required super.database,
+    required super.sectionId,
+    required super.url,
+    required super.name,
     required String description,
     required this.source,
     this.school,
     this.levelText,
   }) : super(
-          categoryId: id,
-          name: name,
           shortDescription: description.length > 50 ? description.substring(0, 50) : description,
           qualities: school ?? '',
         );
 
   factory SpellReference.fromMap(Map<String, dynamic> map) {
     return SpellReference(
-      id: map['section_id'] as int,
-      name: map['name'] as String,
+      database: map['database'] as String? ?? 'book-cr.db',
+      sectionId: map['section_id']?.toString() ?? '',
+      url: map['url'] as String? ?? '',
+      name: map['name'] as String? ?? 'Unknown',
       description: map['description'] as String? ?? '',
       source: map['source'] as String? ?? '',
       school: map['school'] as String?,
       levelText: map['level_text'] as String?,
     );
+  }
+
+  @override
+  Map<String, dynamic> toMap() {
+    return {
+      'database': database,
+      'section_id': sectionId,
+      'url': url,
+      'name': name,
+      'description': shortDescription,
+      'source': source,
+      'school': school,
+      'level_text': levelText,
+    };
   }
 
   String getDescription() => '$name - $shortDescription';

@@ -79,6 +79,14 @@ class DatabaseHelper {
           LEFT JOIN skill_attributes sa ON s.section_id = sa.section_id
           WHERE s.type = ?
         ''';
+      } else if (type == 'feat') {
+        query = '''
+          SELECT s.section_id, s.name, s.description, s.body, s.source, s.type, 
+                 fd.prerequisites, fd.type AS feat_type
+          FROM sections s
+          LEFT JOIN feat_details fd ON s.section_id = fd.section_id
+          WHERE s.type = ?
+        ''';
       } else {
         query = '''
           SELECT section_id, name, description, body, source, type
@@ -119,16 +127,23 @@ class DatabaseHelper {
           LEFT JOIN skill_attributes sa ON s.section_id = sa.section_id
           WHERE s.section_id = ?
         ''';
+      } else if (sectionId.startsWith('feat_')) {
+        query = '''
+          SELECT s.section_id, s.name, s.description, s.body, s.source, s.type, 
+                 fd.prerequisites, fd.type AS feat_type
+          FROM sections s
+          LEFT JOIN feat_details fd ON s.section_id = fd.section_id
+          WHERE s.section_id = ?
+        ''';
       } else {
         query = '''
-          SELECT section_id, name, description, body, source, type
+          SELECT section_id, name, description, body, source
           FROM sections
           WHERE section_id = ?
         ''';
       }
       final results = await db.rawQuery(query, [sectionId]);
-      // ignore: avoid_print
-      print('Query result for section_id $sectionId: ${results.length} items');
+      // ignore returning null
       return results.isNotEmpty ? results.first : null;
     } catch (e) {
       // ignore: avoid_print
@@ -142,6 +157,6 @@ class DatabaseHelper {
     final tables = await db.rawQuery('SELECT name FROM sqlite_master WHERE type="table";');
     print('Tables: $tables');
     final columns = await db.rawQuery('PRAGMA table_info(sections);');
-    print('Sections columns: $columns');
+    print('Columns: $columns');
   }
 }

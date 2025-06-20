@@ -1,43 +1,35 @@
-// lib/models/search_result_item.dart
-import 'reference_item_base.dart';
+import 'package:pathfinder_athenaeum/models/reference_item_base.dart';
 
 class SearchResultItem extends ReferenceItemBase {
-  final String sourceTitle;
-  final String? type;
-  final String? subtype;
-
-  const SearchResultItem({
-    required super.sectionId,
+  SearchResultItem({
     required super.database,
-    required super.name,
+    required super.sectionId,
     required super.url,
-    required this.sourceTitle,
-    this.type,
-    this.subtype,
-  });
+    required super.name,
+    required String description,
+  }) : super(
+          shortDescription: description.length > 50 ? description.substring(0, 50) : description,
+          qualities: '',
+        );
 
-  String get typeLine {
-    if (type == null) return '';
-    return subtype != null ? '$type/$subtype' : type!;
+  factory SearchResultItem.fromMap(Map<String, dynamic> map) {
+    return SearchResultItem(
+      database: map['database'] as String? ?? 'book-cr.db',
+      sectionId: map['section_id']?.toString() ?? '',
+      url: map['url'] as String? ?? '',
+      name: map['name'] as String? ?? 'Unknown',
+      description: map['description'] as String? ?? '',
+    );
   }
 
   @override
-  Map<String, dynamic> toMap() => {
-        ...super.toMap(),
-        'sourceTitle': sourceTitle,
-        'type': type,
-        'subtype': subtype,
-      };
-
-  factory SearchResultItem.fromMap(Map<String, dynamic> map) =>
-      SearchResultItem(
-        sectionId: map['sectionId'],
-        database: map['database'],
-        name: map['name'],
-        url: map['url'],
-        sourceTitle: map['sourceTitle'],
-        type: map['type'],
-        subtype: map['subtype'],
-      );
+  Map<String, dynamic> toMap() {
+    return {
+      'database': database,
+      'section_id': sectionId,
+      'url': url,
+      'name': name,
+      'description': shortDescription,
+    };
+  }
 }
-

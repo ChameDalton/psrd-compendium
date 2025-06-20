@@ -38,7 +38,11 @@ class SkillListScreen extends StatelessWidget {
             itemCount: items.length,
             itemBuilder: (context, index) {
               final item = items[index];
-              final skill = SkillReference.fromMap(item);
+              final skill = SkillReference.fromMap({
+                ...item,
+                'database': 'book-cr.db',
+                'url': item['url'] ?? '',
+              });
               final subtitle = skill.attribute != null
                   ? 'Attribute: ${skill.attribute} - Source: ${skill.source} - ${skill.shortDescription}'
                   : 'Source: ${skill.source} - ${skill.shortDescription}';
@@ -50,7 +54,7 @@ class SkillListScreen extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 onTap: () {
-                  context.push('/category/skill/${skill.categoryId}');
+                  context.push('/category/skill/${skill.sectionId}');
                 },
               );
             },

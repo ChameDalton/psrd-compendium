@@ -43,3 +43,8 @@ flutter:
     - assets/book-ucampaign.db
     - assets/book-ue.db
     - assets/book-um.db
+
+analysis_options:
+  linter:
+    rules:
+      avoid_print: false

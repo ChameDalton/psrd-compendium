@@ -38,7 +38,11 @@ class SpellListScreen extends StatelessWidget {
             itemCount: items.length,
             itemBuilder: (context, index) {
               final item = items[index];
-              final spell = SpellReference.fromMap(item);
+              final spell = SpellReference.fromMap({
+                ...item,
+                'database': 'book-cr.db',
+                'url': item['url'] ?? '',
+              });
               final subtitle = spell.school != null
                   ? '${spell.school} (${spell.levelText ?? ''}) - Source: ${spell.source} - ${spell.shortDescription}'
                   : 'Source: ${spell.source} - ${spell.shortDescription}';
@@ -50,7 +54,7 @@ class SpellListScreen extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 onTap: () {
-                  context.push('/category/spell/${spell.categoryId}');
+                  context.push('/category/spell/${spell.sectionId}');
                 },
               );
             },

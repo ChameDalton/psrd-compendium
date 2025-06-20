@@ -1,29 +1,35 @@
-// lib/models/viewed_item.dart
-import 'reference_item_base.dart';
+import 'package:pathfinder_athenaeum/models/reference_item_base.dart';
 
 class ViewedItem extends ReferenceItemBase {
-  final DateTime viewedAt;
-
-  const ViewedItem({
-    required super.sectionId,
+  ViewedItem({
     required super.database,
-    required super.name,
+    required super.sectionId,
     required super.url,
-    required this.viewedAt,
-  });
+    required super.name,
+    required String description,
+  }) : super(
+          shortDescription: description.length > 50 ? description.substring(0, 50) : description,
+          qualities: '',
+        );
+
+  factory ViewedItem.fromMap(Map<String, dynamic> map) {
+    return ViewedItem(
+      database: map['database'] as String? ?? 'book-cr.db',
+      sectionId: map['section_id']?.toString() ?? '',
+      url: map['url'] as String? ?? '',
+      name: map['name'] as String? ?? 'Unknown',
+      description: map['description'] as String? ?? '',
+    );
+  }
 
   @override
-  Map<String, dynamic> toMap() => {
-        ...super.toMap(),
-        'viewedAt': viewedAt.toIso8601String(),
-      };
-
-  factory ViewedItem.fromMap(Map<String, dynamic> map) => ViewedItem(
-        sectionId: map['sectionId'],
-        database: map['database'],
-        name: map['name'],
-        url: map['url'],
-        viewedAt: DateTime.parse(map['viewedAt']),
-      );
+  Map<String, dynamic> toMap() {
+    return {
+      'database': database,
+      'section_id': sectionId,
+      'url': url,
+      'name': name,
+      'description': shortDescription,
+    };
+  }
 }
-

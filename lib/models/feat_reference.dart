@@ -1,57 +1,46 @@
-// lib/models/feat_reference.dart
-import 'reference_item_base.dart';
+import 'package:pathfinder_athenaeum/models/reference_item_base.dart';
 
 class FeatReference extends ReferenceItemBase {
-  final String description;
-  final String typeLine;
-  final String? subtype;
   final String? prerequisites;
+  final String? type;
 
-  const FeatReference({
-    required super.sectionId,
+  FeatReference({
     required super.database,
-    required super.name,
+    required super.sectionId,
     required super.url,
-    required this.description,
-    required this.typeLine,
-    this.subtype,
-    this.prerequisites,
-  });
-
- String get formattedTypeLine {
-  if (typeLine.isNotEmpty && description.isNotEmpty) {
-    return "($typeLine) - $description";
-  } else if (typeLine.isNotEmpty) {
-    return "($typeLine)";
-  } else {
-    return description.isNotEmpty ? description : "No description available";
-  }
-}
-
-  String get formattedFeatType => typeLine.isNotEmpty ? "($typeLine)" : "";
-
-
-  @override
-  Map<String, dynamic> toMap() => {
-        ...super.toMap(),
-        'description': description,
-        'typeLine': typeLine,
-        'subtype': subtype,
-        'prerequisites': prerequisites,
-      };
+    required super.name,
+    required String description,
+    required this.prerequisites,
+    required this.type,
+  }) : super(
+          shortDescription: description.length > 50 ? description.substring(0, 50) : description,
+          qualities: type ?? '',
+        );
 
   factory FeatReference.fromMap(Map<String, dynamic> map) {
     return FeatReference(
-      sectionId: map['section_id'] ?? 0,
-      database: 'core',
-      name: map['name'] ?? 'Unknown Feat',
-      url: map['url'] ?? '',
-      description: map['description'] ?? '',
-      typeLine: map['feat_type'] ?? '',  // ✅ Pulls feat type (e.g., Combat)
-      prerequisites: null,  // Placeholder until we identify prerequisites field
+      database: map['database'] as String? ?? 'book-cr.db',
+      sectionId: map['section_id']?.toString() ?? '',
+      url: map['url'] as String? ?? '',
+      name: map['name'] as String? ?? 'Unknown',
+      description: map['description'] as String? ?? '',
+      prerequisites: map['prerequisites'] as String?,
+      type: map['type'] as String?,
     );
   }
 
+  @override
+  Map<String, dynamic> toMap() {
+    return {
+      'database': database,
+      'section_id': sectionId,
+      'url': url,
+      'name': name,
+      'description': shortDescription,
+      'prerequisites': prerequisites,
+      'type': type,
+    };
+  }
 
-
+  String get formattedTypeLine => type ?? 'Unknown';
 }
