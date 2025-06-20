@@ -102,12 +102,31 @@ class DatabaseHelper {
     // ignore: avoid_print
     print('Querying section_id: $sectionId in $dbName');
     try {
-      final results = await db.query(
-        'sections',
-        columns: ['section_id', 'name', 'description', 'body', 'source', 'type'],
-        where: 'section_id = ?',
-        whereArgs: [sectionId],
-      );
+      String query;
+      if (sectionId.startsWith('spell_')) {
+        query = '''
+          SELECT s.section_id, s.name, s.description, s.body, s.source, s.type, 
+                 sd.school, sd.level_text
+          FROM sections s
+          LEFT JOIN spell_details sd ON s.section_id = sd.section_id
+          WHERE s.section_id = ?
+        ''';
+      } else if (sectionId.startsWith('skill_')) {
+        query = '''
+          SELECT s.section_id, s.name, s.description, s.body, s.source, s.type, 
+                 sa.attribute, sa.armor_check_penalty, sa.trained_only
+          FROM sections s
+          LEFT JOIN skill_attributes sa ON s.section_id = sa.section_id
+          WHERE s.section_id = ?
+        ''';
+      } else {
+        query = '''
+          SELECT section_id, name, description, body, source, type
+          FROM sections
+          WHERE section_id = ?
+        ''';
+      }
+      final results = await db.rawQuery(query, [sectionId]);
       // ignore: avoid_print
       print('Query result for section_id $sectionId: ${results.length} items');
       return results.isNotEmpty ? results.first : null;
