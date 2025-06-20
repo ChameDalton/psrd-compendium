@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:psrd_compendium/services/database_helper.dart';
+import 'package:pathfinder_athenaeum/services/database_helper.dart';
 
 class CategoryScreen extends StatelessWidget {
   final String type;
@@ -11,6 +11,7 @@ class CategoryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Adjust type to match database (e.g., 'spells' -> 'spell')
     final dbType = type.endsWith('s') ? type.substring(0, type.length - 1) : type;
+    // ignore: avoid_print
     print('Loading category: $dbType');
 
     return Scaffold(
@@ -25,11 +26,13 @@ class CategoryScreen extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
+            // ignore: avoid_print
             print('CategoryScreen error: ${snapshot.error}');
             return Center(child: Text('Error: ${snapshot.error}'));
           }
           final items = snapshot.data ?? [];
           if (items.isEmpty) {
+            // ignore: avoid_print
             print('No items found for type: $dbType');
             return const Center(child: Text('No items found'));
           }
@@ -49,7 +52,7 @@ class CategoryScreen extends StatelessWidget {
                 onTap: () {
                   final sectionId = item['section_id']?.toString();
                   if (sectionId != null) {
-                    context.push('/category/$dbType/$sectionId'); // Changed to push
+                    context.push('/category/$dbType/$sectionId');
                   }
                 },
               );

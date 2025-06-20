@@ -1,6 +1,7 @@
+import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:path/path.dart';
 import 'dart:io';
 
 class DatabaseHelper {
@@ -27,7 +28,6 @@ class DatabaseHelper {
 
   Future<Database> getDatabase(String dbName) async {
     if (_databases.containsKey(dbName)) {
-      print('Returning cached database: $dbName');
       return _databases[dbName]!;
     }
     _databases[dbName] = await _initDatabase(dbName);
@@ -35,43 +35,65 @@ class DatabaseHelper {
   }
 
   Future<Database> _initDatabase(String dbName) async {
-    if (!dbNames.contains(dbName)) {
-      throw Exception('Invalid database: $dbName');
-    }
-    final dir = await getApplicationDocumentsDirectory();
-    final path = '${dir.path}/$dbName';
-    print('Database path: $path');
-    final file = File(path);
-
-    if (!await file.exists()) {
-      print('Copying $dbName from assets to $path');
-      final data = await rootBundle.load('assets/$dbName');
+    // ignore: avoid_print
+    print('Initializing database: $dbName');
+    final documentsDir = await getApplicationDocumentsDirectory();
+    final dbPath = join(documentsDir.path, dbName);
+    if (!await File(dbPath).exists()) {
+      // ignore: avoid_print
+      print('Copying $dbName from assets to $dbPath');
+      final data = await DefaultAssetBundle.of(rootBundle).load('assets/$dbName');
       final bytes = data.buffer.asUint8List();
-      await file.writeAsBytes(bytes);
+      await File(dbPath).writeAsBytes(bytes);
+      // ignore: avoid_print
       print('$dbName copied successfully');
-    } else {
-      print('$dbName already exists at $path');
     }
-
-    final db = await openDatabase(path);
-    print('Database opened: $dbName');
+    // ignore: avoid_print
+    print('Opening database: $dbPath');
+    final db = await openDatabase(dbPath);
+    // ignore: avoid_print
+    print('Database $dbName opened');
     return db;
   }
 
   Future<List<Map<String, dynamic>>> getItemsByType(String type, {String dbName = defaultDbName}) async {
     final db = await getDatabase(dbName);
+    // ignore: avoid_print
     print('Querying sections for type: $type in $dbName');
     try {
       final results = await db.query(
-        'sections', // Changed from 'section_id' to 'sections'
-        columns: ['section_id', 'name', 'description', 'body', 'source', 'type'],
+        'sections',
+        columns: ['section_id', 'name', 'description', 'body', 'source', 'type', 'school', 'level_text'],
         where: 'type = ?',
         whereArgs: [type],
       );
-      print('Query results for $type: $results');
+      // ignore: avoid_print
+      print('Query results for $type: ${results.length} items');
       return results;
     } catch (e) {
-      print('Query error: $e');
+      // ignore: avoid_print
+      print('Query error for $type in $dbName: $e');
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>?> getItemBySectionId(String sectionId, {String dbName = defaultDbName}) async {
+    final db = await getDatabase(dbName);
+    // ignore: avoid_print
+    print('Querying section_id: $sectionId in $dbName');
+    try {
+      final results = await db.query(
+        'sections',
+        columns: ['section_id', 'name', 'description', 'body', 'source', 'type', 'school', 'level_text'],
+        where: 'section_id = ?',
+        whereArgs: [sectionId],
+      );
+      // ignore: avoid_print
+      print('Query result for section_id $sectionId: ${results.length} items');
+      return results.isNotEmpty ? results.first : null;
+    } catch (e) {
+      // ignore: avoid_print
+      print('Query error for section_id $sectionId in $dbName: $e');
       rethrow;
     }
   }

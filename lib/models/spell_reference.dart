@@ -1,57 +1,30 @@
-// lib/models/spell_reference.dart
-import 'reference_item_base.dart';
-
-class SpellReference extends ReferenceItemBase {
+class SpellReference {
+  final int id;
+  final String name;
   final String description;
+  final String source;
   final String school;
-  final String? subschool;
-  final String? descriptor;
-  final int? level;
-  final String? classes;
+  final String levelText;
 
-  const SpellReference({
-    required super.sectionId,
-    required super.database,
-    required super.name,
-    required super.url,
+  SpellReference({
+    required this.id,
+    required this.name,
     required this.description,
+    required this.source,
     required this.school,
-    this.subschool,
-    this.descriptor,
-    this.level,
-    this.classes,
+    required this.levelText,
   });
 
-  String get schoolLine {
-    final parts = <String>[school];
-    if (subschool != null) parts.add('($subschool)');
-    if (descriptor != null) parts.add('[$descriptor]');
-    return parts.join(' ');
+  factory SpellReference.fromMap(Map<String, dynamic> map) {
+    return SpellReference(
+      id: map['section_id'] as int,
+      name: map['name'] as String,
+      description: map['description'] as String? ?? '',
+      source: map['source'] as String? ?? '',
+      school: map['school'] as String? ?? '',
+      levelText: map['level_text'] as String? ?? '',
+    );
   }
 
-  String get shortDescription => description.trim().split('.').first + '.';
-
-  @override
-  Map<String, dynamic> toMap() => {
-        ...super.toMap(),
-        'description': description,
-        'school': school,
-        'subschool': subschool,
-        'descriptor': descriptor,
-        'level': level,
-        'classes': classes,
-      };
-
-  factory SpellReference.fromMap(Map<String, dynamic> map) => SpellReference(
-        sectionId: map['sectionId'],
-        database: map['database'],
-        name: map['name'],
-        url: map['url'],
-        description: map['description'],
-        school: map['school'],
-        subschool: map['subschool'],
-        descriptor: map['descriptor'],
-        level: map['level'],
-        classes: map['classes'],
-      );
+  String getDescription() => '$name - $description';
 }

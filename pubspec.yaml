@@ -1,4 +1,4 @@
-name: psrd_compendium
+name: pathfinder_athenaeum
 description: A Flutter rewrite of Pathfinder Open Reference
 publish_to: 'none'
 version: 1.0.0+1
@@ -17,6 +17,7 @@ dependencies:
   flutter_html: ^3.0.0
   shared_preferences: ^2.2.2
   url_launcher: ^6.3.0
+  path: ^1.8.3
 
 dev_dependencies:
   flutter_test:

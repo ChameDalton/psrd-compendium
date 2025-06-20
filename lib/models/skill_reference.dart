@@ -1,50 +1,25 @@
-// lib/models/skill_reference.dart
-import 'reference_item_base.dart';
-
-class SkillReference extends ReferenceItemBase {
+class SkillReference {
+  final int id;
+  final String name;
   final String description;
-  final String attribute;
-  final bool armorCheckPenalty;
-  final bool trainedOnly;
+  final String source;
 
-  const SkillReference({
-    required super.sectionId,
-    required super.database,
-    required super.name,
-    required super.url,
+  SkillReference({
+    required this.id,
+    required this.name,
     required this.description,
-    required this.attribute,
-    required this.armorCheckPenalty,
-    required this.trainedOnly,
+    required this.source,
   });
 
-  String get qualities {
-    final tags = <String>[];
-    if (trainedOnly) tags.add('Trained Only');
-    if (armorCheckPenalty) tags.add('Armor Check Penalty');
-    return tags.isEmpty ? '' : '(${tags.join('; ')})';
+  factory SkillReference.fromMap(Map<String, dynamic> map) {
+    return SkillReference(
+      id: map['section_id'] as int,
+      name: map['name'] as String,
+      description: map['description'] as String? ?? '',
+      source: map['source'] as String? ?? '',
+    );
   }
 
-  String get shortDescription =>
-      description.split('.').first.trim() + '.';
-
   @override
-  Map<String, dynamic> toMap() => {
-        ...super.toMap(),
-        'description': description,
-        'attribute': attribute,
-        'armorCheckPenalty': armorCheckPenalty,
-        'trainedOnly': trainedOnly,
-      };
-
-  factory SkillReference.fromMap(Map<String, dynamic> map) => SkillReference(
-        sectionId: map['sectionId'],
-        database: map['database'],
-        name: map['name'],
-        url: map['url'],
-        description: map['description'],
-        attribute: map['attribute'],
-        armorCheckPenalty: map['armorCheckPenalty'],
-        trainedOnly: map['trainedOnly'],
-      );
+  String toString() => '$name ($id)';
 }

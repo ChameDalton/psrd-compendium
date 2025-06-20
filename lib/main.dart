@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:psrd_compendium/screens/category_screen.dart';
-import 'package:psrd_compendium/screens/details_screen.dart';
-import 'package:psrd_compendium/screens/search_screen.dart';
+import 'package:pathfinder_athenaeum/screens/category_screen.dart';
+import 'package:pathfinder_athenaeum/screens/details_screen.dart';
+import 'package:pathfinder_athenaeum/screens/search_screen.dart';
 
 void main() {
   runApp(PathfinderApp());
@@ -42,6 +42,9 @@ class PathfinderApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
         useMaterial3: true,
+        appBarTheme: const AppBarTheme(
+          leadingWidth: 56,
+        ),
       ),
       routerConfig: _router,
     );

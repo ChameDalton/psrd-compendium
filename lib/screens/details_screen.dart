@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:psrd_compendium/services/database_helper.dart';
+import 'package:pathfinder_athenaeum/services/database_helper.dart';
 
 class DetailsScreen extends StatelessWidget {
   final String type;
@@ -10,27 +10,27 @@ class DetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // ignore: avoid_print
     print('DetailsScreen: type=$type, sectionId=$sectionId');
     return Scaffold(
       appBar: AppBar(
         title: const Text('Details'),
         automaticallyImplyLeading: true,
       ),
-      body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: DatabaseHelper().getItemsByType(type, dbName: 'book-cr.db'),
+      body: FutureBuilder<Map<String, dynamic>?>(
+        future: DatabaseHelper().getItemBySectionId(sectionId, dbName: 'book-cr.db'),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
+            // ignore: avoid_print
             print('DetailsScreen error: ${snapshot.error}');
             return Center(child: Text('Error: ${snapshot.error}'));
           }
-          final item = snapshot.data?.firstWhere(
-            (i) => i['section_id'].toString() == sectionId,
-            orElse: () => {},
-          );
-          if (item == null || item.isEmpty) {
+          final item = snapshot.data;
+          if (item == null) {
+            // ignore: avoid_print
             print('No item found for sectionId: $sectionId, type: $type');
             return const Center(child: Text('Item not found'));
           }
@@ -51,6 +51,10 @@ class DetailsScreen extends StatelessWidget {
                   if (item['level_text'] != null) ...[
                     const SizedBox(height: 8),
                     Text('Level: ${item['level_text']}'),
+                  ],
+                  if (item['source'] != null) ...[
+                    const SizedBox(height: 8),
+                    Text('Source: ${item['source']}'),
                   ],
                   const SizedBox(height: 16),
                   Html(

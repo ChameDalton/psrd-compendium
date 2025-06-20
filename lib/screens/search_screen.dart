@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:psrd_compendium/services/database_helper.dart';
+import 'package:pathfinder_athenaeum/services/database_helper.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -19,13 +19,15 @@ class SearchScreenState extends State<SearchScreen> {
       return;
     }
     final db = await DatabaseHelper().getDatabase('book-cr.db');
+    // ignore: avoid_print
     print('Searching sections for query: $query');
     final results = await db.query(
-      'sections', // Changed from 'section_id' to 'sections'
+      'sections',
       where: 'name LIKE ?',
       whereArgs: ['%$query%'],
       columns: ['section_id', 'name', 'description', 'body', 'source', 'type'],
     );
+    // ignore: avoid_print
     print('Search results: $results');
     setState(() => _results = results);
   }
@@ -33,7 +35,10 @@ class SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Search')),
+      appBar: AppBar(
+        title: const Text('Search'),
+        automaticallyImplyLeading: true,
+      ),
       body: Column(
         children: [
           Padding(
@@ -52,10 +57,12 @@ class SearchScreenState extends State<SearchScreen> {
               itemCount: _results.length,
               itemBuilder: (context, index) {
                 final item = _results[index];
+                final description = item['description']?.toString() ?? '';
+                final preview = description.length > 50 ? description.substring(0, 50) : description;
                 return ListTile(
                   title: Text(item['name']?.toString() ?? 'Unknown'),
                   subtitle: Text(
-                    item['description']?.toString().substring(0, 50) ?? '',
+                    'Source: ${item['source'] ?? ''} - $preview',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -63,7 +70,7 @@ class SearchScreenState extends State<SearchScreen> {
                     final type = item['type']?.toString();
                     final sectionId = item['section_id']?.toString();
                     if (type != null && sectionId != null) {
-                      context.go('/category/$type/$sectionId');
+                      context.push('/category/$type/$sectionId');
                     }
                   },
                 );
