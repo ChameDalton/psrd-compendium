@@ -5,54 +5,8 @@ import 'package:pathfinder_athenaeum/screens/class_list_screen.dart';
 import 'package:pathfinder_athenaeum/screens/creature_list_screen.dart';
 import 'package:pathfinder_athenaeum/screens/feat_list_screen.dart';
 import 'package:pathfinder_athenaeum/screens/spell_list_screen.dart';
+import 'package:pathfinder_athenaeum/screens/details_screen.dart';
 import 'package:pathfinder_athenaeum/services/database_helper.dart';
-
-// Generic DetailScreen for feats, spells, creatures
-class DetailScreen extends StatelessWidget {
-  final String sectionId;
-  final String type;
-
-  const DetailScreen({super.key, required this.sectionId, required this.type});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('${type[0].toUpperCase()}${type.substring(1)} Details')),
-      body: FutureBuilder<Map<String, dynamic>?>(
-        future: DatabaseHelper().getItemBySectionId(sectionId, dbName: 'book-cr.db'),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            // ignore: avoid_print
-            print('DetailScreen error for $type: ${snapshot.error}');
-            return Center(child: Text('Error: ${snapshot.error}'));
-          }
-          final item = snapshot.data;
-          if (item == null) {
-            return Center(child: Text('$type not found'));
-          }
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(item['name'] ?? 'Unknown', style: Theme.of(context).textTheme.headlineSmall),
-                const SizedBox(height: 8),
-                Text(item['description'] ?? 'No description', style: Theme.of(context).textTheme.bodyLarge),
-                const SizedBox(height: 8),
-                Text('Source: ${item['source'] ?? 'Unknown'}'),
-                const SizedBox(height: 8),
-                Text('Body: ${item['body'] ?? 'No details'}'),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
 
 // Home screen
 class HomeScreen extends StatelessWidget {
@@ -120,7 +74,7 @@ final _router = GoRouter(
         if (type == 'class') {
           return ClassDetailScreen(sectionId: id);
         }
-        return DetailScreen(sectionId: id, type: type);
+        return DetailsScreen(sectionId: id, type: type);
       },
     ),
   ],
@@ -136,7 +90,7 @@ void main() {
 }
 
 class PathfinderApp extends StatelessWidget {
-  PathfinderApp({super.key});
+  const PathfinderApp({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,5 @@
-// lib/screens/class_detail_screen.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:pathfinder_athenaeum/services/database_helper.dart';
 
 class ClassDetailScreen extends StatelessWidget {
@@ -26,18 +26,22 @@ class ClassDetailScreen extends StatelessWidget {
           if (item == null) {
             return const Center(child: Text('Class not found'));
           }
-          return Padding(
+          return SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(item['name'] ?? 'Unknown', style: Theme.of(context).textTheme.headlineSmall),
                 const SizedBox(height: 8),
-                Text(item['description'] ?? 'No description', style: Theme.of(context).textTheme.bodyLarge),
+                if (item['description'] != null && item['description'].isNotEmpty)
+                  Text(item['description'], style: Theme.of(context).textTheme.bodyLarge),
                 const SizedBox(height: 8),
                 Text('Source: ${item['source'] ?? 'Unknown'}'),
                 const SizedBox(height: 8),
-                Text('Body: ${item['body'] ?? 'No details'}'),
+                if (item['body'] != null && item['body'].isNotEmpty)
+                  Html(data: item['body']),
+                if (item['body'] == null || item['body'].isEmpty)
+                  const Text('Body: No details'),
               ],
             ),
           );
