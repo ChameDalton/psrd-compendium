@@ -61,48 +61,12 @@ class DatabaseHelper {
     // ignore: avoid_print
     print('Querying sections for type: $type in $dbName');
     try {
-      String query;
-      List<dynamic> whereArgs = [type];
-      if (type == 'spell') {
-        query = '''
-          SELECT s.section_id, s.name, s.description, s.body, s.source, s.type, 
-                 sd.school, sd.level_text, sd.subschool, sd.descriptor
-          FROM sections s
-          LEFT JOIN spell_details sd ON s.section_id = sd.section_id
-          WHERE s.type = ?
-        ''';
-      } else if (type == 'skill') {
-        query = '''
-          SELECT s.section_id, s.name, s.description, s.body, s.source, s.type, 
-                 sa.attribute, sa.armor_check_penalty, sa.trained_only
-          FROM sections s
-          LEFT JOIN skill_attributes sa ON s.section_id = sa.section_id
-          WHERE s.type = ?
-        ''';
-      } else if (type == 'feat') {
-        query = '''
-          SELECT s.section_id, s.name, s.description, s.body, s.source, s.type, 
-                 fd.prerequisites, fd.type AS feat_type
-          FROM sections s
-          LEFT JOIN feat_details fd ON s.section_id = fd.section_id
-          WHERE s.type = ?
-        ''';
-      } else if (type == 'monster') {
-        query = '''
-          SELECT s.section_id, s.name, s.description, s.body, s.source, s.type, 
-                 ca.challenge_rating, ca.size, ca.alignment
-          FROM sections s
-          LEFT JOIN creature_attributes ca ON s.section_id = ca.section_id
-          WHERE s.type = ?
-        ''';
-      } else {
-        query = '''
-          SELECT section_id, name, description, body, source, type
-          FROM sections
-          WHERE type = ?
-        ''';
-      }
-      final results = await db.rawQuery(query, whereArgs);
+      const query = '''
+        SELECT section_id, name, description, body, source, type
+        FROM sections
+        WHERE type = ?
+      ''';
+      final results = await db.rawQuery(query, [type]);
       // ignore: avoid_print
       print('Query results for $type: ${results.length} items');
       return results;
@@ -118,46 +82,11 @@ class DatabaseHelper {
     // ignore: avoid_print
     print('Querying section_id: $sectionId in $dbName');
     try {
-      String query;
-      if (sectionId.startsWith('spell_')) {
-        query = '''
-          SELECT s.section_id, s.name, s.description, s.body, s.source, s.type, 
-                 sd.school, sd.level_text, sd.subschool, sd.descriptor
-          FROM sections s
-          LEFT JOIN spell_details sd ON s.section_id = sd.section_id
-          WHERE s.section_id = ?
-        ''';
-      } else if (sectionId.startsWith('skill_')) {
-        query = '''
-          SELECT s.section_id, s.name, s.description, s.body, s.source, s.type, 
-                 sa.attribute, sa.armor_check_penalty, sa.trained_only
-          FROM sections s
-          LEFT JOIN skill_attributes sa ON s.section_id = sa.section_id
-          WHERE s.section_id = ?
-        ''';
-      } else if (sectionId.startsWith('feat_')) {
-        query = '''
-          SELECT s.section_id, s.name, s.description, s.body, s.source, s.type, 
-                 fd.prerequisites, fd.type AS feat_type
-          FROM sections s
-          LEFT JOIN feat_details fd ON s.section_id = fd.section_id
-          WHERE s.section_id = ?
-        ''';
-      } else if (sectionId.startsWith('monster_')) {
-        query = '''
-          SELECT s.section_id, s.name, s.description, s.body, s.source, s.type, 
-                 ca.challenge_rating, ca.size, ca.alignment
-          FROM sections s
-          LEFT JOIN creature_attributes ca ON s.section_id = ca.section_id
-          WHERE s.section_id = ?
-        ''';
-      } else {
-        query = '''
-          SELECT section_id, name, description, body, source, type
-          FROM sections
-          WHERE section_id = ?
-        ''';
-      }
+      const query = '''
+        SELECT section_id, name, description, body, source, type
+        FROM sections
+        WHERE section_id = ?
+      ''';
       final results = await db.rawQuery(query, [sectionId]);
       // ignore: avoid_print
       print('Query result for section_id $sectionId: ${results.length} items');
@@ -171,9 +100,14 @@ class DatabaseHelper {
 
   Future<void> logSchema() async {
     final db = await getDatabase(defaultDbName);
-    final tables = await db.rawQuery('SELECT name FROM sqlite_master WHERE type="table";');
+    final tables = await db.rawQuery("SELECT name FROM sqlite_master WHERE type='table';");
+    // ignore: avoid_print
     print('Tables: $tables');
-    final columns = await db.rawQuery('PRAGMA table_info(sections);');
-    print('Columns: $columns');
+    for (var table in tables) {
+      final tableName = table['name'] as String;
+      final columns = await db.rawQuery('PRAGMA table_info($tableName);');
+      // ignore: avoid_print
+      print('Columns for $tableName: $columns');
+    }
   }
 }

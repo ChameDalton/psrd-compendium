@@ -19,7 +19,7 @@ class CreatureListScreen extends StatelessWidget {
         ],
       ),
       body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: DatabaseHelper().getItemsByType('monster', dbName: 'book-cr.db'),
+        future: DatabaseHelper().getItemsByType('creature', dbName: 'book-cr.db'),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -37,20 +37,15 @@ class CreatureListScreen extends StatelessWidget {
             itemCount: items.length,
             itemBuilder: (context, index) {
               final item = items[index];
-              final description = item['description']?.toString() ?? '';
-              final preview = description.length > 50 ? description.substring(0, 50) : description;
               return ListTile(
-                title: Text(item['name']?.toString() ?? 'Unknown'),
+                title: Text(item['name'] ?? 'Unknown'),
                 subtitle: Text(
-                  'Source: ${item['source'] ?? ''} - $preview',
+                  item['description']?.substring(0, 50) ?? '',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 onTap: () {
-                  final sectionId = item['section_id']?.toString();
-                  if (sectionId != null) {
-                    context.push('/category/creature/$sectionId');
-                  }
+                  context.push('/category/creature/${item['section_id']}');
                 },
               );
             },
