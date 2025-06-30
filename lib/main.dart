@@ -7,7 +7,7 @@ import 'package:pathfinder_athenaeum/services/database_helper.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await DatabaseHelper().logSchema(); // Add this line
+  await DatabaseHelper().logSchema();
   runApp(PathfinderApp());
 }
 

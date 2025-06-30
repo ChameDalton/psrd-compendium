@@ -16,6 +16,7 @@ dependencies:
   go_router: ^14.2.0
   flutter_html: ^3.0.0
   shared_preferences: ^2.2.2
+  sqflite_common_ffi: ^2.3.3
   url_launcher: ^6.3.0
   path: ^1.8.3
 

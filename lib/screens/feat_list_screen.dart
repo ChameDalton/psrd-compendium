@@ -1,71 +1,65 @@
 // lib/screens/feat_list_screen.dart
 import 'package:flutter/material.dart';
-import '../models/feat_reference.dart';
-import '../services/feat_service.dart';
-import '../screens/reference_detail_screen.dart';
-import '../widgets/reference_list_tile.dart';
+import 'package:go_router/go_router.dart';
+import 'package:pathfinder_athenaeum/models/feat_reference.dart';
+import 'package:pathfinder_athenaeum/services/database_helper.dart';
 
-class FeatListScreen extends StatefulWidget {
+class FeatListScreen extends StatelessWidget {
   const FeatListScreen({super.key});
-
-  @override
-  State<FeatListScreen> createState() => _FeatListScreenState();
-}
-
-class _FeatListScreenState extends State<FeatListScreen> {
-  late Future<List<FeatReference>> futureFeats;
-
-  @override
-  void initState() {
-    super.initState();
-    futureFeats = FeatService.loadCoreFeats();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Feats')),
-      body: FutureBuilder<List<FeatReference>>(
-        future: futureFeats,
+      appBar: AppBar(
+        title: const Text('Feats'),
+        automaticallyImplyLeading: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () => (context as Element).markNeedsBuild(),
+          ),
+        ],
+      ),
+      body: FutureBuilder<List<Map<String, dynamic>>>(
+        future: DatabaseHelper().getItemsByType('feat', dbName: 'book-cr.db'),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error loading feats: ${snapshot.error}'));
-          } else {
-            final feats = snapshot.data ?? [];
-            return ListView.builder(
-              itemCount: feats.length,
-              itemBuilder: (context, index) {
-                final feat = feats[index];
-                return ReferenceListTile(
-                  item: feat,
-                  subtitle: feat.formattedTypeLine, // ✅ Displays feat type & description properly
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => ReferenceDetailScreen(
-                          item: feat,
-                          buildContent: (_) => Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(feat.formattedTypeLine, style: Theme.of(context).textTheme.titleMedium), // ✅ Updated to formattedTypeLine
-                              const SizedBox(height: 12),
-                              if (feat.prerequisites != null)
-                                Text('Prerequisite: ${feat.prerequisites!}', style: Theme.of(context).textTheme.bodyMedium),
-                              const SizedBox(height: 16),
-                              Text(feat.description),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                );
-              },
-            );
           }
+          if (snapshot.hasError) {
+            // ignore: avoid_print
+            print('FeatListScreen error: ${snapshot.error}');
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+          final items = snapshot.data ?? [];
+          if (items.isEmpty) {
+            return const Center(child: Text('No feats found'));
+          }
+          return ListView.builder(
+            itemCount: items.length,
+            itemBuilder: (context, index) {
+              final item = items[index];
+              final feat = FeatReference.fromMap({
+                ...item,
+                'database': 'book-cr.db',
+                'url': item['url'] ?? '',
+              });
+              final subtitle = feat.prerequisites != null
+                  ? '${feat.formattedTypeLine} - Prerequisites: ${feat.prerequisites} - ${feat.shortDescription}'
+                  : '${feat.formattedTypeLine} - ${feat.shortDescription}';
+              return ListTile(
+                title: Text(feat.name),
+                subtitle: Text(
+                  subtitle,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                onTap: () {
+                  context.push('/category/feat/${feat.sectionId}');
+                },
+              );
+            },
+          );
         },
       ),
     );

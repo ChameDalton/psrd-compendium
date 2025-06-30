@@ -1,3 +1,4 @@
+// lib/services/database_helper.dart
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
@@ -5,7 +6,7 @@ import 'package:path/path.dart';
 import 'dart:io';
 
 class DatabaseHelper {
-  static Map<String, Database> _databases = {};
+  static final Map<String, Database> _databases = {};
   static const String defaultDbName = 'book-cr.db';
   static const List<String> dbNames = [
     'book-apg.db',
@@ -66,7 +67,7 @@ class DatabaseHelper {
       if (type == 'spell') {
         query = '''
           SELECT s.section_id, s.name, s.description, s.body, s.source, s.type, 
-                 sd.school, sd.level_text
+                 sd.school, sd.level_text, sd.subschool, sd.descriptor
           FROM sections s
           LEFT JOIN spell_details sd ON s.section_id = sd.section_id
           WHERE s.type = ?
@@ -85,6 +86,14 @@ class DatabaseHelper {
                  fd.prerequisites, fd.type AS feat_type
           FROM sections s
           LEFT JOIN feat_details fd ON s.section_id = fd.section_id
+          WHERE s.type = ?
+        ''';
+      } else if (type == 'monster') {
+        query = '''
+          SELECT s.section_id, s.name, s.description, s.body, s.source, s.type, 
+                 ca.challenge_rating, ca.size, ca.alignment
+          FROM sections s
+          LEFT JOIN creature_attributes ca ON s.section_id = ca.section_id
           WHERE s.type = ?
         ''';
       } else {
@@ -114,7 +123,7 @@ class DatabaseHelper {
       if (sectionId.startsWith('spell_')) {
         query = '''
           SELECT s.section_id, s.name, s.description, s.body, s.source, s.type, 
-                 sd.school, sd.level_text
+                 sd.school, sd.level_text, sd.subschool, sd.descriptor
           FROM sections s
           LEFT JOIN spell_details sd ON s.section_id = sd.section_id
           WHERE s.section_id = ?
@@ -127,7 +136,7 @@ class DatabaseHelper {
           LEFT JOIN skill_attributes sa ON s.section_id = sa.section_id
           WHERE s.section_id = ?
         ''';
-      } else if (sectionId.startsWith('feat_')) {
+      } else if (type == 'feat') {
         query = '''
           SELECT s.section_id, s.name, s.description, s.body, s.source, s.type, 
                  fd.prerequisites, fd.type AS feat_type
@@ -135,15 +144,24 @@ class DatabaseHelper {
           LEFT JOIN feat_details fd ON s.section_id = fd.section_id
           WHERE s.section_id = ?
         ''';
+      } else if (type == 'monster') {
+        query = '''
+          SELECT s.section_id, s.name, s.description, s.body, s.source, s.type, 
+                 ca.challenge_rating, ca.size, ca.alignment
+          FROM sections s
+          LEFT JOIN creature_attributes ca ON s.section_id = ca.section_id
+          WHERE s.section_id = ?
+        ''';
       } else {
         query = '''
-          SELECT section_id, name, description, body, source
+          SELECT section_id, name, description, body, source, type
           FROM sections
           WHERE section_id = ?
         ''';
       }
       final results = await db.rawQuery(query, [sectionId]);
-      // ignore returning null
+      // ignore: avoid_print
+      print('Query result for section_id $sectionId: ${results.length} items');
       return results.isNotEmpty ? results.first : null;
     } catch (e) {
       // ignore: avoid_print
