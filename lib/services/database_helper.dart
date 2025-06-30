@@ -1,4 +1,3 @@
-// lib/services/database_helper.dart
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
@@ -136,7 +135,7 @@ class DatabaseHelper {
           LEFT JOIN skill_attributes sa ON s.section_id = sa.section_id
           WHERE s.section_id = ?
         ''';
-      } else if (type == 'feat') {
+      } else if (sectionId.startsWith('feat_')) {
         query = '''
           SELECT s.section_id, s.name, s.description, s.body, s.source, s.type, 
                  fd.prerequisites, fd.type AS feat_type
@@ -144,7 +143,7 @@ class DatabaseHelper {
           LEFT JOIN feat_details fd ON s.section_id = fd.section_id
           WHERE s.section_id = ?
         ''';
-      } else if (type == 'monster') {
+      } else if (sectionId.startsWith('monster_')) {
         query = '''
           SELECT s.section_id, s.name, s.description, s.body, s.source, s.type, 
                  ca.challenge_rating, ca.size, ca.alignment

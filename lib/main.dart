@@ -1,47 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pathfinder_athenaeum/screens/category_screen.dart';
-import 'package:pathfinder_athenaeum/screens/details_screen.dart';
-import 'package:pathfinder_athenaeum/screens/search_screen.dart';
 import 'package:pathfinder_athenaeum/services/database_helper.dart';
+import 'package:pathfinder_athenaeum/screens/feat_list_screen.dart';
+import 'package:pathfinder_athenaeum/screens/spell_list_screen.dart';
+import 'package:pathfinder_athenaeum/screens/class_list_screen.dart';
+// Add other screen imports as needed
 
-void main() async {
+// Define your GoRouter configuration (replace with your actual routes)
+final _router = GoRouter(
+  routes: [
+    GoRoute(
+      path: '/',
+      builder: (context, state) => const FeatListScreen(), // Replace with your home screen
+    ),
+    GoRoute(
+      path: '/category/feat/:id',
+      builder: (context, state) => FeatListScreen(), // Adjust for detail screen
+    ),
+    GoRoute(
+      path: '/category/spell/:id',
+      builder: (context, state) => SpellListScreen(), // Adjust for detail screen
+    ),
+    GoRoute(
+      path: '/category/class/:id',
+      builder: (context, state) => ClassListScreen(), // Adjust for detail screen
+    ),
+    // Add routes for other categories (e.g., skills, creatures)
+  ],
+);
+
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  await DatabaseHelper().logSchema();
+  DatabaseHelper().logSchema();
   runApp(PathfinderApp());
 }
 
 class PathfinderApp extends StatelessWidget {
-  PathfinderApp({super.key});
-
-  final _router = GoRouter(
-    initialLocation: '/',
-    routes: [
-      GoRoute(
-        path: '/',
-        builder: (context, state) => const CategoryListScreen(),
-      ),
-      GoRoute(
-        path: '/category/:type',
-        builder: (context, state) {
-          final type = state.pathParameters['type']!;
-          return CategoryScreen(type: type);
-        },
-      ),
-      GoRoute(
-        path: '/category/:type/:sectionId',
-        builder: (context, state) {
-          final type = state.pathParameters['type']!;
-          final sectionId = state.pathParameters['sectionId']!;
-          return DetailsScreen(type: type, sectionId: sectionId);
-        },
-      ),
-      GoRoute(
-        path: '/search',
-        builder: (context, state) => const SearchScreen(),
-      ),
-    ],
-  );
+  PathfinderApp({super.key}); // Non-const constructor
 
   @override
   Widget build(BuildContext context) {
@@ -51,46 +46,6 @@ class PathfinderApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       routerConfig: _router,
-    );
-  }
-}
-
-class CategoryListScreen extends StatelessWidget {
-  const CategoryListScreen({super.key});
-
-  static const List<String> _categories = [
-    'Spells',
-    'Feats',
-    'Creatures',
-    'Classes',
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Pathfinder Compendium'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {
-              context.push('/search');
-            },
-          ),
-        ],
-      ),
-      body: ListView.builder(
-        itemCount: _categories.length,
-        itemBuilder: (context, index) {
-          final category = _categories[index];
-          return ListTile(
-            title: Text(category),
-            onTap: () {
-              context.push('/category/$category');
-            },
-          );
-        },
-      ),
     );
   }
 }
