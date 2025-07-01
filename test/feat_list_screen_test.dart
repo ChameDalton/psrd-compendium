@@ -68,6 +68,9 @@ void main() {
       final databaseHelper = DatabaseHelper();
       databaseHelper.setTestDatabase(':memory:', db);
 
+      // Mock getItemsByType to use in-memory database
+      final featsFuture = databaseHelper.getItemsByType('feat', dbName: ':memory:');
+
       // Pump the widget with the test database
       await tester.pumpWidget(
         MaterialApp(
@@ -75,9 +78,15 @@ void main() {
         ),
       );
 
-      // Simulate DatabaseHelper using the in-memory database
-      final feats = await databaseHelper.getItemsByType('feat', dbName: ':memory:');
+      // Wait for the FutureBuilder to complete
+      await tester.pumpAndSettle();
 
+      // Verify the UI
+      expect(find.text('Acrobatic'), findsOneWidget);
+      expect(find.text('You are skilled at leaping, jumping, and flying'), findsOneWidget);
+
+      // Verify the database query
+      final feats = await featsFuture;
       expect(feats, isNotEmpty);
       expect(feats.first['name'], 'Acrobatic');
       expect(feats.first['description'], 'You are skilled at leaping, jumping, and flying');
@@ -88,4 +97,4 @@ void main() {
       await db.close();
     });
   });
-}git 
+}
