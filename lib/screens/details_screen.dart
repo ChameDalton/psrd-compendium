@@ -3,114 +3,90 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:pathfinder_athenaeum/services/database_helper.dart';
 
 class DetailsScreen extends StatelessWidget {
-  final String type;
   final String sectionId;
+  final String type;
 
-  const DetailsScreen({super.key, required this.type, required this.sectionId});
+  const DetailsScreen({super.key, required this.sectionId, required this.type});
 
   @override
   Widget build(BuildContext context) {
-    // Map 'creatures' to 'monster'
-    final queryType = type.toLowerCase() == 'creature' ? 'monster' : type.toLowerCase();
-    // ignore: avoid_print
-    print('DetailsScreen: type=$queryType, sectionId=$sectionId');
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Details'),
-        automaticallyImplyLeading: true,
-      ),
+      appBar: AppBar(title: Text('${type[0].toUpperCase()}${type.substring(1)} Details')),
       body: FutureBuilder<Map<String, dynamic>?>(
-        future: _getItemDetails(queryType, sectionId),
+        future: DatabaseHelper().getItemBySectionId(sectionId, dbName: 'book-cr.db'),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
             // ignore: avoid_print
-            print('DetailsScreen error: ${snapshot.error}');
+            print('DetailsScreen error for $type: ${snapshot.error}');
             return Center(child: Text('Error: ${snapshot.error}'));
           }
           final item = snapshot.data;
           if (item == null) {
-            // ignore: avoid_print
-            print('No item found for sectionId: $sectionId, type: $queryType');
-            return const Center(child: Text('Item not found'));
+            return Center(child: Text('$type not found'));
           }
           return SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    item['name']?.toString() ?? 'Unknown',
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-                  if (queryType == 'spell' && item['school'] != null) ...[
-                    const SizedBox(height: 8),
-                    Text('School: ${item['school']}'),
-                  ],
-                  if (queryType == 'spell' && item['level_text'] != null) ...[
-                    const SizedBox(height: 8),
-                    Text('Level: ${item['level_text']}'),
-                  ],
-                  if (queryType == 'skill' && item['attribute'] != null) ...[
-                    const SizedBox(height: 8),
-                    Text('Attribute: ${item['attribute']}'),
-                  ],
-                  if (item['source'] != null) ...[
-                    const SizedBox(height: 8),
-                    Text('Source: ${item['source']}'),
-                  ],
-                  if (item['description'] != null && item['description'].toString().isNotEmpty) ...[
-                    const SizedBox(height: 8),
-                    Text('Description: ${item['description']}'),
-                  ],
-                  const SizedBox(height: 16),
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(item['name'] ?? 'Unknown', style: Theme.of(context).textTheme.headlineSmall),
+                const SizedBox(height: 8),
+                if (item['description'] != null && item['description'].isNotEmpty)
+                  Text(item['description'], style: Theme.of(context).textTheme.bodyLarge),
+                const SizedBox(height: 8),
+                Text('Source: ${item['source'] ?? 'Unknown'}'),
+                const SizedBox(height: 8),
+                if (item['feat_type'] != null)
+                  Text('Feat Type: ${item['feat_type']}'),
+                if (item['prerequisites'] != null)
+                  Text('Prerequisites: ${item['prerequisites']}'),
+                if (item['school'] != null)
+                  Text('School: ${item['school']}'),
+                if (item['subschool'] != null)
+                  Text('Subschool: ${item['subschool']}'),
+                if (item['descriptor'] != null)
+                  Text('Descriptor: ${item['descriptor']}'),
+                if (item['level_text'] != null)
+                  Text('Level: ${item['level_text']}'),
+                if (item['challenge_rating'] != null)
+                  Text('Challenge Rating: ${item['challenge_rating']}'),
+                if (item['size'] != null)
+                  Text('Size: ${item['size']}'),
+                if (item['alignment'] != null)
+                  Text('Alignment: ${item['alignment']}'),
+                if (item['attribute'] != null)
+                  Text('Attribute: ${item['attribute']}'),
+                if (item['armor_check_penalty'] != null)
+                  Text('Armor Check Penalty: ${item['armor_check_penalty']}'),
+                if (item['trained_only'] != null)
+                  Text('Trained Only: ${item['trained_only']}'),
+                const SizedBox(height: 8),
+                if (item['body'] != null && item['body'].isNotEmpty)
                   Html(
-                    data: item['body']?.toString() ?? '',
+                    data: item['body'],
                     style: {
-                      'body': Style(fontSize: FontSize(16)),
-                      'table': Style(border: Border.all(color: Colors.grey)),
-                      'a': Style(color: Colors.blue),
+                      "p": Style(fontSize: FontSize(16)),
+                      "b": Style(fontWeight: FontWeight.bold),
+                      "table": Style(border: Border.all(color: Colors.grey)),
+                      "td": Style(border: Border.all(color: Colors.grey)),
                     },
                   ),
-                ],
-              ),
+                if (item['body'] == null || item['body'].isEmpty)
+                  Text(
+                    type == 'feat' && item['prerequisites'] != null
+                        ? 'Details: ${item['prerequisites']}'
+                        : 'Body: No details',
+                  ),
+                if (item['child_body'] != null && item['child_body'].isNotEmpty)
+                  Text('Child Body: ${item['child_body']}', style: TextStyle(color: Colors.grey)),
+              ],
             ),
           );
         },
       ),
     );
-  }
-
-  Future<Map<String, dynamic>?> _getItemDetails(String type, String sectionId) async {
-    final db = await DatabaseHelper().getDatabase('book-cr.db');
-    String query;
-    if (type == 'spell') {
-      query = '''
-        SELECT s.section_id, s.name, s.description, s.body, s.source, s.type, 
-               sd.school, sd.level_text
-        FROM sections s
-        LEFT JOIN spell_details sd ON s.section_id = sd.section_id
-        WHERE s.section_id = ?
-      ''';
-    } else if (type == 'skill') {
-      query = '''
-        SELECT s.section_id, s.name, s.description, s.body, s.source, s.type, 
-               sa.attribute, sa.armor_check_penalty, sa.trained_only
-        FROM sections s
-        LEFT JOIN skill_attributes sa ON s.section_id = sa.section_id
-        WHERE s.section_id = ?
-      ''';
-    } else {
-      query = '''
-        SELECT section_id, name, description, body, source, type
-        FROM sections
-        WHERE section_id = ?
-      ''';
-    }
-    final results = await db.rawQuery(query, [sectionId]);
-    return results.isNotEmpty ? results.first : null;
   }
 }

@@ -26,7 +26,27 @@ class DatabaseHelper {
     'book-um.db',
   ];
 
+  // Allow setting a test database for in-memory testing
+  void setTestDatabase(String dbName, Database db) {
+    // ignore: avoid_print
+    print('Setting test database for: $dbName');
+    _databases[dbName] = db;
+  }
+
   Future<Database> getDatabase(String dbName) async {
+    if (dbName == inMemoryDatabasePath) {
+      // Use in-memory database for tests
+      if (_databases.containsKey(dbName)) {
+        // ignore: avoid_print
+        print('Returning existing in-memory database');
+        return _databases[dbName]!;
+      }
+      // ignore: avoid_print
+      print('Opening new in-memory database');
+      final db = await databaseFactory.openDatabase(inMemoryDatabasePath);
+      _databases[dbName] = db;
+      return db;
+    }
     if (_databases.containsKey(dbName)) {
       return _databases[dbName]!;
     }
@@ -83,9 +103,10 @@ class DatabaseHelper {
             .map((col) => 'sd.$col')
             .toList();
         query = '''
-          SELECT s.section_id, s.name, s.description, s.body, s.source, s.type${safeColumns.isNotEmpty ? ', ${safeColumns.join(', ')}' : ''}
+          SELECT s.section_id, s.name, s.description, COALESCE(s.body, child.body) AS body, s.source, s.type${safeColumns.isNotEmpty ? ', ${safeColumns.join(', ')}' : ''}, s.parent_id, child.body AS child_body
           FROM sections s
           LEFT JOIN spell_details sd ON s.section_id = sd.section_id
+          LEFT JOIN sections child ON s.parent_id = child.section_id
           WHERE s.type = ?
         ''';
       } else if (type == 'feat' && await _tableExists(db, 'feat_details')) {
@@ -95,9 +116,10 @@ class DatabaseHelper {
             .map((col) => col == 'type' ? 'fd.$col AS feat_type' : 'fd.$col')
             .toList();
         query = '''
-          SELECT s.section_id, s.name, s.description, s.body, s.source, s.type${safeColumns.isNotEmpty ? ', ${safeColumns.join(', ')}' : ''}
+          SELECT s.section_id, s.name, s.description, COALESCE(s.body, child.body) AS body, s.source, s.type${safeColumns.isNotEmpty ? ', ${safeColumns.join(', ')}' : ''}, s.parent_id, child.body AS child_body
           FROM sections s
           LEFT JOIN feat_details fd ON s.section_id = fd.section_id
+          LEFT JOIN sections child ON s.parent_id = child.section_id
           WHERE s.type = ?
         ''';
       } else if (type == 'creature' && await _tableExists(db, 'creature_attributes')) {
@@ -107,9 +129,10 @@ class DatabaseHelper {
             .map((col) => 'ca.$col')
             .toList();
         query = '''
-          SELECT s.section_id, s.name, s.description, s.body, s.source, s.type${safeColumns.isNotEmpty ? ', ${safeColumns.join(', ')}' : ''}
+          SELECT s.section_id, s.name, s.description, COALESCE(s.body, child.body) AS body, s.source, s.type${safeColumns.isNotEmpty ? ', ${safeColumns.join(', ')}' : ''}, s.parent_id, child.body AS child_body
           FROM sections s
           LEFT JOIN creature_attributes ca ON s.section_id = ca.section_id
+          LEFT JOIN sections child ON s.parent_id = child.section_id
           WHERE s.type = ?
         ''';
       } else if (type == 'skill' && await _tableExists(db, 'skill_attributes')) {
@@ -119,21 +142,28 @@ class DatabaseHelper {
             .map((col) => 'sa.$col')
             .toList();
         query = '''
-          SELECT s.section_id, s.name, s.description, s.body, s.source, s.type${safeColumns.isNotEmpty ? ', ${safeColumns.join(', ')}' : ''}
+          SELECT s.section_id, s.name, s.description, COALESCE(s.body, child.body) AS body, s.source, s.type${safeColumns.isNotEmpty ? ', ${safeColumns.join(', ')}' : ''}, s.parent_id, child.body AS child_body
           FROM sections s
           LEFT JOIN skill_attributes sa ON s.section_id = sa.section_id
+          LEFT JOIN sections child ON s.parent_id = child.section_id
           WHERE s.type = ?
         ''';
       } else {
         query = '''
-          SELECT section_id, name, description, body, source, type
-          FROM sections
+          SELECT s.section_id, s.name, s.description, COALESCE(s.body, child.body) AS body, s.source, s.type, s.parent_id, child.body AS child_body
+          FROM sections s
+          LEFT JOIN sections child ON s.parent_id = child.section_id
           WHERE s.type = ?
         ''';
       }
       final results = await db.rawQuery(query, whereArgs);
       // ignore: avoid_print
       print('Query results for $type: ${results.length} items');
+      if (type == 'feat' && results.isNotEmpty) {
+        // Log body and prerequisites for the first feat
+        // ignore: avoid_print
+        print('Sample feat data: ${results.first}');
+      }
       return results;
     } catch (e) {
       // ignore: avoid_print
@@ -155,9 +185,10 @@ class DatabaseHelper {
             .map((col) => 'sd.$col')
             .toList();
         query = '''
-          SELECT s.section_id, s.name, s.description, s.body, s.source, s.type${safeColumns.isNotEmpty ? ', ${safeColumns.join(', ')}' : ''}
+          SELECT s.section_id, s.name, s.description, COALESCE(s.body, child.body) AS body, s.source, s.type${safeColumns.isNotEmpty ? ', ${safeColumns.join(', ')}' : ''}, s.parent_id, child.body AS child_body
           FROM sections s
           LEFT JOIN spell_details sd ON s.section_id = sd.section_id
+          LEFT JOIN sections child ON s.parent_id = child.section_id
           WHERE s.section_id = ?
         ''';
       } else if (sectionId.startsWith('feat_') && await _tableExists(db, 'feat_details')) {
@@ -167,9 +198,10 @@ class DatabaseHelper {
             .map((col) => col == 'type' ? 'fd.$col AS feat_type' : 'fd.$col')
             .toList();
         query = '''
-          SELECT s.section_id, s.name, s.description, s.body, s.source, s.type${safeColumns.isNotEmpty ? ', ${safeColumns.join(', ')}' : ''}
+          SELECT s.section_id, s.name, s.description, COALESCE(s.body, child.body) AS body, s.source, s.type${safeColumns.isNotEmpty ? ', ${safeColumns.join(', ')}' : ''}, s.parent_id, child.body AS child_body
           FROM sections s
           LEFT JOIN feat_details fd ON s.section_id = fd.section_id
+          LEFT JOIN sections child ON s.parent_id = child.section_id
           WHERE s.section_id = ?
         ''';
       } else if (sectionId.startsWith('creature_') && await _tableExists(db, 'creature_attributes')) {
@@ -179,9 +211,10 @@ class DatabaseHelper {
             .map((col) => 'ca.$col')
             .toList();
         query = '''
-          SELECT s.section_id, s.name, s.description, s.body, s.source, s.type${safeColumns.isNotEmpty ? ', ${safeColumns.join(', ')}' : ''}
+          SELECT s.section_id, s.name, s.description, COALESCE(s.body, child.body) AS body, s.source, s.type${safeColumns.isNotEmpty ? ', ${safeColumns.join(', ')}' : ''}, s.parent_id, child.body AS child_body
           FROM sections s
           LEFT JOIN creature_attributes ca ON s.section_id = ca.section_id
+          LEFT JOIN sections child ON s.parent_id = child.section_id
           WHERE s.section_id = ?
         ''';
       } else if (sectionId.startsWith('skill_') && await _tableExists(db, 'skill_attributes')) {
@@ -191,21 +224,28 @@ class DatabaseHelper {
             .map((col) => 'sa.$col')
             .toList();
         query = '''
-          SELECT s.section_id, s.name, s.description, s.body, s.source, s.type${safeColumns.isNotEmpty ? ', ${safeColumns.join(', ')}' : ''}
+          SELECT s.section_id, s.name, s.description, COALESCE(s.body, child.body) AS body, s.source, s.type${safeColumns.isNotEmpty ? ', ${safeColumns.join(', ')}' : ''}, s.parent_id, child.body AS child_body
           FROM sections s
           LEFT JOIN skill_attributes sa ON s.section_id = sa.section_id
+          LEFT JOIN sections child ON s.parent_id = child.section_id
           WHERE s.section_id = ?
         ''';
       } else {
         query = '''
-          SELECT section_id, name, description, body, source, type
-          FROM sections
+          SELECT s.section_id, s.name, s.description, COALESCE(s.body, child.body) AS body, s.source, s.type, s.parent_id, child.body AS child_body
+          FROM sections s
+          LEFT JOIN sections child ON s.parent_id = child.section_id
           WHERE s.section_id = ?
         ''';
       }
       final results = await db.rawQuery(query, [sectionId]);
       // ignore: avoid_print
       print('Query result for section_id $sectionId: ${results.length} items');
+      if (results.isNotEmpty) {
+        // Log body and relevant fields
+        // ignore: avoid_print
+        print('Item data for $sectionId: ${results.first}');
+      }
       return results.isNotEmpty ? results.first : null;
     } catch (e) {
       // ignore: avoid_print
