@@ -36,7 +36,7 @@ class DatabaseHelper {
     final db = await database;
     return await db.query(
       'sections',
-      columns: ['id', 'name', 'type', 'source', 'parent_id', 'body'],
+      columns: ['section_id', 'name', 'type', 'source', 'parent_id', 'body'],
       where: 'type = ?',
       whereArgs: [type],
     );
