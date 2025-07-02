@@ -3,7 +3,6 @@ import 'package:pathfinder_athenaeum/services/database_helper.dart';
 import 'package:pathfinder_athenaeum/screens/feat_list_screen.dart';
 import 'package:pathfinder_athenaeum/screens/spell_list_screen.dart';
 import 'package:pathfinder_athenaeum/screens/class_list_screen.dart';
-import 'package:pathfinder_athenaeum/screens/creature_list_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -69,16 +68,12 @@ class HomeScreen extends StatelessWidget {
               },
               child: const Text('Classes'),
             ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => CreatureListScreen(dbHelper: dbHelper),
-                  ),
-                );
-              },
-              child: const Text('Creatures'),
+            const Tooltip(
+              message: 'Creatures not yet supported (requires b1.db)',
+              child: ElevatedButton(
+                onPressed: null, // Disabled until creatures database is confirmed
+                child: Text('Creatures'),
+              ),
             ),
           ],
         ),
