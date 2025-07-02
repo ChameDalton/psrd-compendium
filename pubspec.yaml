@@ -1,4 +1,4 @@
-name: psrd_compendium
+name: pathfinder_athenaeum
 description: A Flutter app replicating Pathfinder Open Reference.
 publish_to: 'none'
 version: 1.0.0+1
@@ -21,19 +21,19 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/book-apg.db
-    - assets/book-arg.db
-    - assets/book-b1.db
-    - assets/book-b2.db
-    - assets/book-b3.db
-    - assets/book-b4.db
-    - assets/book-cr.db
-    - assets/book-gmg.db
-    - assets/book-ma.db
-    - assets/book-mc.db
-    - assets/book-npc.db
-    - assets/book-tech.db
-    - assets/book-uc.db
-    - assets/book-ucampaign.db
-    - assets/book-ue.db
-    - assets/book-um.db
+    - assets/databases/book-apg.db
+    - assets/databases/book-arg.db
+    - assets/databases/book-b1.db
+    - assets/databases/book-b2.db
+    - assets/databases/book-b3.db
+    - assets/databases/book-b4.db
+    - assets/databases/book-cr.db
+    - assets/databases/book-gmg.db
+    - assets/databases/book-ma.db
+    - assets/databases/book-mc.db
+    - assets/databases/book-npc.db
+    - assets/databases/book-tech.db
+    - assets/databases/book-uc.db
+    - assets/databases/book-ucampaign.db
+    - assets/databases/book-ue.db
+    - assets/databases/book-um.db

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:psrd_compendium/screens/feat_list_screen.dart';
-import 'package:psrd_compendium/screens/spell_list_screen.dart';
-import 'package:psrd_compendium/screens/class_list_screen.dart';
-import 'package:psrd_compendium/screens/creature_list_screen.dart';
+import 'package:pathfinder_athenaeum/screens/feat_list_screen.dart';
+import 'package:pathfinder_athenaeum/screens/spell_list_screen.dart';
+import 'package:pathfinder_athenaeum/screens/class_list_screen.dart';
+import 'package:pathfinder_athenaeum/screens/creature_list_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'PSRD Compendium',
+      title: 'Pathfinder Athenaeum',
       theme: ThemeData(primarySwatch: Colors.blue),
       home: const HomeScreen(),
       routes: {
@@ -33,7 +33,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Pathfinder Compendium')),
+      appBar: AppBar(title: const Text('Pathfinder Athenaeum')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:psrd_compendium/database_helper.dart';
+import 'package:pathfinder_athenaeum/services/database_helper.dart';
 
 class SpellListScreen extends StatelessWidget {
   const SpellListScreen({super.key});
@@ -27,13 +27,12 @@ class SpellListScreen extends StatelessWidget {
                 title: Text(spell['name'] ?? 'Unknown'),
                 subtitle: Text(spell['source'] ?? ''),
                 onTap: () {
-                  // TODO: Implement SpellDetailsScreen
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => Scaffold(
                         appBar: AppBar(title: Text(spell['name'] ?? 'Details')),
-                        body: const Center(child: Text('Details screen TBD')),
+                        body: const Center(child: Text('Spell details TBD')),
                       ),
                     ),
                   );

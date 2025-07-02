@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:psrd_compendium/database_helper.dart';
+import 'package:pathfinder_athenaeum/services/database_helper.dart';
 
 class CreatureListScreen extends StatelessWidget {
   const CreatureListScreen({super.key});
 
   @override
-  Widget build(Build
-
-Context) {
+  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Creatures')),
+      appBar: AppBar(title: const Text('Creatсию
+
+Creatures')),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: DatabaseHelper.instance.getSections('creature'),
         builder: (context, snapshot) {
@@ -29,13 +29,12 @@ Context) {
                 title: Text(creature['name'] ?? 'Unknown'),
                 subtitle: Text(creature['source'] ?? ''),
                 onTap: () {
-                  // TODO: Implement CreatureDetailsScreen
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => Scaffold(
                         appBar: AppBar(title: Text(creature['name'] ?? 'Details')),
-                        body: const Center(child: Text('Details screen TBD')),
+                        body: const Center(child: Text('Creature details TBD')),
                       ),
                     ),
                   );

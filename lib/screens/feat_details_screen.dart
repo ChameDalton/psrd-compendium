@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:psrd_compendium/database_helper.dart';
+import 'package:pathfinder_athenaeum/services/database_helper.dart';
 
 class FeatDetailsScreen extends StatelessWidget {
   final String featId;

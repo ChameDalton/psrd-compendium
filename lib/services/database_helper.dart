@@ -31,7 +31,6 @@ class DatabaseHelper {
     return await openDatabase(path, readOnly: true);
   }
 
-  // Query sections by type (e.g., feat, spell, class)
   Future<List<Map<String, dynamic>>> getSections(String type) async {
     final db = await database;
     return await db.query(
@@ -42,7 +41,6 @@ class DatabaseHelper {
     );
   }
 
-  // Query detailed content using parent_id
   Future<List<Map<String, dynamic>>> getSectionDetails(String parentId) async {
     final db = await database;
     return await db.query(
@@ -52,7 +50,6 @@ class DatabaseHelper {
     );
   }
 
-  // Generic search to support existing or future search functionality
   Future<List<Map<String, dynamic>>> searchSections(
       String query, String type) async {
     final db = await database;

@@ -1,6 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:psrd_compendium/database_helper.dart';
-import 'package:psrd_compendium/screens/feat_list_screen.dart';
+import 'package:pathfinder_athenaeum/services/database_helper.dart';
+import 'package:pathfinder_athenaeum/screens/feat_list_screen.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:mockito/mockito.dart';
 
@@ -53,7 +54,9 @@ void main() {
     final mockDbHelper = MockDatabaseHelper();
     DatabaseHelper.instance = mockDbHelper;
 
-    await tester.pumpWidget(const MaterialApp(home: FeatListScreen()));
+    await tester.pumpWidget(const MaterialApp(
+      home: FeatListScreen(),
+    ));
     await tester.pumpAndSettle();
 
     expect(find.text('Power Attack'), findsOneWidget);

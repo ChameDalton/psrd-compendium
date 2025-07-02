@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:psrd_compendium/database_helper.dart';
-import 'package:psrd_compendium/screens/feat_details_screen.dart';
+import 'package:pathfinder_athenaeum/services/database_helper.dart';
+import 'package:pathfinder_athenaeum/screens/feat_details_screen.dart';
 
 class FeatListScreen extends StatelessWidget {
   const FeatListScreen({super.key});
