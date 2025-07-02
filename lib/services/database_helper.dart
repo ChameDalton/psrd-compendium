@@ -12,8 +12,12 @@ class DatabaseHelper {
   DatabaseHelper._init();
 
   Future<Database> database(BuildContext context) async {
-    if (_database != null) return _database!;
-    return _database = await _lock.synchronized(() => _initDB(context, 'book-cr.db'));
+    if (_database != null) {
+      return _database!;
+    }
+    final db = await _lock.synchronized(() => _initDB(context, 'book-cr.db'));
+    _database = db;
+    return db;
   }
 
   Future<Database> _initDB(BuildContext context, String fileName) async {
@@ -24,6 +28,7 @@ class DatabaseHelper {
     if (!exists) {
       try {
         await Directory(dirname(path)).create(recursive: true);
+        // ignore: use_build_context_synchronously
         final data = await DefaultAssetBundle.of(context).load('assets/databases/$fileName');
         final bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
         await File(path).writeAsBytes(bytes);
