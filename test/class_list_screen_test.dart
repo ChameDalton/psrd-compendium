@@ -45,7 +45,7 @@ void main() {
     final mockDbHelper = MockDatabaseHelper();
 
     await tester.pumpWidget(
-      const MaterialApp(
+      MaterialApp(
         home: ClassListScreen(dbHelper: mockDbHelper),
       ),
     );

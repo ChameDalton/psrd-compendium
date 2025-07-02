@@ -47,6 +47,12 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: FeatListScreen(dbHelper: mockDbHelper),
+        routes: {
+          '/feat_details': (context) => FeatDetailsScreen(
+                featId: 'feat_1862',
+                dbHelper: mockDbHelper,
+              ),
+        },
       ),
     );
     await tester.pumpAndSettle();

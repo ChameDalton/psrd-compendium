@@ -5,15 +5,14 @@ import 'package:pathfinder_athenaeum/screens/class_details_screen.dart';
 class ClassListScreen extends StatelessWidget {
   final DatabaseHelper dbHelper;
 
-  const ClassListScreen({super.key, this.dbHelper});
+  const ClassListScreen({super.key, required this.dbHelper});
 
   @override
   Widget build(BuildContext context) {
-    final effectiveDbHelper = dbHelper ?? DatabaseHelper.instance;
     return Scaffold(
       appBar: AppBar(title: const Text('Classes')),
       body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: effectiveDbHelper.getSections('class'),
+        future: dbHelper.getSections('class'),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());

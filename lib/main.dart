@@ -20,8 +20,8 @@ class MyApp extends StatelessWidget {
       home: const HomeScreen(),
       routes: {
         '/feats': (context) => FeatListScreen(dbHelper: DatabaseHelper.instance),
-        '/spells': (context) => const SpellListScreen(),
-        '/classes': (context) => const ClassListScreen(),
+        '/spells': (context) => SpellListScreen(dbHelper: DatabaseHelper.instance),
+        '/classes': (context) => ClassListScreen(dbHelper: DatabaseHelper.instance),
         '/creatures': (context) => const CreatureListScreen(),
       },
     );
