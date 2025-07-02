@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:pathfinder_athenaeum/models/spell_reference.dart';
-import 'package:pathfinder_athenaeum/services/database_helper.dart';
+import 'package:psrd_compendium/database_helper.dart';
 
 class SpellListScreen extends StatelessWidget {
   const SpellListScreen({super.key});
@@ -9,52 +7,36 @@ class SpellListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Spells'),
-        automaticallyImplyLeading: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () => (context as Element).markNeedsBuild(),
-          ),
-        ],
-      ),
+      appBar: AppBar(title: const Text('Spells')),
       body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: DatabaseHelper().getItemsByType('spell', dbName: 'book-cr.db'),
+        future: DatabaseHelper.instance.getSections('spell'),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            // ignore: avoid_print
-            print('SpellListScreen error: ${snapshot.error}');
+          } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
-          }
-          final items = snapshot.data ?? [];
-          if (items.isEmpty) {
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return const Center(child: Text('No spells found'));
           }
+          final spells = snapshot.data!;
           return ListView.builder(
-            itemCount: items.length,
+            itemCount: spells.length,
             itemBuilder: (context, index) {
-              final item = items[index];
-              final spell = SpellReference.fromMap({
-                ...item,
-                'database': 'book-cr.db',
-                'url': item['url'] ?? '',
-              });
-              final subtitle = spell.school != null
-                  ? '${spell.school} (${spell.levelText ?? ''}) - Source: ${spell.source} - ${spell.shortDescription}'
-                  : 'Source: ${spell.source} - ${spell.shortDescription}';
+              final spell = spells[index];
               return ListTile(
-                title: Text(spell.name),
-                subtitle: Text(
-                  subtitle,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                title: Text(spell['name'] ?? 'Unknown'),
+                subtitle: Text(spell['source'] ?? ''),
                 onTap: () {
-                  context.push('/category/spell/${spell.sectionId}');
+                  // TODO: Implement SpellDetailsScreen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Scaffold(
+                        appBar: AppBar(title: Text(spell['name'] ?? 'Details')),
+                        body: const Center(child: Text('Details screen TBD')),
+                      ),
+                    ),
+                  );
                 },
               );
             },

@@ -1,7 +1,5 @@
-// lib/screens/class_list_screen.dart     
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:pathfinder_athenaeum/services/database_helper.dart';
+import 'package:psrd_compendium/database_helper.dart';
 
 class ClassListScreen extends StatelessWidget {
   const ClassListScreen({super.key});
@@ -9,44 +7,36 @@ class ClassListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Classes'),
-        automaticallyImplyLeading: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () => (context as Element).markNeedsBuild(),
-          ),
-        ],
-      ),
+      appBar: AppBar(title: const Text('Classes')),
       body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: DatabaseHelper().getItemsByType('class', dbName: 'book-cr.db'),
+        future: DatabaseHelper.instance.getSections('class'),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            // ignore: avoid_print
-            print('ClassListScreen error: ${snapshot.error}');
+          } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
-          }
-          final items = snapshot.data ?? [];
-          if (items.isEmpty) {
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return const Center(child: Text('No classes found'));
           }
+          final classes = snapshot.data!;
           return ListView.builder(
-            itemCount: items.length,
+            itemCount: classes.length,
             itemBuilder: (context, index) {
-              final item = items[index];
+              final classData = classes[index];
               return ListTile(
-                title: Text(item['name'] ?? 'Unknown'),
-                subtitle: Text(
-                  item['description']?.substring(0, 50) ?? '',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                title: Text(classData['name'] ?? 'Unknown'),
+                subtitle: Text(classData['source'] ?? ''),
                 onTap: () {
-                  context.push('/category/class/${item['section_id']}');
+                  // TODO: Implement ClassDetailsScreen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Scaffold(
+                        appBar: AppBar(title: Text(classData['name'] ?? 'Details')),
+                        body: const Center(child: Text('Details screen TBD')),
+                      ),
+                    ),
+                  );
                 },
               );
             },
