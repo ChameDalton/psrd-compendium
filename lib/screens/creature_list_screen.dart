@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pathfinder_athenaeum/services/database_helper.dart';
+import 'package:pathfinder_athenaeum/screens/creature_details_screen.dart';
 
 class CreatureListScreen extends StatelessWidget {
   const CreatureListScreen({super.key});
@@ -30,10 +31,7 @@ class CreatureListScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => Scaffold(
-                        appBar: AppBar(title: Text(creature['name'] ?? 'Details')),
-                        body: const Center(child: Text('Creature details TBD')),
-                      ),
+                      builder: (context) => CreatureDetailsScreen(creatureId: creature['section_id']),
                     ),
                   );
                 },

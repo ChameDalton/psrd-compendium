@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pathfinder_athenaeum/services/database_helper.dart';
-import 'package:pathfinder_athenaeum/screens/feat_list_screen.dart';
-import 'package:pathfinder_athenaeum/screens/feat_details_screen.dart';
+import 'package:pathfinder_athenaeum/screens/class_list_screen.dart';
+import 'package:pathfinder_athenaeum/screens/class_details_screen.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:mockito/mockito.dart';
 
@@ -11,12 +11,12 @@ class MockDatabaseHelper extends Mock implements DatabaseHelper {
   Future<List<Map<String, dynamic>>> getSections(String type) async {
     return [
       {
-        'section_id': 'feat_1862',
-        'name': 'Power Attack',
-        'type': 'feat',
+        'section_id': 'class_456',
+        'name': 'Fighter',
+        'type': 'class',
         'source': 'Core Rulebook',
         'parent_id': null,
-        'body': 'You deal extra damage.'
+        'body': 'A versatile warrior.'
       }
     ];
   }
@@ -25,12 +25,12 @@ class MockDatabaseHelper extends Mock implements DatabaseHelper {
   Future<List<Map<String, dynamic>>> getSectionDetails(String parentId) async {
     return [
       {
-        'section_id': 'detail_1',
+        'section_id': 'detail_3',
         'name': 'Detail',
-        'type': 'feat_detail',
+        'type': 'class_detail',
         'source': 'Core Rulebook',
         'parent_id': parentId,
-        'body': 'Extra damage on attack.'
+        'body': 'Proficient with all weapons.'
       }
     ];
   }
@@ -41,28 +41,28 @@ void main() {
     databaseFactory = databaseFactoryFfi;
   });
 
-  testWidgets('FeatListScreen displays feats and navigates to details', (WidgetTester tester) async {
+  testWidgets('ClassListScreen displays classes and navigates to details', (WidgetTester tester) async {
     final mockDbHelper = MockDatabaseHelper();
 
     await tester.pumpWidget(
       MaterialApp(
-        home: FeatListScreen(dbHelper: mockDbHelper),
+        home: ClassListScreen(),
         routes: {
-          '/feat_details': (context) => FeatDetailsScreen(
-                featId: (ModalRoute.of(context)!.settings.arguments as Map)['featId'],
+          '/class_details': (context) => ClassDetailsScreen(
+                classId: (ModalRoute.of(context)!.settings.arguments as Map)['classId'],
               ),
         },
       ),
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Power Attack'), findsOneWidget);
+    expect(find.text('Fighter'), findsOneWidget);
     expect(find.text('Core Rulebook'), findsOneWidget);
 
-    await tester.tap(find.text('Power Attack'));
+    await tester.tap(find.text('Fighter'));
     await tester.pumpAndSettle();
 
-    expect(find.byType(FeatDetailsScreen), findsOneWidget);
-    expect(find.text('Extra damage on attack.'), findsOneWidget);
+    expect(find.byType(ClassDetailsScreen), findsOneWidget);
+    expect(find.text('Proficient with all weapons.'), findsOneWidget);
   });
 }

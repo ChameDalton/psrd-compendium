@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pathfinder_athenaeum/services/database_helper.dart';
+import 'package:pathfinder_athenaeum/screens/spell_details_screen.dart';
 
 class SpellListScreen extends StatelessWidget {
   const SpellListScreen({super.key});
@@ -30,10 +31,7 @@ class SpellListScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => Scaffold(
-                        appBar: AppBar(title: Text(spell['name'] ?? 'Details')),
-                        body: const Center(child: Text('Spell details TBD')),
-                      ),
+                      builder: (context) => SpellDetailsScreen(spellId: spell['section_id']),
                     ),
                   );
                 },

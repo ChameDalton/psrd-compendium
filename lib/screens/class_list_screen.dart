@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pathfinder_athenaeum/services/database_helper.dart';
+import 'package:pathfinder_athenaeum/screens/class_details_screen.dart';
 
 class ClassListScreen extends StatelessWidget {
   const ClassListScreen({super.key});
@@ -30,10 +31,7 @@ class ClassListScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => Scaffold(
-                        appBar: AppBar(title: Text(classData['name'] ?? 'Details')),
-                        body: const Center(child: Text('Class details TBD')),
-                      ),
+                      builder: (context) => ClassDetailsScreen(classId: classData['section_id']),
                     ),
                   );
                 },
