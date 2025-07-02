@@ -52,11 +52,13 @@ void main() {
 
   testWidgets('FeatListScreen displays feats', (WidgetTester tester) async {
     final mockDbHelper = MockDatabaseHelper();
-    DatabaseHelper.instance = mockDbHelper;
-
-    await tester.pumpWidget(const MaterialApp(
+    // Use a factory to provide the mock
+    await tester.pumpWidget(MaterialApp(
       home: FeatListScreen(),
     ));
+
+    // Mock the DatabaseHelper instance in the widget
+    DatabaseHelper mockInstance() => mockDbHelper;
     await tester.pumpAndSettle();
 
     expect(find.text('Power Attack'), findsOneWidget);

@@ -7,9 +7,7 @@ class CreatureListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Creatсию
-
-Creatures')),
+      appBar: AppBar(title: const Text('Creatures')),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: DatabaseHelper.instance.getSections('creature'),
         builder: (context, snapshot) {
