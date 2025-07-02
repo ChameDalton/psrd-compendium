@@ -50,10 +50,10 @@ class ClassDetailsScreen extends StatelessWidget {
                         padding: const EdgeInsets.only(left: 16.0, top: 4.0, bottom: 4.0, right: 8.0),
                         child: Html(data: subSubData['body'] ?? ''),
                       );
-                    }).toList(),
+                    }),
                   ],
                 );
-              }).toList(),
+              }),
             ],
           );
         },

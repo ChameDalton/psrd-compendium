@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -11,13 +12,7 @@ class DatabaseHelper {
   DatabaseHelper._init();
 
   Future<Database> get database async {
-    if (_database != null) return _database!;
-    return await _lock.synchronized(() async {
-      if (_database == null) {
-        _database = await _initDB('book-cr.db');
-      }
-      return _database!;
-    });
+    return _database ??= await _lock.synchronized(() => _initDB('book-cr.db'));
   }
 
   Future<Database> _initDB(String fileName) async {
@@ -28,11 +23,12 @@ class DatabaseHelper {
     if (!exists) {
       try {
         await Directory(dirname(path)).create(recursive: true);
-        ByteData data = await DefaultAssetBundle.of(rootBundle).load('assets/databases/$fileName');
-        List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+        final data = await DefaultAssetBundle.of(PlatformDispatcher.instance.views.first).load('assets/databases/$fileName');
+        final bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
         await File(path).writeAsBytes(bytes);
       } catch (e) {
-        print('Error copying database: $e');
+        // Handle error appropriately in production (e.g., logging)
+        rethrow;
       }
     }
 
