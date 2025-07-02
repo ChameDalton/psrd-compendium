@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pathfinder_athenaeum/services/database_helper.dart';
 import 'package:pathfinder_athenaeum/screens/feat_list_screen.dart';
 import 'package:pathfinder_athenaeum/screens/spell_list_screen.dart';
 import 'package:pathfinder_athenaeum/screens/class_list_screen.dart';
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(primarySwatch: Colors.blue),
       home: const HomeScreen(),
       routes: {
-        '/feats': (context) => const FeatListScreen(),
+        '/feats': (context) => FeatListScreen(dbHelper: DatabaseHelper.instance),
         '/spells': (context) => const SpellListScreen(),
         '/classes': (context) => const ClassListScreen(),
         '/creatures': (context) => const CreatureListScreen(),

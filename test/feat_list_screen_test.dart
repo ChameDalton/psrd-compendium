@@ -24,22 +24,19 @@ class MockDatabaseHelper extends Mock implements DatabaseHelper {
 void main() {
   setUp(() {
     databaseFactory = databaseFactoryFfi;
-    // Override the singleton instance with the mock
-    DatabaseHelper.instance = MockDatabaseHelper();
   });
 
   testWidgets('FeatListScreen displays feats', (WidgetTester tester) async {
-    await tester.pumpWidget(const MaterialApp(
-      home: FeatListScreen(),
-    ));
+    final mockDbHelper = MockDatabaseHelper();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: FeatListScreen(dbHelper: mockDbHelper),
+      ),
+    );
     await tester.pumpAndSettle();
 
     expect(find.text('Power Attack'), findsOneWidget);
     expect(find.text('Core Rulebook'), findsOneWidget);
-  });
-
-  tearDown(() {
-    // Reset the singleton instance
-    DatabaseHelper.instance = DatabaseHelper._init();
   });
 }

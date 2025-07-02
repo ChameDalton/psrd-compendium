@@ -3,14 +3,16 @@ import 'package:pathfinder_athenaeum/services/database_helper.dart';
 import 'package:pathfinder_athenaeum/screens/feat_details_screen.dart';
 
 class FeatListScreen extends StatelessWidget {
-  const FeatListScreen({super.key});
+  final DatabaseHelper dbHelper;
+
+  const FeatListScreen({super.key, required this.dbHelper});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Feats')),
       body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: DatabaseHelper.instance.getSections('feat'),
+        future: dbHelper.getSections('feat'),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
