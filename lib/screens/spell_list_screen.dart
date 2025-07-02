@@ -12,7 +12,7 @@ class SpellListScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Spells')),
       body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: dbHelper.getSections('spell'),
+        future: dbHelper.getSections(context, 'spell'),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());

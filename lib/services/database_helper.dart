@@ -41,8 +41,8 @@ class DatabaseHelper {
     return await openDatabase(path);
   }
 
-  Future<List<Map<String, dynamic>>> getSections(String type) async {
-    final db = await database(BuildContext as BuildContext);
+  Future<List<Map<String, dynamic>>> getSections(BuildContext context, String type) async {
+    final db = await database(context);
     return await db.query(
       'sections',
       where: 'type = ? AND parent_id IS NULL',
@@ -50,8 +50,8 @@ class DatabaseHelper {
     );
   }
 
-  Future<List<Map<String, dynamic>>> getSectionDetails(String parentId) async {
-    final db = await database(BuildContext as BuildContext);
+  Future<List<Map<String, dynamic>>> getSectionDetails(BuildContext context, String parentId) async {
+    final db = await database(context);
     return await db.query(
       'sections',
       where: 'parent_id = ?',
@@ -59,8 +59,8 @@ class DatabaseHelper {
     );
   }
 
-  Future<Map<String, dynamic>> getSectionWithSubsections(String sectionId) async {
-    final db = await database(BuildContext as BuildContext);
+  Future<Map<String, dynamic>> getSectionWithSubsections(BuildContext context, String sectionId) async {
+    final db = await database(context);
     // Fetch the top-level section
     final section = await db.query(
       'sections',
@@ -73,7 +73,7 @@ class DatabaseHelper {
     }
 
     // Fetch subsections recursively
-    final subsections = await _getSubsections(sectionId, db);
+    final subsections = await _getSubsections(context, sectionId, db);
 
     return {
       'section': section.first,
@@ -81,7 +81,7 @@ class DatabaseHelper {
     };
   }
 
-  Future<List<Map<String, dynamic>>> _getSubsections(String parentId, Database db) async {
+  Future<List<Map<String, dynamic>>> _getSubsections(BuildContext context, String parentId, Database db) async {
     final subsections = await db.query(
       'sections',
       where: 'parent_id = ?',
@@ -90,7 +90,7 @@ class DatabaseHelper {
 
     List<Map<String, dynamic>> result = [];
     for (var subsection in subsections) {
-      final nestedSubsections = await _getSubsections(subsection['section_id'].toString(), db);
+      final nestedSubsections = await _getSubsections(context, subsection['section_id'].toString(), db);
       result.add({
         'section': subsection,
         'subsections': nestedSubsections,
@@ -99,8 +99,8 @@ class DatabaseHelper {
     return result;
   }
 
-  Future close() async {
-    final db = await database(BuildContext as BuildContext);
+  Future close(BuildContext context) async {
+    final db = await database(context);
     _database = null;
     await db.close();
   }

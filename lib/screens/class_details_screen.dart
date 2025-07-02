@@ -13,7 +13,7 @@ class ClassDetailsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Class Details')),
       body: FutureBuilder<Map<String, dynamic>>(
-        future: dbHelper.getSectionWithSubsections(classId),
+        future: dbHelper.getSectionWithSubsections(context, classId),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());

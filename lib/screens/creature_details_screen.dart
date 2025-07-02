@@ -13,7 +13,7 @@ class CreatureDetailsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Creature Details')),
       body: FutureBuilder<Map<String, dynamic>>(
-        future: dbHelper.getSectionWithSubsections(creatureId),
+        future: dbHelper.getSectionWithSubsections(context, creatureId),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());

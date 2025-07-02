@@ -13,7 +13,7 @@ class SpellDetailsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Spell Details')),
       body: FutureBuilder<Map<String, dynamic>>(
-        future: dbHelper.getSectionWithSubsections(spellId),
+        future: dbHelper.getSectionWithSubsections(context, spellId),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());

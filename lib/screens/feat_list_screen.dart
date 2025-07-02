@@ -12,7 +12,7 @@ class FeatListScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Feats')),
       body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: dbHelper.getSections('feat'),
+        future: dbHelper.getSections(context, 'feat'),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());

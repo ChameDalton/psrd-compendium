@@ -18,58 +18,69 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Pathfinder Athenaeum',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: Scaffold(
-        appBar: AppBar(title: const Text('Pathfinder Athenaeum')),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => FeatListScreen(dbHelper: dbHelper),
-                    ),
-                  );
-                },
-                child: const Text('Feats'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SpellListScreen(dbHelper: dbHelper),
-                    ),
-                  );
-                },
-                child: const Text('Spells'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ClassListScreen(dbHelper: dbHelper),
-                    ),
-                  );
-                },
-                child: const Text('Classes'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CreatureListScreen(dbHelper: dbHelper),
-                    ),
-                  );
-                },
-                child: const Text('Creatures'),
-              ),
-            ],
-          ),
+      home: HomeScreen(dbHelper: dbHelper),
+    );
+  }
+}
+
+class HomeScreen extends StatelessWidget {
+  final DatabaseHelper dbHelper;
+
+  const HomeScreen({super.key, required this.dbHelper});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Pathfinder Athenaeum')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => FeatListScreen(dbHelper: dbHelper),
+                  ),
+                );
+              },
+              child: const Text('Feats'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SpellListScreen(dbHelper: dbHelper),
+                  ),
+                );
+              },
+              child: const Text('Spells'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ClassListScreen(dbHelper: dbHelper),
+                  ),
+                );
+              },
+              child: const Text('Classes'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CreatureListScreen(dbHelper: dbHelper),
+                  ),
+                );
+              },
+              child: const Text('Creatures'),
+            ),
+          ],
         ),
       ),
     );

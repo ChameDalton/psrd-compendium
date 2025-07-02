@@ -8,7 +8,7 @@ import 'package:mockito/mockito.dart';
 
 class MockDatabaseHelper extends Mock implements DatabaseHelper {
   @override
-  Future<List<Map<String, dynamic>>> getSections(String type) async {
+  Future<List<Map<String, dynamic>>> getSections(BuildContext context, String type) async {
     return [
       {
         'section_id': 1862,
@@ -22,7 +22,7 @@ class MockDatabaseHelper extends Mock implements DatabaseHelper {
   }
 
   @override
-  Future<Map<String, dynamic>> getSectionWithSubsections(String sectionId) async {
+  Future<Map<String, dynamic>> getSectionWithSubsections(BuildContext context, String sectionId) async {
     return {
       'section': {
         'section_id': 1862,
