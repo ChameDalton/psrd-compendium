@@ -11,7 +11,7 @@ class MockDatabaseHelper extends Mock implements DatabaseHelper {
   Future<List<Map<String, dynamic>>> getSections(String type) async {
     return [
       {
-        'section_id': 'feat_1862',
+        'section_id': 1862,
         'name': 'Power Attack',
         'type': 'feat',
         'source': 'Core Rulebook',
@@ -47,12 +47,6 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: FeatListScreen(dbHelper: mockDbHelper),
-        routes: {
-          '/feat_details': (context) => FeatDetailsScreen(
-                featId: 'feat_1862',
-                dbHelper: mockDbHelper,
-              ),
-        },
       ),
     );
     await tester.pumpAndSettle();

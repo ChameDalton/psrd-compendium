@@ -11,7 +11,7 @@ class MockDatabaseHelper extends Mock implements DatabaseHelper {
   Future<List<Map<String, dynamic>>> getSections(String type) async {
     return [
       {
-        'section_id': 'spell_123',
+        'section_id': 123,
         'name': 'Magic Missile',
         'type': 'spell',
         'source': 'Core Rulebook',

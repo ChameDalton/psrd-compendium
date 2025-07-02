@@ -34,7 +34,7 @@ class FeatListScreen extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) => FeatDetailsScreen(
-                        featId: feat['section_id'],
+                        featId: feat['section_id'].toString(),
                         dbHelper: dbHelper,
                       ),
                     ),

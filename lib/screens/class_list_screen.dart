@@ -34,7 +34,7 @@ class ClassListScreen extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) => ClassDetailsScreen(
-                        classId: classData['section_id'],
+                        classId: classData['section_id'].toString(),
                         dbHelper: dbHelper,
                       ),
                     ),

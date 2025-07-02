@@ -34,7 +34,7 @@ class SpellListScreen extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) => SpellDetailsScreen(
-                        spellId: spell['section_id'],
+                        spellId: spell['section_id'].toString(),
                         dbHelper: dbHelper,
                       ),
                     ),
