@@ -45,13 +45,8 @@ void main() {
     final mockDbHelper = MockDatabaseHelper();
 
     await tester.pumpWidget(
-      MaterialApp(
-        home: SpellListScreen(),
-        routes: {
-          '/spell_details': (context) => SpellDetailsScreen(
-                spellId: (ModalRoute.of(context)!.settings.arguments as Map)['spellId'],
-              ),
-        },
+      const MaterialApp(
+        home: SpellListScreen(dbHelper: mockDbHelper),
       ),
     );
     await tester.pumpAndSettle();

@@ -45,13 +45,8 @@ void main() {
     final mockDbHelper = MockDatabaseHelper();
 
     await tester.pumpWidget(
-      MaterialApp(
-        home: ClassListScreen(),
-        routes: {
-          '/class_details': (context) => ClassDetailsScreen(
-                classId: (ModalRoute.of(context)!.settings.arguments as Map)['classId'],
-              ),
-        },
+      const MaterialApp(
+        home: ClassListScreen(dbHelper: mockDbHelper),
       ),
     );
     await tester.pumpAndSettle();
