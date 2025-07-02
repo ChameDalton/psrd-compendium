@@ -22,17 +22,42 @@ class MockDatabaseHelper extends Mock implements DatabaseHelper {
   }
 
   @override
-  Future<List<Map<String, dynamic>>> getSectionDetails(String parentId) async {
-    return [
-      {
-        'section_id': 'detail_3',
-        'name': 'Detail',
-        'type': 'class_detail',
+  Future<Map<String, dynamic>> getSectionWithSubsections(String sectionId) async {
+    return {
+      'section': {
+        'section_id': 456,
+        'name': 'Fighter',
+        'type': 'class',
         'source': 'Core Rulebook',
-        'parent_id': parentId,
-        'body': 'Proficient with all weapons.'
-      }
-    ];
+        'parent_id': null,
+        'body': 'A versatile warrior.'
+      },
+      'subsections': [
+        {
+          'section': {
+            'section_id': 'detail_3',
+            'name': 'Detail',
+            'type': 'class_detail',
+            'source': 'Core Rulebook',
+            'parent_id': sectionId,
+            'body': 'Proficient with all weapons.'
+          },
+          'subsections': [
+            {
+              'section': {
+                'section_id': 'sub_detail_3',
+                'name': 'Sub Detail',
+                'type': 'class_sub_detail',
+                'source': 'Core Rulebook',
+                'parent_id': 'detail_3',
+                'body': 'Includes martial weapons.'
+              },
+              'subsections': []
+            }
+          ]
+        }
+      ]
+    };
   }
 }
 
@@ -58,6 +83,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(ClassDetailsScreen), findsOneWidget);
+    expect(find.text('A versatile warrior.'), findsOneWidget);
     expect(find.text('Proficient with all weapons.'), findsOneWidget);
+    expect(find.text('Includes martial weapons.'), findsOneWidget);
   });
 }

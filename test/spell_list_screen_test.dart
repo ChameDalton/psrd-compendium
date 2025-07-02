@@ -22,17 +22,42 @@ class MockDatabaseHelper extends Mock implements DatabaseHelper {
   }
 
   @override
-  Future<List<Map<String, dynamic>>> getSectionDetails(String parentId) async {
-    return [
-      {
-        'section_id': 'detail_2',
-        'name': 'Detail',
-        'type': 'spell_detail',
+  Future<Map<String, dynamic>> getSectionWithSubsections(String sectionId) async {
+    return {
+      'section': {
+        'section_id': 123,
+        'name': 'Magic Missile',
+        'type': 'spell',
         'source': 'Core Rulebook',
-        'parent_id': parentId,
-        'body': 'Deals force damage.'
-      }
-    ];
+        'parent_id': null,
+        'body': 'Fires magic missiles.'
+      },
+      'subsections': [
+        {
+          'section': {
+            'section_id': 'detail_2',
+            'name': 'Detail',
+            'type': 'spell_detail',
+            'source': 'Core Rulebook',
+            'parent_id': sectionId,
+            'body': 'Deals force damage.'
+          },
+          'subsections': [
+            {
+              'section': {
+                'section_id': 'sub_detail_2',
+                'name': 'Sub Detail',
+                'type': 'spell_sub_detail',
+                'source': 'Core Rulebook',
+                'parent_id': 'detail_2',
+                'body': '1d4+1 damage per missile.'
+              },
+              'subsections': []
+            }
+          ]
+        }
+      ]
+    };
   }
 }
 
@@ -58,6 +83,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(SpellDetailsScreen), findsOneWidget);
+    expect(find.text('Fires magic missiles.'), findsOneWidget);
     expect(find.text('Deals force damage.'), findsOneWidget);
+    expect(find.text('1d4+1 damage per missile.'), findsOneWidget);
   });
 }

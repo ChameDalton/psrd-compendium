@@ -12,26 +12,49 @@ class FeatDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Feat Details')),
-      body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: dbHelper.getSectionDetails(featId),
+      body: FutureBuilder<Map<String, dynamic>>(
+        future: dbHelper.getSectionWithSubsections(featId),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          } else if (!snapshot.hasData || snapshot.data!['section'] == null) {
             return const Center(child: Text('No details found'));
           }
-          final details = snapshot.data!;
-          return ListView.builder(
-            itemCount: details.length,
-            itemBuilder: (context, index) {
-              final detail = details[index];
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Html(data: detail['body'] ?? 'No content'),
-              );
-            },
+          final data = snapshot.data!;
+          final section = data['section'] as Map<String, dynamic>;
+          final subsections = data['subsections'] as List<dynamic>;
+
+          return ListView(
+            children: [
+              if (section['body'] != null && section['body'].toString().isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Html(data: section['body']),
+                ),
+              ...subsections.map((subsection) {
+                final subData = subsection['section'] as Map<String, dynamic>;
+                final subSubsections = subsection['subsections'] as List<dynamic>;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (subData['body'] != null && subData['body'].toString().isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Html(data: subData['body']),
+                      ),
+                    ...subSubsections.map((subSubsection) {
+                      final subSubData = subSubsection['section'] as Map<String, dynamic>;
+                      return Padding(
+                        padding: const EdgeInsets.only(left: 16.0, top: 4.0, bottom: 4.0, right: 8.0),
+                        child: Html(data: subSubData['body'] ?? ''),
+                      );
+                    }).toList(),
+                  ],
+                );
+              }).toList(),
+            ],
           );
         },
       ),

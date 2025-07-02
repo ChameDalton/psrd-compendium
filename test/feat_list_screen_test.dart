@@ -22,17 +22,42 @@ class MockDatabaseHelper extends Mock implements DatabaseHelper {
   }
 
   @override
-  Future<List<Map<String, dynamic>>> getSectionDetails(String parentId) async {
-    return [
-      {
-        'section_id': 'detail_1',
-        'name': 'Detail',
-        'type': 'feat_detail',
+  Future<Map<String, dynamic>> getSectionWithSubsections(String sectionId) async {
+    return {
+      'section': {
+        'section_id': 1862,
+        'name': 'Power Attack',
+        'type': 'feat',
         'source': 'Core Rulebook',
-        'parent_id': parentId,
-        'body': 'Extra damage on attack.'
-      }
-    ];
+        'parent_id': null,
+        'body': 'You deal extra damage.'
+      },
+      'subsections': [
+        {
+          'section': {
+            'section_id': 'detail_1',
+            'name': 'Detail',
+            'type': 'feat_detail',
+            'source': 'Core Rulebook',
+            'parent_id': sectionId,
+            'body': 'Extra damage on attack.'
+          },
+          'subsections': [
+            {
+              'section': {
+                'section_id': 'sub_detail_1',
+                'name': 'Sub Detail',
+                'type': 'feat_sub_detail',
+                'source': 'Core Rulebook',
+                'parent_id': 'detail_1',
+                'body': 'Applies to melee attacks.'
+              },
+              'subsections': []
+            }
+          ]
+        }
+      ]
+    };
   }
 }
 
@@ -58,6 +83,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(FeatDetailsScreen), findsOneWidget);
+    expect(find.text('You deal extra damage.'), findsOneWidget);
     expect(find.text('Extra damage on attack.'), findsOneWidget);
+    expect(find.text('Applies to melee attacks.'), findsOneWidget);
   });
 }
