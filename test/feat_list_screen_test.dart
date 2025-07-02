@@ -7,30 +7,6 @@ import 'package:mockito/mockito.dart';
 
 class MockDatabaseHelper extends Mock implements DatabaseHelper {
   @override
-  Future<Database> get database async {
-    final db = await databaseFactoryFfi.openDatabase(inMemoryDatabasePath);
-    await db.execute('''
-      CREATE TABLE sections (
-        id TEXT PRIMARY KEY,
-        name TEXT,
-        type TEXT,
-        source TEXT,
-        parent_id TEXT,
-        body TEXT
-      )
-    ''');
-    await db.insert('sections', {
-      'id': 'feat_1862',
-      'name': 'Power Attack',
-      'type': 'feat',
-      'source': 'Core Rulebook',
-      'parent_id': null,
-      'body': 'You deal extra damage.'
-    });
-    return db;
-  }
-
-  @override
   Future<List<Map<String, dynamic>>> getSections(String type) async {
     return [
       {
@@ -48,20 +24,22 @@ class MockDatabaseHelper extends Mock implements DatabaseHelper {
 void main() {
   setUp(() {
     databaseFactory = databaseFactoryFfi;
+    // Override the singleton instance with the mock
+    DatabaseHelper.instance = MockDatabaseHelper();
   });
 
   testWidgets('FeatListScreen displays feats', (WidgetTester tester) async {
-    final mockDbHelper = MockDatabaseHelper();
-    // Use a factory to provide the mock
-    await tester.pumpWidget(MaterialApp(
+    await tester.pumpWidget(const MaterialApp(
       home: FeatListScreen(),
     ));
-
-    // Mock the DatabaseHelper instance in the widget
-    DatabaseHelper mockInstance() => mockDbHelper;
     await tester.pumpAndSettle();
 
     expect(find.text('Power Attack'), findsOneWidget);
     expect(find.text('Core Rulebook'), findsOneWidget);
+  });
+
+  tearDown(() {
+    // Reset the singleton instance
+    DatabaseHelper.instance = DatabaseHelper._init();
   });
 }

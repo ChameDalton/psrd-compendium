@@ -11,12 +11,14 @@ dependencies:
     sdk: flutter
   sqflite: ^2.3.3
   path: ^1.9.0
+  synchronized: ^3.4.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   sqflite_common_ffi: ^2.3.3
   mockito: ^5.4.4
+  flutter_lints: ^6.0.0
 
 flutter:
   uses-material-design: true
