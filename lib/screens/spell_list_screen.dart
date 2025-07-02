@@ -33,7 +33,10 @@ class SpellListScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => SpellDetailsScreen(spellId: spell['section_id']),
+                      builder: (context) => SpellDetailsScreen(
+                        spellId: spell['section_id'],
+                        dbHelper: dbHelper,
+                      ),
                     ),
                   );
                 },
