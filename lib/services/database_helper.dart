@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:flutter/services.dart';
+import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:synchronized/synchronized.dart';
@@ -11,11 +11,12 @@ class DatabaseHelper {
 
   DatabaseHelper._init();
 
-  Future<Database> get database async {
-    return _database ??= await _lock.synchronized(() => _initDB('book-cr.db'));
+  Future<Database> database(BuildContext context) async {
+    if (_database != null) return _database!;
+    return _database = await _lock.synchronized(() => _initDB(context, 'book-cr.db'));
   }
 
-  Future<Database> _initDB(String fileName) async {
+  Future<Database> _initDB(BuildContext context, String fileName) async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, fileName);
 
@@ -23,7 +24,7 @@ class DatabaseHelper {
     if (!exists) {
       try {
         await Directory(dirname(path)).create(recursive: true);
-        final data = await DefaultAssetBundle.of(PlatformDispatcher.instance.views.first).load('assets/databases/$fileName');
+        final data = await DefaultAssetBundle.of(context).load('assets/databases/$fileName');
         final bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
         await File(path).writeAsBytes(bytes);
       } catch (e) {
@@ -36,7 +37,7 @@ class DatabaseHelper {
   }
 
   Future<List<Map<String, dynamic>>> getSections(String type) async {
-    final db = await database;
+    final db = await database(BuildContext as BuildContext);
     return await db.query(
       'sections',
       where: 'type = ? AND parent_id IS NULL',
@@ -45,7 +46,7 @@ class DatabaseHelper {
   }
 
   Future<List<Map<String, dynamic>>> getSectionDetails(String parentId) async {
-    final db = await database;
+    final db = await database(BuildContext as BuildContext);
     return await db.query(
       'sections',
       where: 'parent_id = ?',
@@ -54,7 +55,7 @@ class DatabaseHelper {
   }
 
   Future<Map<String, dynamic>> getSectionWithSubsections(String sectionId) async {
-    final db = await database;
+    final db = await database(BuildContext as BuildContext);
     // Fetch the top-level section
     final section = await db.query(
       'sections',
@@ -94,7 +95,7 @@ class DatabaseHelper {
   }
 
   Future close() async {
-    final db = await database;
+    final db = await database(BuildContext as BuildContext);
     _database = null;
     await db.close();
   }

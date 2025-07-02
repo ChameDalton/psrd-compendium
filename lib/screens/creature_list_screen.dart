@@ -3,14 +3,16 @@ import 'package:pathfinder_athenaeum/services/database_helper.dart';
 import 'package:pathfinder_athenaeum/screens/creature_details_screen.dart';
 
 class CreatureListScreen extends StatelessWidget {
-  const CreatureListScreen({super.key});
+  final DatabaseHelper dbHelper;
+
+  const CreatureListScreen({super.key, required this.dbHelper});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Creatures')),
       body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: DatabaseHelper.instance.getSections('creature'),
+        future: dbHelper.getSections('creature'),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -31,7 +33,10 @@ class CreatureListScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => CreatureDetailsScreen(creatureId: creature['section_id']),
+                      builder: (context) => CreatureDetailsScreen(
+                        creatureId: creature['section_id'].toString(),
+                        dbHelper: dbHelper,
+                      ),
                     ),
                   );
                 },

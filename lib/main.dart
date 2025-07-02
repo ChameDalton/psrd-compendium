@@ -14,48 +14,62 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dbHelper = DatabaseHelper.instance;
     return MaterialApp(
       title: 'Pathfinder Athenaeum',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: const HomeScreen(),
-      routes: {
-        '/feats': (context) => FeatListScreen(dbHelper: DatabaseHelper.instance),
-        '/spells': (context) => SpellListScreen(dbHelper: DatabaseHelper.instance),
-        '/classes': (context) => ClassListScreen(dbHelper: DatabaseHelper.instance),
-        '/creatures': (context) => const CreatureListScreen(),
-      },
-    );
-  }
-}
-
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Pathfinder Athenaeum')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              onPressed: () => Navigator.pushNamed(context, '/spells'),
-              child: const Text('Spells'),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.pushNamed(context, '/feats'),
-              child: const Text('Feats'),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.pushNamed(context, '/classes'),
-              child: const Text('Classes'),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.pushNamed(context, '/creatures'),
-              child: const Text('Creatures'),
-            ),
-          ],
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Pathfinder Athenaeum')),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => FeatListScreen(dbHelper: dbHelper),
+                    ),
+                  );
+                },
+                child: const Text('Feats'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SpellListScreen(dbHelper: dbHelper),
+                    ),
+                  );
+                },
+                child: const Text('Spells'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ClassListScreen(dbHelper: dbHelper),
+                    ),
+                  );
+                },
+                child: const Text('Classes'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CreatureListScreen(dbHelper: dbHelper),
+                    ),
+                  );
+                },
+                child: const Text('Creatures'),
+              ),
+            ],
+          ),
         ),
       ),
     );

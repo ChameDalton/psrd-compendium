@@ -59,6 +59,11 @@ class MockDatabaseHelper extends Mock implements DatabaseHelper {
       ]
     };
   }
+
+  @override
+  Future<Database> database(BuildContext context) async {
+    return await databaseFactoryFfi.openDatabase(inMemoryDatabasePath);
+  }
 }
 
 void main() {
