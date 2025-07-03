@@ -21,31 +21,24 @@ void main() {
       {'section_id': '2', 'name': 'Fireball', 'type': 'spell', 'parent_id': 2},
     ];
 
-    // Create a context key to capture BuildContext
-    final contextKey = GlobalKey();
-
-    // Mock the getSections method to return a Future with mockSpells
-    when(mockDbHelper.getSections(any, 'spell')).thenAnswer((invocation) async {
-      final context = invocation.positionalArguments[0] as BuildContext;
-      if (context == contextKey.currentContext) {
-        return mockSpells;
-      }
-      throw Exception('Invalid BuildContext');
-    });
-
+    // StatefulWidget to capture BuildContext
+    BuildContext? testContext;
     await tester.pumpWidget(
       MaterialApp(
-        home: Builder(
-          builder: (BuildContext context) {
-            // Assign context to contextKey
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              contextKey.currentContext;
-            });
+        home: StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            testContext = context;
             return SpellListScreen(dbHelper: mockDbHelper);
           },
         ),
       ),
     );
+
+    // Ensure context is captured
+    expect(testContext, isNotNull);
+
+    // Mock getSections with the captured context
+    when(mockDbHelper.getSections(testContext!, 'spell')).thenAnswer((_) async => mockSpells);
 
     // Wait for the FutureBuilder to complete
     await tester.pumpAndSettle();
@@ -60,7 +53,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // Verify that getSections was called with the correct context
-    verify(mockDbHelper.getSections(contextKey.currentContext, 'spell')).called(1);
+    verify(mockDbHelper.getSections(testContext!, 'spell')).called(1);
 
     // Verify navigation to SpellDetailsScreen with correct parameters
     expect(
