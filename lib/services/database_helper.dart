@@ -41,8 +41,8 @@ class DatabaseHelper {
       try {
         debugPrint('Creating directory: ${dirname(path)}');
         await Directory(dirname(path)).create(recursive: true);
-        debugPrint('Loading asset: assets/databases/$fileName');
         // ignore: use_build_context_synchronously
+        debugPrint('Loading asset: assets/databases/$fileName');
         final data = await DefaultAssetBundle.of(context).load('assets/databases/$fileName');
         debugPrint('Asset loaded, size: ${data.lengthInBytes} bytes');
         final bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
@@ -109,12 +109,60 @@ class DatabaseHelper {
     }
 
     // Fetch subsections recursively
-    // ignore: use_build_context_synchronously
     final subsections = await _getSubsections(context, sectionId, db);
     debugPrint('Subsections found for section_id $sectionId: ${subsections.length}');
 
     return {
       'section': section.first,
+      'subsections': subsections,
+    };
+  }
+
+  Future<Map<String, dynamic>> getSpellDetails(BuildContext context, String sectionId) async {
+    // ignore: use_build_context_synchronously
+    final db = await database(context);
+    debugPrint('Querying spell details for section_id: $sectionId');
+
+    // Fetch section data
+    final section = await db.query(
+      'sections',
+      where: 'section_id = ?',
+      whereArgs: [sectionId],
+    );
+
+    if (section.isEmpty) {
+      debugPrint('No section found for section_id: $sectionId');
+      return {
+        'section': null,
+        'spell_details': null,
+        'spell_effects': [],
+        'subsections': [],
+      };
+    }
+
+    // Fetch spell details
+    final spellDetails = await db.query(
+      'spell_details',
+      where: 'section_id = ?',
+      whereArgs: [sectionId],
+    );
+
+    // Fetch spell effects
+    final spellEffects = await db.query(
+      'spell_effects',
+      where: 'section_id = ?',
+      whereArgs: [sectionId],
+    );
+
+    // Fetch subsections
+    final subsections = await _getSubsections(context, sectionId, db);
+
+    debugPrint('Spell details found for section_id $sectionId: details=${spellDetails.length}, effects=${spellEffects.length}, subsections=${subsections.length}');
+
+    return {
+      'section': section.first,
+      'spell_details': spellDetails.isNotEmpty ? spellDetails.first : null,
+      'spell_effects': spellEffects,
       'subsections': subsections,
     };
   }
@@ -130,7 +178,6 @@ class DatabaseHelper {
 
     List<Map<String, dynamic>> result = [];
     for (var subsection in subsections) {
-      // ignore: use_build_context_synchronously
       final nestedSubsections = await _getSubsections(context, subsection['section_id'].toString(), db);
       result.add({
         'section': subsection,
