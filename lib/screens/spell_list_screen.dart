@@ -10,32 +10,37 @@ class SpellListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Spells')),
+      appBar: AppBar(
+        title: const Text('Spells'),
+      ),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: dbHelper.getSections(context, 'spell'),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
+          }
+          if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          }
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return const Center(child: Text('No spells found'));
           }
+
           final spells = snapshot.data!;
           return ListView.builder(
             itemCount: spells.length,
             itemBuilder: (context, index) {
               final spell = spells[index];
               return ListTile(
-                title: Text(spell['name'] ?? 'Unknown'),
-                subtitle: Text(spell['source'] ?? ''),
+                title: Text(spell['name'] ?? 'Unknown Spell'),
                 onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => SpellDetailsScreen(
-                        spellId: spell['section_id'].toString(),
                         dbHelper: dbHelper,
+                        sectionId: spell['section_id'].toString(),
+                        spellName: spell['name'].toString(),
                       ),
                     ),
                   );

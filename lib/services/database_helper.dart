@@ -43,6 +43,7 @@ class DatabaseHelper {
         await Directory(dirname(path)).create(recursive: true);
         // ignore: use_build_context_synchronously
         debugPrint('Loading asset: assets/databases/$fileName');
+        // ignore: use_build_context_synchronously
         final data = await DefaultAssetBundle.of(context).load('assets/databases/$fileName');
         debugPrint('Asset loaded, size: ${data.lengthInBytes} bytes');
         final bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
@@ -91,33 +92,6 @@ class DatabaseHelper {
     return result;
   }
 
-  Future<Map<String, dynamic>> getSectionWithSubsections(BuildContext context, String sectionId) async {
-    // ignore: use_build_context_synchronously
-    final db = await database(context);
-    debugPrint('Querying section with subsections for section_id: $sectionId');
-    // Fetch the top-level section
-    final section = await db.query(
-      'sections',
-      where: 'section_id = ?',
-      whereArgs: [sectionId],
-    );
-    debugPrint('Top-level section found for section_id $sectionId: ${section.length}');
-
-    if (section.isEmpty) {
-      debugPrint('No section found for section_id: $sectionId');
-      return {'section': null, 'subsections': []};
-    }
-
-    // Fetch subsections recursively
-    final subsections = await _getSubsections(context, sectionId, db);
-    debugPrint('Subsections found for section_id $sectionId: ${subsections.length}');
-
-    return {
-      'section': section.first,
-      'subsections': subsections,
-    };
-  }
-
   Future<Map<String, dynamic>> getSpellDetails(BuildContext context, String sectionId) async {
     // ignore: use_build_context_synchronously
     final db = await database(context);
@@ -155,6 +129,7 @@ class DatabaseHelper {
     );
 
     // Fetch subsections
+    // ignore: use_build_context_synchronously
     final subsections = await _getSubsections(context, sectionId, db);
 
     debugPrint('Spell details found for section_id $sectionId: details=${spellDetails.length}, effects=${spellEffects.length}, subsections=${subsections.length}');
@@ -163,6 +138,34 @@ class DatabaseHelper {
       'section': section.first,
       'spell_details': spellDetails.isNotEmpty ? spellDetails.first : null,
       'spell_effects': spellEffects,
+      'subsections': subsections,
+    };
+  }
+
+  Future<Map<String, dynamic>> getSectionWithSubsections(BuildContext context, String sectionId) async {
+    // ignore: use_build_context_synchronously
+    final db = await database(context);
+    debugPrint('Querying section with subsections for section_id: $sectionId');
+    // Fetch the top-level section
+    final section = await db.query(
+      'sections',
+      where: 'section_id = ?',
+      whereArgs: [sectionId],
+    );
+    debugPrint('Top-level section found for section_id $sectionId: ${section.length}');
+
+    if (section.isEmpty) {
+      debugPrint('No section found for section_id: $sectionId');
+      return {'section': null, 'subsections': []};
+    }
+
+    // Fetch subsections recursively
+    // ignore: use_build_context_synchronously
+    final subsections = await _getSubsections(context, sectionId, db);
+    debugPrint('Subsections found for section_id $sectionId: ${subsections.length}');
+
+    return {
+      'section': section.first,
       'subsections': subsections,
     };
   }
@@ -178,6 +181,7 @@ class DatabaseHelper {
 
     List<Map<String, dynamic>> result = [];
     for (var subsection in subsections) {
+    // ignore: use_build_context_synchronously
       final nestedSubsections = await _getSubsections(context, subsection['section_id'].toString(), db);
       result.add({
         'section': subsection,

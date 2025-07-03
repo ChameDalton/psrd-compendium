@@ -49,7 +49,7 @@ class SpellDetailsScreen extends StatelessWidget {
                     padding: const EdgeInsets.only(bottom: 8.0),
                     child: Text(
                       'Level: ${spellDetails['level_text']}',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
                     ),
                   ),
                 // Casting Time
@@ -58,7 +58,7 @@ class SpellDetailsScreen extends StatelessWidget {
                     padding: const EdgeInsets.only(bottom: 8.0),
                     child: Text(
                       'Casting Time: ${spellDetails['casting_time']}',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
                     ),
                   ),
                 // Components
@@ -67,7 +67,7 @@ class SpellDetailsScreen extends StatelessWidget {
                     padding: const EdgeInsets.only(bottom: 8.0),
                     child: Text(
                       'Components: ${spellDetails['component_text']}',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
                     ),
                   ),
                 // Range
@@ -76,7 +76,7 @@ class SpellDetailsScreen extends StatelessWidget {
                     padding: const EdgeInsets.only(bottom: 8.0),
                     child: Text(
                       'Range: ${spellDetails['range']}',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
                     ),
                   ),
                 // Spell Effects
@@ -91,14 +91,15 @@ class SpellDetailsScreen extends StatelessWidget {
                           children: [
                             Text(
                               effect['name'] ?? 'Effect',
-                              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).primaryColor,
-                                  ),
+                              style: const TextStyle(
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blue,
+                              ),
                             ),
                             Text(
                               effect['description'] ?? '',
-                              style: Theme.of(context).textTheme.bodyMedium,
+                              style: const TextStyle(fontSize: 14.0),
                             ),
                           ],
                         ),
@@ -111,7 +112,7 @@ class SpellDetailsScreen extends StatelessWidget {
                     padding: const EdgeInsets.only(bottom: 8.0),
                     child: Text(
                       'Duration: ${spellDetails['duration']}',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
                     ),
                   ),
                 // Saving Throw
@@ -120,7 +121,7 @@ class SpellDetailsScreen extends StatelessWidget {
                     padding: const EdgeInsets.only(bottom: 8.0),
                     child: Text(
                       'Saving Throw: ${spellDetails['saving_throw']}',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
                     ),
                   ),
                 // Spell Resistance
@@ -129,7 +130,7 @@ class SpellDetailsScreen extends StatelessWidget {
                     padding: const EdgeInsets.only(bottom: 8.0),
                     child: Text(
                       'Spell Resistance: ${spellDetails['spell_resistance']}',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
                     ),
                   ),
                 // Source
@@ -138,7 +139,7 @@ class SpellDetailsScreen extends StatelessWidget {
                     padding: const EdgeInsets.only(bottom: 8.0),
                     child: Text(
                       'Source: ${section['source']}',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
                     ),
                   ),
                 // Summary (Description)
@@ -147,7 +148,7 @@ class SpellDetailsScreen extends StatelessWidget {
                     padding: const EdgeInsets.only(bottom: 16.0),
                     child: Text(
                       'Summary: ${section['description']}',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
                     ),
                   ),
                 // Body (HTML)
@@ -155,11 +156,8 @@ class SpellDetailsScreen extends StatelessWidget {
                   Html(
                     data: section['body'],
                     style: {
-                      '*': Style(
-                        fontSize: FontSize(16.0),
-                        lineHeight: LineHeight(1.5),
-                      ),
                       'p': Style(
+                        fontSize: FontSize.medium,
                         margin: Margins(bottom: Margin(8.0)),
                       ),
                       'b': Style(
@@ -180,20 +178,18 @@ class SpellDetailsScreen extends StatelessWidget {
                           children: [
                             Text(
                               subSectionData['name'] ?? 'Subsection',
-                              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).primaryColor,
-                                  ),
+                              style: const TextStyle(
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blue,
+                              ),
                             ),
                             if (subSectionData['body'] != null)
                               Html(
                                 data: subSectionData['body'],
                                 style: {
-                                  '*': Style(
-                                    fontSize: FontSize(16.0),
-                                    lineHeight: LineHeight(1.5),
-                                  ),
                                   'p': Style(
+                                    fontSize: FontSize.medium,
                                     margin: Margins(bottom: Margin(8.0)),
                                   ),
                                   'b': Style(
