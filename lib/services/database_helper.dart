@@ -41,8 +41,8 @@ class DatabaseHelper {
       try {
         debugPrint('Creating directory: ${dirname(path)}');
         await Directory(dirname(path)).create(recursive: true);
-        // ignore: use_build_context_synchronously
         debugPrint('Loading asset: assets/databases/$fileName');
+        // ignore: use_build_context_synchronously
         final data = await DefaultAssetBundle.of(context).load('assets/databases/$fileName');
         debugPrint('Asset loaded, size: ${data.lengthInBytes} bytes');
         final bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
@@ -109,6 +109,7 @@ class DatabaseHelper {
     }
 
     // Fetch subsections recursively
+    // ignore: use_build_context_synchronously
     final subsections = await _getSubsections(context, sectionId, db);
     debugPrint('Subsections found for section_id $sectionId: ${subsections.length}');
 
@@ -129,6 +130,7 @@ class DatabaseHelper {
 
     List<Map<String, dynamic>> result = [];
     for (var subsection in subsections) {
+      // ignore: use_build_context_synchronously
       final nestedSubsections = await _getSubsections(context, subsection['section_id'].toString(), db);
       result.add({
         'section': subsection,
