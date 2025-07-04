@@ -23,8 +23,20 @@ void main() {
       {'section_id': '2', 'name': 'Cleric', 'type': 'class', 'parent_id': 1636},
     ];
 
-    // Mock getSections with any BuildContext
+    final mockClassDetails = {
+      'section': {
+        'section_id': '1',
+        'name': 'Bard',
+        'source': 'PFRPG Core',
+        'description': 'A versatile performer',
+        'body': '<p>Uses performances to inspire allies.</p>',
+      },
+      'subsections': [],
+    };
+
+    // Mock getSections and getSectionWithSubsections with any BuildContext
     when(mockDbHelper.getSections(any, 'class')).thenAnswer((_) async => Future.value(mockClasses));
+    when(mockDbHelper.getSectionWithSubsections(any, '1')).thenAnswer((_) async => Future.value(mockClassDetails));
 
     await tester.pumpWidget(
       MaterialApp(
@@ -50,8 +62,9 @@ void main() {
     await tester.tap(find.text('Bard'));
     await tester.pumpAndSettle();
 
-    // Verify that getSections was called
+    // Verify that getSections and getSectionWithSubsections were called
     verify(mockDbHelper.getSections(any, 'class')).called(1);
+    verify(mockDbHelper.getSectionWithSubsections(any, '1')).called(1);
 
     // Verify navigation to ClassDetailsScreen with correct parameters
     expect(
@@ -60,5 +73,9 @@ void main() {
       ),
       findsOneWidget,
     );
+
+    // Verify some detail fields are displayed
+    expect(find.text('Source: PFRPG Core'), findsOneWidget);
+    expect(find.text('Description: A versatile performer'), findsOneWidget);
   });
 }

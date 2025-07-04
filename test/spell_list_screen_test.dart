@@ -23,8 +23,30 @@ void main() {
       {'section_id': '2', 'name': 'Fireball', 'type': 'spell', 'parent_id': 2},
     ];
 
-    // Mock getSections with any BuildContext
+    final mockSpellDetails = {
+      'section': {
+        'section_id': '1',
+        'name': 'Magic Missile',
+        'source': 'PFRPG Core',
+        'description': 'Fires magic darts',
+        'body': '<p>Deals 1d4+1 damage per missile.</p>',
+      },
+      'spell_details': {
+        'level_text': 'sorcerer/wizard 1',
+        'casting_time': '1 standard action',
+        'component_text': 'V, S',
+        'range': '100 ft. + 10 ft./level',
+        'duration': 'instantaneous',
+        'saving_throw': 'none',
+        'spell_resistance': 'yes',
+      },
+      'spell_effects': [],
+      'subsections': [],
+    };
+
+    // Mock getSections and getSpellDetails with any BuildContext
     when(mockDbHelper.getSections(any, 'spell')).thenAnswer((_) async => Future.value(mockSpells));
+    when(mockDbHelper.getSpellDetails(any, '1')).thenAnswer((_) async => Future.value(mockSpellDetails));
 
     await tester.pumpWidget(
       MaterialApp(
@@ -54,8 +76,9 @@ void main() {
     await tester.tap(find.text('Magic Missile'));
     await tester.pumpAndSettle();
 
-    // Verify that getSections was called
+    // Verify that getSections and getSpellDetails were called
     verify(mockDbHelper.getSections(any, 'spell')).called(1);
+    verify(mockDbHelper.getSpellDetails(any, '1')).called(1);
 
     // Verify navigation to SpellDetailsScreen with correct parameters
     expect(
@@ -67,5 +90,10 @@ void main() {
       ),
       findsOneWidget,
     );
+
+    // Verify some detail fields are displayed
+    expect(find.text('Source: PFRPG Core'), findsOneWidget);
+    expect(find.text('Level: sorcerer/wizard 1'), findsOneWidget);
+    expect(find.text('Casting Time: 1 standard action'), findsOneWidget);
   });
 }
