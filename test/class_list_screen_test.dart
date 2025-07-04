@@ -31,7 +31,7 @@ void main() {
         'description': 'A versatile performer',
         'body': '<p>Uses performances to inspire allies.</p>',
       },
-      'subsections': [],
+      'subsections': <Map<String, dynamic>>[], // Explicitly typed empty list
     };
 
     // Mock getSections and getSectionWithSubsections with any BuildContext
@@ -60,7 +60,8 @@ void main() {
 
     // Tap on 'Bard' to trigger navigation
     await tester.tap(find.text('Bard'));
-    await tester.pumpAndSettle();
+    await tester.pump(Duration(milliseconds: 100)); // Ensure navigation starts
+    await tester.pumpAndSettle(); // Wait for ClassDetailsScreen FutureBuilder
 
     // Verify that getSections and getSectionWithSubsections were called
     verify(mockDbHelper.getSections(any, 'class')).called(1);
@@ -74,7 +75,7 @@ void main() {
       findsOneWidget,
     );
 
-    // Verify some detail fields are displayed
+    // Verify detail fields are displayed
     expect(find.text('Source: PFRPG Core'), findsOneWidget);
     expect(find.text('Description: A versatile performer'), findsOneWidget);
   });

@@ -40,8 +40,8 @@ void main() {
         'saving_throw': 'none',
         'spell_resistance': 'yes',
       },
-      'spell_effects': [],
-      'subsections': [],
+      'spell_effects': <Map<String, dynamic>>[], // Explicitly typed empty list
+      'subsections': <Map<String, dynamic>>[], // Explicitly typed empty list
     };
 
     // Mock getSections and getSpellDetails with any BuildContext
@@ -74,7 +74,8 @@ void main() {
 
     // Tap on 'Magic Missile' to trigger navigation
     await tester.tap(find.text('Magic Missile'));
-    await tester.pumpAndSettle();
+    await tester.pump(Duration(milliseconds: 100)); // Ensure navigation starts
+    await tester.pumpAndSettle(); // Wait for SpellDetailsScreen FutureBuilder
 
     // Verify that getSections and getSpellDetails were called
     verify(mockDbHelper.getSections(any, 'spell')).called(1);
@@ -91,7 +92,7 @@ void main() {
       findsOneWidget,
     );
 
-    // Verify some detail fields are displayed
+    // Verify detail fields are displayed
     expect(find.text('Source: PFRPG Core'), findsOneWidget);
     expect(find.text('Level: sorcerer/wizard 1'), findsOneWidget);
     expect(find.text('Casting Time: 1 standard action'), findsOneWidget);
