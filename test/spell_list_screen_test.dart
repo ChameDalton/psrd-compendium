@@ -74,7 +74,7 @@ void main() {
 
     // Tap on 'Magic Missile' to trigger navigation
     await tester.tap(find.text('Magic Missile'));
-    await tester.pump(Duration(milliseconds: 100)); // Ensure navigation starts
+    await tester.pump(const Duration(milliseconds: 100)); // Ensure navigation starts
     await tester.pumpAndSettle(); // Wait for SpellDetailsScreen FutureBuilder
 
     // Verify that getSections and getSpellDetails were called
