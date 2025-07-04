@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:pathfinder_athenaeum/services/database_helper.dart';
 import 'package:pathfinder_athenaeum/screens/spell_list_screen.dart';
 import 'package:pathfinder_athenaeum/screens/spell_details_screen.dart';
 
-// Mock DatabaseHelper for testing
-class MockDatabaseHelper extends Mock implements DatabaseHelper {}
+// Generate mocks for DatabaseHelper
+@GenerateMocks([DatabaseHelper])
+import 'spell_list_screen_test.mocks.dart';
 
 void main() {
   late MockDatabaseHelper mockDbHelper;
@@ -21,17 +23,12 @@ void main() {
       {'section_id': '2', 'name': 'Fireball', 'type': 'spell', 'parent_id': 2},
     ];
 
-    // StatefulWidget to capture BuildContext
-    BuildContext? testContext;
+    // Mock getSections with any BuildContext
+    when(mockDbHelper.getSections(any, 'spell')).thenAnswer((_) async => Future.value(mockSpells));
+
     await tester.pumpWidget(
       MaterialApp(
-        home: StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            testContext = context;
-            return SpellListScreen(dbHelper: mockDbHelper);
-          },
-        ),
-        // Define navigation route for SpellDetailsScreen
+        home: SpellListScreen(dbHelper: mockDbHelper),
         routes: {
           '/spell_details': (context) {
             final args = ModalRoute.of(context)!.settings.arguments as Map<String, String>;
@@ -45,12 +42,6 @@ void main() {
       ),
     );
 
-    // Ensure context is captured
-    expect(testContext, isNotNull);
-
-    // Mock getSections with the captured context
-    when(mockDbHelper.getSections(testContext!, 'spell')).thenAnswer((_) async => Future.value(mockSpells));
-
     // Wait for the FutureBuilder to complete
     await tester.pumpAndSettle();
 
@@ -63,8 +54,8 @@ void main() {
     await tester.tap(find.text('Magic Missile'));
     await tester.pumpAndSettle();
 
-    // Verify that getSections was called with the correct context
-    verify(mockDbHelper.getSections(testContext!, 'spell')).called(1);
+    // Verify that getSections was called
+    verify(mockDbHelper.getSections(any, 'spell')).called(1);
 
     // Verify navigation to SpellDetailsScreen with correct parameters
     expect(
