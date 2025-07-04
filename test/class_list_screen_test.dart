@@ -31,6 +31,14 @@ void main() {
             return ClassListScreen(dbHelper: mockDbHelper);
           },
         ),
+        // Define navigation route for ClassDetailsScreen
+        routes: {
+          '/class_details': (context) => ClassDetailsScreen(
+                id: ModalRoute.of(context)!.settings.arguments as String,
+                name: ModalRoute.of(context)!.settings.arguments as String,
+                dbHelper: mockDbHelper,
+              ),
+        },
       ),
     );
 
@@ -38,7 +46,7 @@ void main() {
     expect(testContext, isNotNull);
 
     // Mock getSections with the captured context
-    when(mockDbHelper.getSections(testContext!, 'class')).thenAnswer((_) async => mockClasses);
+    when(mockDbHelper.getSections(testContext!, 'class')).thenAnswer((_) async => Future.value(mockClasses));
 
     // Wait for the FutureBuilder to complete
     await tester.pumpAndSettle();
@@ -60,8 +68,8 @@ void main() {
       find.byWidgetPredicate(
         (widget) =>
             widget is ClassDetailsScreen &&
-            widget.sectionId == '1' &&
-            widget.className == 'Bard',
+            widget.id == '1' &&
+            widget.name == 'Bard',
       ),
       findsOneWidget,
     );
