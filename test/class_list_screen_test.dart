@@ -5,6 +5,7 @@ import 'package:mockito/mockito.dart';
 import 'package:pathfinder_athenaeum/services/database_helper.dart';
 import 'package:pathfinder_athenaeum/screens/class_list_screen.dart';
 import 'package:pathfinder_athenaeum/screens/class_details_screen.dart';
+import 'package:flutter/foundation.dart';
 
 // Generate mocks for DatabaseHelper
 @GenerateMocks([DatabaseHelper])
@@ -62,6 +63,7 @@ void main() {
     await tester.tap(find.text('Bard'));
     await tester.pump(const Duration(milliseconds: 500)); // Longer delay for navigation
     await tester.pumpAndSettle(); // Wait for ClassDetailsScreen FutureBuilder
+    debugPrint('Navigated to ClassDetailsScreen for classId: 1');
 
     // Verify that getSections and getSectionWithSubsections were called
     verify(mockDbHelper.getSections(any, 'class')).called(1);
@@ -75,8 +77,8 @@ void main() {
       findsOneWidget,
     );
 
-    // Verify detail fields are displayed (adjusted to match potential rendering)
-    expect(find.text('PFRPG Core'), findsOneWidget); // Adjusted from 'Source: PFRPG Core'
+    // Verify detail fields are displayed
+    expect(find.text('Source: PFRPG Core'), findsOneWidget); // Updated to match ClassDetailsScreen
     expect(find.text('Description: A versatile performer'), findsOneWidget);
   });
 }
