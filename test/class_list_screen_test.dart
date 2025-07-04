@@ -34,8 +34,7 @@ void main() {
         // Define navigation route for ClassDetailsScreen
         routes: {
           '/class_details': (context) => ClassDetailsScreen(
-                id: ModalRoute.of(context)!.settings.arguments as String,
-                name: ModalRoute.of(context)!.settings.arguments as String,
+                classId: ModalRoute.of(context)!.settings.arguments as String,
                 dbHelper: mockDbHelper,
               ),
         },
@@ -66,10 +65,7 @@ void main() {
     // Verify navigation to ClassDetailsScreen with correct parameters
     expect(
       find.byWidgetPredicate(
-        (widget) =>
-            widget is ClassDetailsScreen &&
-            widget.id == '1' &&
-            widget.name == 'Bard',
+        (widget) => widget is ClassDetailsScreen && widget.classId == '1',
       ),
       findsOneWidget,
     );
