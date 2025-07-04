@@ -5,7 +5,6 @@ import 'package:mockito/mockito.dart';
 import 'package:pathfinder_athenaeum/services/database_helper.dart';
 import 'package:pathfinder_athenaeum/screens/class_list_screen.dart';
 import 'package:pathfinder_athenaeum/screens/class_details_screen.dart';
-import 'package:flutter/foundation.dart';
 
 // Generate mocks for DatabaseHelper
 @GenerateMocks([DatabaseHelper])

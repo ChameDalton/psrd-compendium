@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:pathfinder_athenaeum/services/database_helper.dart';
-import 'package:flutter/foundation.dart';
 
 class ClassDetailsScreen extends StatelessWidget {
   final String classId;
