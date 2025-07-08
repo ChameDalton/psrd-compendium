@@ -3,12 +3,11 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i4;
+import 'dart:async' as _i3;
 
-import 'package:flutter/material.dart' as _i5;
+import 'package:flutter/material.dart' as _i4;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:pathfinder_athenaeum/services/database_helper.dart' as _i3;
-import 'package:sqflite/sqflite.dart' as _i2;
+import 'package:pathfinder_athenaeum/services/database_helper.dart' as _i2;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -24,43 +23,44 @@ import 'package:sqflite/sqflite.dart' as _i2;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeDatabase_0 extends _i1.SmartFake implements _i2.Database {
-  _FakeDatabase_0(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
 /// A class which mocks [DatabaseHelper].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockDatabaseHelper extends _i1.Mock implements _i3.DatabaseHelper {
+class MockDatabaseHelper extends _i1.Mock implements _i2.DatabaseHelper {
   MockDatabaseHelper() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i4.Future<_i2.Database> database(_i5.BuildContext? context) =>
-      (super.noSuchMethod(
+  _i3.Future<void> initDatabase() => (super.noSuchMethod(
         Invocation.method(
-          #database,
-          [context],
+          #initDatabase,
+          [],
         ),
-        returnValue: _i4.Future<_i2.Database>.value(_FakeDatabase_0(
-          this,
-          Invocation.method(
-            #database,
-            [context],
-          ),
-        )),
-      ) as _i4.Future<_i2.Database>);
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
 
   @override
-  _i4.Future<List<Map<String, dynamic>>> getSections(
-    _i5.BuildContext? context,
+  _i3.Future<void> writeToFile(
+    String? path,
+    List<int>? bytes,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #writeToFile,
+          [
+            path,
+            bytes,
+          ],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<List<Map<String, dynamic>>> getSections(
+    _i4.BuildContext? context,
     String? type,
   ) =>
       (super.noSuchMethod(
@@ -71,47 +71,13 @@ class MockDatabaseHelper extends _i1.Mock implements _i3.DatabaseHelper {
             type,
           ],
         ),
-        returnValue: _i4.Future<List<Map<String, dynamic>>>.value(
+        returnValue: _i3.Future<List<Map<String, dynamic>>>.value(
             <Map<String, dynamic>>[]),
-      ) as _i4.Future<List<Map<String, dynamic>>>);
+      ) as _i3.Future<List<Map<String, dynamic>>>);
 
   @override
-  _i4.Future<List<Map<String, dynamic>>> getSectionDetails(
-    _i5.BuildContext? context,
-    String? parentId,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getSectionDetails,
-          [
-            context,
-            parentId,
-          ],
-        ),
-        returnValue: _i4.Future<List<Map<String, dynamic>>>.value(
-            <Map<String, dynamic>>[]),
-      ) as _i4.Future<List<Map<String, dynamic>>>);
-
-  @override
-  _i4.Future<Map<String, dynamic>> getSpellDetails(
-    _i5.BuildContext? context,
-    String? sectionId,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getSpellDetails,
-          [
-            context,
-            sectionId,
-          ],
-        ),
-        returnValue:
-            _i4.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i4.Future<Map<String, dynamic>>);
-
-  @override
-  _i4.Future<Map<String, dynamic>> getSectionWithSubsections(
-    _i5.BuildContext? context,
+  _i3.Future<Map<String, dynamic>> getSectionWithSubsections(
+    _i4.BuildContext? context,
     String? sectionId,
   ) =>
       (super.noSuchMethod(
@@ -123,15 +89,23 @@ class MockDatabaseHelper extends _i1.Mock implements _i3.DatabaseHelper {
           ],
         ),
         returnValue:
-            _i4.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i4.Future<Map<String, dynamic>>);
+            _i3.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i3.Future<Map<String, dynamic>>);
 
   @override
-  _i4.Future<dynamic> close(_i5.BuildContext? context) => (super.noSuchMethod(
+  _i3.Future<Map<String, dynamic>> getSpellDetails(
+    _i4.BuildContext? context,
+    String? sectionId,
+  ) =>
+      (super.noSuchMethod(
         Invocation.method(
-          #close,
-          [context],
+          #getSpellDetails,
+          [
+            context,
+            sectionId,
+          ],
         ),
-        returnValue: _i4.Future<dynamic>.value(),
-      ) as _i4.Future<dynamic>);
+        returnValue:
+            _i3.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i3.Future<Map<String, dynamic>>);
 }

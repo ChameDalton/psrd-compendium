@@ -25,4 +25,24 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
+    - assets/databases/book-acg.db
+    - assets/databases/book-apg.db
+    - assets/databases/book-arg.db
+    - assets/databases/book-b1.db
+    - assets/databases/book-b2.db
+    - assets/databases/book-b3.db
+    - assets/databases/book-b4.db
     - assets/databases/book-cr.db
+    - assets/databases/book-gmg.db
+    - assets/databases/book-ma.db
+    - assets/databases/book-mc.db
+    - assets/databases/book-npc.db
+    - assets/databases/book-oa.db
+    - assets/databases/book-ogl.db
+    - assets/databases/book-pfu.db
+    - assets/databases/book-tech.db
+    - assets/databases/book-uc.db
+    - assets/databases/book-ucampaign.db
+    - assets/databases/book-ue.db
+    - assets/databases/book-um.db
+    - assets/databases/index.db
