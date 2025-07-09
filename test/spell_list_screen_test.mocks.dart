@@ -3,9 +3,6 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i3;
-
-import 'package:flutter/material.dart' as _i4;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:pathfinder_athenaeum/services/database_helper.dart' as _i2;
 
@@ -30,82 +27,4 @@ class MockDatabaseHelper extends _i1.Mock implements _i2.DatabaseHelper {
   MockDatabaseHelper() {
     _i1.throwOnMissingStub(this);
   }
-
-  @override
-  _i3.Future<void> initDatabase() => (super.noSuchMethod(
-        Invocation.method(
-          #initDatabase,
-          [],
-        ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
-
-  @override
-  _i3.Future<void> writeToFile(
-    String? path,
-    List<int>? bytes,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #writeToFile,
-          [
-            path,
-            bytes,
-          ],
-        ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
-
-  @override
-  _i3.Future<List<Map<String, dynamic>>> getSections(
-    _i4.BuildContext? context,
-    String? type,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getSections,
-          [
-            context,
-            type,
-          ],
-        ),
-        returnValue: _i3.Future<List<Map<String, dynamic>>>.value(
-            <Map<String, dynamic>>[]),
-      ) as _i3.Future<List<Map<String, dynamic>>>);
-
-  @override
-  _i3.Future<Map<String, dynamic>> getSectionWithSubsections(
-    _i4.BuildContext? context,
-    String? sectionId,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getSectionWithSubsections,
-          [
-            context,
-            sectionId,
-          ],
-        ),
-        returnValue:
-            _i3.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i3.Future<Map<String, dynamic>>);
-
-  @override
-  _i3.Future<Map<String, dynamic>> getSpellDetails(
-    _i4.BuildContext? context,
-    String? sectionId,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getSpellDetails,
-          [
-            context,
-            sectionId,
-          ],
-        ),
-        returnValue:
-            _i3.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i3.Future<Map<String, dynamic>>);
 }

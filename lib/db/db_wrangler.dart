@@ -1,37 +1,47 @@
-import 'package:sqflite/sqflite.dart';
+import 'dart:io';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:flutter/services.dart' show ByteData, rootBundle;
+import 'package:sqflite/sqflite.dart';
 import 'user_database.dart';
+import '../services/database_helper.dart';
 
 class DbWrangler {
-  Map<String, Database> _bookDatabases = {};
+  final Map<String, Database> _bookDatabases = {};
   Database? _indexDatabase;
   UserDatabase? _userDatabase;
 
   Future<void> initializeDatabases() async {
-    final dbDir = await getApplicationDocumentsDirectory();
-    final assets = ['book-pfsrd.db', 'index.db']; // Add other book DBs as needed
+    final assets = [
+      'book-acg.db',
+      'book-apg.db',
+      'book-arg.db',
+      'book-b1.db',
+      'book-b2.db',
+      'book-b3.db',
+      'book-b4.db',
+      'book-cr.db',
+      'book-gmg.db',
+      'book-ma.db',
+      'book-mc.db',
+      'book-npc.db',
+      'book-oa.db',
+      'book-ogl.db',
+      'book-pfu.db',
+      'book-tech.db',
+      'book-uc.db',
+      'book-ucampaign.db',
+      'book-ue.db',
+      'book-um.db',
+    ];
 
-    // Copy book and index databases from assets
     for (var asset in assets) {
-      final dbPath = join(dbDir.path, asset);
-      final exists = await databaseExists(dbPath);
-      if (!exists) {
-        final data = await rootBundle.load('assets/$asset');
-        final buffer = data.buffer;
-        await File(dbPath).writeAsBytes(
-            buffer.asUint8List(data.offsetInBytes, data.lengthInBytes));
-      }
-      _bookDatabases[asset] = await openDatabase(dbPath);
+      _bookDatabases[asset] = await DatabaseHelper.getDatabase(asset);
     }
 
-    // Initialize index database
     _indexDatabase = _bookDatabases['index.db'];
 
-    // Initialize user database (created, not copied)
     _userDatabase = UserDatabase();
-    await _userDatabase!.database; // Trigger creation
+    await _userDatabase!.database;
   }
 
   Database getBookDatabase(String name) => _bookDatabases['$name.db']!;

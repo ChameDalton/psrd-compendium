@@ -1,19 +1,26 @@
 import 'package:flutter/material.dart';
 import '../db/user_database.dart';
 
-class BookmarkScreen extends StatelessWidget {
+class BookmarkScreen extends StatefulWidget {
   final UserDatabase userDb;
 
-  BookmarkScreen(this.userDb);
+  const BookmarkScreen({Key? key, required this.userDb}) : super(key: key);
 
+  @override
+  _BookmarkScreenState createState() => _BookmarkScreenState();
+}
+
+class _BookmarkScreenState extends State<BookmarkScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Bookmarks')),
+      appBar: const AppBar(title: Text('Bookmarks')),
       body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: userDb.getBookmarks(),
+        future: widget.userDb.getBookmarks(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData) return Center(child: CircularProgressIndicator());
+          if (!snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
           final bookmarks = snapshot.data!;
           return ListView.builder(
             itemCount: bookmarks.length,
@@ -23,17 +30,16 @@ class BookmarkScreen extends StatelessWidget {
                 title: Text(bookmark['name']),
                 subtitle: Text(bookmark['url']),
                 trailing: IconButton(
-                  icon: Icon(Icons.delete),
+                  icon: const Icon(Icons.delete),
                   onPressed: () async {
-                    await userDb.deleteBookmark(bookmark['_id']);
+                    await widget.userDb.deleteBookmark(bookmark['_id']);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Bookmark removed')),
+                      const SnackBar(content: Text('Bookmark removed')),
                     );
-                    (context as Element).markNeedsBuild(); // Refresh UI
+                    setState(() {});
                   },
                 ),
                 onTap: () {
-                  // Navigate to content using bookmark['url']
                   Navigator.pushNamed(context, bookmark['url']);
                 },
               );
@@ -43,11 +49,10 @@ class BookmarkScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          // Example: Add a bookmark (replace with actual section data)
-          await userDb.addBookmark(1, 'Fireball', 'pfsrd://Spells/Fireball');
-          (context as Element).markNeedsBuild(); // Refresh UI
+          await widget.userDb.addBookmark(1, 'Fireball', 'pfsrd://Spells/Fireball');
+          setState(() {});
         },
-        child: Icon(Icons.bookmark_add),
+        child: const Icon(Icons.bookmark_add),
       ),
     );
   }

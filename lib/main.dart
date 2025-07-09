@@ -12,14 +12,14 @@ void main() async {
 class MainApp extends StatelessWidget {
   final DbWrangler dbWrangler;
 
-  MainApp({required this.dbWrangler});
+  const MainApp({Key? key, required this.dbWrangler}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: HomeScreen(dbWrangler: dbWrangler),
       routes: {
-        '/bookmarks': (context) => BookmarkScreen(dbWrangler.getUserDatabase()),
+        '/bookmarks': (context) => BookmarkScreen(userDb: dbWrangler.getUserDatabase()),
       },
     );
   }
@@ -28,19 +28,19 @@ class MainApp extends StatelessWidget {
 class HomeScreen extends StatelessWidget {
   final DbWrangler dbWrangler;
 
-  HomeScreen({required this.dbWrangler});
+  const HomeScreen({Key? key, required this.dbWrangler}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Pathfinder Compendium')),
-      body: Center(child: Text('Welcome to the Pathfinder Compendium!')),
+      appBar: const AppBar(title: Text('Pathfinder Compendium')),
+      body: const Center(child: Text('Welcome to the Pathfinder Compendium!')),
       drawer: Drawer(
         child: ListView(
           children: [
-            DrawerHeader(child: Text('Menu')),
+            const DrawerHeader(child: Text('Menu')),
             ListTile(
-              title: Text('Bookmarks'),
+              title: const Text('Bookmarks'),
               onTap: () {
                 Navigator.pushNamed(context, '/bookmarks');
               },

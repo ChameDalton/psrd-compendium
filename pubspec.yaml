@@ -1,26 +1,25 @@
-# Existing content from your pubspec.yaml (based on commit acf15ede)
 name: pathfinder_athenaeum
-description: A new Flutter project.
+description: A Flutter-based Pathfinder compendium app.
 publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.5.0 <4.0.0'
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
-  flutter_html: ^3.0.0-beta.2
-  sqflite: ^2.3.3+1
+  sqflite: ^2.3.3
+  path_provider: ^2.1.3
   path: ^1.8.3
-  synchronized: ^3.1.0+1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  mockito: ^5.4.4
-  sqflite_common_ffi: ^2.3.3
+  mockito: ^5.4.2
+  build_runner: ^2.4.6
   flutter_lints: ^4.0.0
+  sqflite_common_ffi: ^2.3.3
 
 flutter:
   uses-material-design: true
