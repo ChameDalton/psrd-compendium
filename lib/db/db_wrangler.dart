@@ -29,6 +29,7 @@ class DbWrangler {
       'book-ucampaign.db',
       'book-ue.db',
       'book-um.db',
+      'index.db',
     ];
 
     for (var asset in assets) {
