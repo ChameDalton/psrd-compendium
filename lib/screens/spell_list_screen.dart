@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../db/db_wrangler.dart';
+import '../services/database_helper.dart';
 
 class SpellListScreen extends StatelessWidget {
   final DbWrangler dbHelper;

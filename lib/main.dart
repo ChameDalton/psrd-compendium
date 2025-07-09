@@ -3,6 +3,8 @@ import 'db/db_wrangler.dart';
 import 'screens/bookmark_screen.dart';
 import 'screens/class_list_screen.dart';
 import 'screens/class_details_screen.dart';
+import 'screens/creature_list_screen.dart';
+import 'screens/creature_details_screen.dart';
 import 'screens/feat_list_screen.dart';
 import 'screens/feat_details_screen.dart';
 import 'screens/race_list_screen.dart';
@@ -30,6 +32,8 @@ class MainApp extends StatelessWidget {
         '/bookmarks': (context) => BookmarkScreen(userDb: dbWrangler.getUserDatabase()),
         '/classes': (context) => ClassListScreen(dbHelper: dbWrangler),
         '/class_details': (context) => ClassDetailsScreen(dbHelper: dbWrangler),
+        '/creatures': (context) => CreatureListScreen(dbHelper: dbWrangler),
+        '/creature_details': (context) => CreatureDetailsScreen(dbHelper: dbWrangler),
         '/feats': (context) => FeatListScreen(dbHelper: dbWrangler),
         '/feat_details': (context) => FeatDetailsScreen(dbHelper: dbWrangler),
         '/races': (context) => RaceListScreen(dbHelper: dbWrangler),
@@ -65,6 +69,12 @@ class HomeScreen extends StatelessWidget {
               title: const Text('Classes'),
               onTap: () {
                 Navigator.pushNamed(context, '/classes');
+              },
+            ),
+            ListTile(
+              title: const Text('Creatures'),
+              onTap: () {
+                Navigator.pushNamed(context, '/creatures');
               },
             ),
             ListTile(

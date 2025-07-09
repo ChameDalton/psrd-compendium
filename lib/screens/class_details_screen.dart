@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import '../db/db_wrangler.dart';
+import '../services/database_helper.dart';
 
 class ClassDetailsScreen extends StatelessWidget {
   final DbWrangler dbHelper;
@@ -33,19 +34,17 @@ class ClassDetailsScreen extends StatelessWidget {
                   'body': Style(fontSize: FontSize(16.0)),
                 },
               ),
-              ...subsections.map((subData) {
-                return ExpansionTile(
-                  title: Text(subData['name']),
-                  children: [
-                    Html(
-                      data: subData['body'] ?? '',
-                      style: {
-                        'body': Style(fontSize: FontSize(16.0)),
-                      },
-                    ),
-                  ],
-                );
-              }).toList(),
+              ...subsections.map((subData) => ExpansionTile(
+                    title: Text(subData['name']),
+                    children: [
+                      Html(
+                        data: subData['body'] ?? '',
+                        style: {
+                          'body': Style(fontSize: FontSize(16.0)),
+                        },
+                      ),
+                    ],
+                  )),
             ],
           );
         },

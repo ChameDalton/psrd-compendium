@@ -36,8 +36,7 @@ class DbWrangler {
       _bookDatabases[asset] = await DatabaseHelper.getDatabase(asset);
     }
 
-    _indexDatabase = _bookDatabases['index.db'];
-
+    _indexDatabase = await DatabaseHelper.getDatabase('index.db');
     _userDatabase = UserDatabase();
     await _userDatabase!.database;
   }

@@ -28,7 +28,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
             itemBuilder: (context, index) {
               final bookmark = bookmarks[index];
               return ListTile(
-                title: Text-ioText(bookmark['name']),
+                title: Text(bookmark['name']),
                 subtitle: Text(bookmark['url']),
                 trailing: IconButton(
                   icon: const Icon(Icons.delete),

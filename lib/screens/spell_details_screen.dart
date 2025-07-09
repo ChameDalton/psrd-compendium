@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import '../db/db_wrangler.dart';
+import '../services/database_helper.dart';
 
 class SpellDetailsScreen extends StatelessWidget {
   final DbWrangler dbHelper;
@@ -29,7 +30,7 @@ class SpellDetailsScreen extends StatelessWidget {
                 style: {
                   'p': Style(
                     fontSize: FontSize.medium,
-                    margin: Margins(bottom: EdgeInsets.only(bottom: 8.0)),
+                    margin: Margins(bottom: Margin.vertical(8.0)),
                   ),
                   'b': Style(fontWeight: FontWeight.bold),
                 },
@@ -40,7 +41,7 @@ class SpellDetailsScreen extends StatelessWidget {
                   style: {
                     'p': Style(
                       fontSize: FontSize.medium,
-                      margin: Margins(bottom: EdgeInsets.only(bottom: 8.0)),
+                      margin: Margins(bottom: Margin.vertical(8.0)),
                     ),
                     'b': Style(fontWeight: FontWeight.bold),
                   },

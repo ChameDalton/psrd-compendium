@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:pathfinder_athenaeum/services/database_helper.dart';
+import '../db/db_wrangler.dart';
+import '../services/database_helper.dart';
 
 class CreatureDetailsScreen extends StatelessWidget {
-  final String creatureId;
-  final DatabaseHelper dbHelper;
+  final DbWrangler dbHelper;
 
-  const CreatureDetailsScreen({super.key, required this.creatureId, required this.dbHelper});
+  const CreatureDetailsScreen({super.key, required this.dbHelper});
 
   @override
   Widget build(BuildContext context) {
+    final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final creatureId = args['id'] as String;
+    final dbName = args['dbName'] as String;
+
     return Scaffold(
       appBar: AppBar(title: const Text('Creature Details')),
       body: FutureBuilder<Map<String, dynamic>>(
-        future: dbHelper.getSectionWithSubsections(context, creatureId),
+        future: DatabaseHelper().getSectionWithSubsections(dbName, creatureId),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!['section'] == null) {
-            return const Center(child: Text('No details found'));
           }
           final data = snapshot.data!;
           final section = data['section'] as Map<String, dynamic>;
@@ -28,32 +28,23 @@ class CreatureDetailsScreen extends StatelessWidget {
 
           return ListView(
             children: [
-              if (section['body'] != null && section['body'].toString().isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Html(data: section['body']),
-                ),
-              ...subsections.map((subsection) {
-                final subData = subsection['section'] as Map<String, dynamic>;
-                final subSubsections = subsection['subsections'] as List<dynamic>;
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (subData['body'] != null && subData['body'].toString().isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Html(data: subData['body']),
+              Html(
+                data: section['body'] ?? '',
+                style: {
+                  'body': Style(fontSize: FontSize(16.0)),
+                },
+              ),
+              ...subsections.map((subData) => ExpansionTile(
+                    title: Text(subData['name']),
+                    children: [
+                      Html(
+                        data: subData['body'] ?? '',
+                        style: {
+                          'body': Style(fontSize: FontSize(16.0)),
+                        },
                       ),
-                    ...subSubsections.map((subSubsection) {
-                      final subSubData = subSubsection['section'] as Map<String, dynamic>;
-                      return Padding(
-                        padding: const EdgeInsets.only(left: 16.0, top: 4.0, bottom: 4.0, right: 8.0),
-                        child: Html(data: subSubData['body'] ?? ''),
-                      );
-                    }),
-                  ],
-                );
-              }),
+                    ],
+                  )),
             ],
           );
         },

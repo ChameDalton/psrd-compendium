@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -24,7 +25,6 @@ class DatabaseHelper {
         final bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
         await File(dbPath).writeAsBytes(bytes, flush: true);
       } catch (e) {
-        // Avoid print in production; consider logging instead
         debugPrint('Error copying database: $e');
       }
     }
@@ -39,10 +39,10 @@ class DatabaseHelper {
     }
   }
 
-  Future<List<Map<String, dynamic>>> getSections(String table, String sectionType) async {
-    final db = await getDatabase('index.db');
+  Future<List<Map<String, dynamic>>> getSections(String dbName, String sectionType) async {
+    final db = await getDatabase(dbName);
     return await db.query(
-      table,
+      'sections',
       where: 'type = ?',
       whereArgs: [sectionType],
       orderBy: 'name',

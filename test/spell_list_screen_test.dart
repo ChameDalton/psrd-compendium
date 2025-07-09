@@ -5,7 +5,6 @@ import 'package:mockito/mockito.dart';
 import 'package:pathfinder_athenaeum/db/db_wrangler.dart';
 import 'package:pathfinder_athenaeum/services/database_helper.dart';
 import 'package:pathfinder_athenaeum/screens/spell_list_screen.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import 'spell_list_screen_test.mocks.dart';
