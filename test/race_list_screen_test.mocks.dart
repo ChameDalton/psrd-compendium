@@ -129,14 +129,14 @@ class MockDatabaseHelper extends _i1.Mock implements _i6.DatabaseHelper {
 
   @override
   _i5.Future<List<Map<String, dynamic>>> getSections(
-    String? table,
+    String? dbName,
     String? sectionType,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
           #getSections,
           [
-            table,
+            dbName,
             sectionType,
           ],
         ),

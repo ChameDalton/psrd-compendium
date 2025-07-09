@@ -24,13 +24,13 @@ void main() {
 
     when(mockDbWrangler.getBookDatabase(any)).thenReturn(mockDatabase);
     when(mockDbHelper.getSections(any, any)).thenAnswer(
-      (_) async => [
+      (_) => Future.value([
         {'_id': 1, 'name': 'Fireball', 'type': 'spell'},
         {'_id': 2, 'name': 'Magic Missile', 'type': 'spell'},
-      ],
+      ]),
     );
     when(mockDbHelper.getSpellDetails(any, any)).thenAnswer(
-      (_) async => {'description': 'A fiery explosion', 'full_text': '<p>Boom!</p>'},
+      (_) => Future.value({'description': 'A fiery explosion', 'full_text': '<p>Boom!</p>'}),
     );
   });
 

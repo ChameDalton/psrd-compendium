@@ -24,10 +24,10 @@ void main() {
 
     when(mockDbWrangler.getBookDatabase(any)).thenReturn(mockDatabase);
     when(mockDbHelper.getSections(any, any)).thenAnswer(
-      (_) async => [
+      (_) => Future.value([
         {'_id': 1, 'name': 'Elf', 'type': 'race'},
         {'_id': 2, 'name': 'Dwarf', 'type': 'race'},
-      ],
+      ]),
     );
   });
 

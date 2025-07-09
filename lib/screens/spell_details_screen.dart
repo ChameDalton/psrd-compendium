@@ -30,7 +30,7 @@ class SpellDetailsScreen extends StatelessWidget {
                 style: {
                   'p': Style(
                     fontSize: FontSize.medium,
-                    margin: Margins(bottom: Margin.vertical(8.0)),
+                    margin: Margins.all(8.0),
                   ),
                   'b': Style(fontWeight: FontWeight.bold),
                 },
@@ -41,7 +41,7 @@ class SpellDetailsScreen extends StatelessWidget {
                   style: {
                     'p': Style(
                       fontSize: FontSize.medium,
-                      margin: Margins(bottom: Margin.vertical(8.0)),
+                      margin: Margins.all(8.0),
                     ),
                     'b': Style(fontWeight: FontWeight.bold),
                   },
