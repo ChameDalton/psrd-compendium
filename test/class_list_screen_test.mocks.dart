@@ -3,8 +3,13 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'dart:async' as _i5;
+
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:pathfinder_athenaeum/services/database_helper.dart' as _i2;
+import 'package:pathfinder_athenaeum/db/db_wrangler.dart' as _i4;
+import 'package:pathfinder_athenaeum/db/user_database.dart' as _i3;
+import 'package:pathfinder_athenaeum/services/database_helper.dart' as _i6;
+import 'package:sqflite/sqflite.dart' as _i2;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -20,11 +25,156 @@ import 'package:pathfinder_athenaeum/services/database_helper.dart' as _i2;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
+class _FakeDatabase_0 extends _i1.SmartFake implements _i2.Database {
+  _FakeDatabase_0(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeUserDatabase_1 extends _i1.SmartFake implements _i3.UserDatabase {
+  _FakeUserDatabase_1(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+/// A class which mocks [DbWrangler].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockDbWrangler extends _i1.Mock implements _i4.DbWrangler {
+  MockDbWrangler() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i5.Future<void> initializeDatabases() => (super.noSuchMethod(
+        Invocation.method(
+          #initializeDatabases,
+          [],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i2.Database getBookDatabase(String? name) => (super.noSuchMethod(
+        Invocation.method(
+          #getBookDatabase,
+          [name],
+        ),
+        returnValue: _FakeDatabase_0(
+          this,
+          Invocation.method(
+            #getBookDatabase,
+            [name],
+          ),
+        ),
+      ) as _i2.Database);
+
+  @override
+  _i2.Database getIndexDatabase() => (super.noSuchMethod(
+        Invocation.method(
+          #getIndexDatabase,
+          [],
+        ),
+        returnValue: _FakeDatabase_0(
+          this,
+          Invocation.method(
+            #getIndexDatabase,
+            [],
+          ),
+        ),
+      ) as _i2.Database);
+
+  @override
+  _i3.UserDatabase getUserDatabase() => (super.noSuchMethod(
+        Invocation.method(
+          #getUserDatabase,
+          [],
+        ),
+        returnValue: _FakeUserDatabase_1(
+          this,
+          Invocation.method(
+            #getUserDatabase,
+            [],
+          ),
+        ),
+      ) as _i3.UserDatabase);
+
+  @override
+  _i5.Future<void> close() => (super.noSuchMethod(
+        Invocation.method(
+          #close,
+          [],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+}
+
 /// A class which mocks [DatabaseHelper].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockDatabaseHelper extends _i1.Mock implements _i2.DatabaseHelper {
+class MockDatabaseHelper extends _i1.Mock implements _i6.DatabaseHelper {
   MockDatabaseHelper() {
     _i1.throwOnMissingStub(this);
   }
+
+  @override
+  _i5.Future<List<Map<String, dynamic>>> getSections(
+    String? table,
+    String? sectionType,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getSections,
+          [
+            table,
+            sectionType,
+          ],
+        ),
+        returnValue: _i5.Future<List<Map<String, dynamic>>>.value(
+            <Map<String, dynamic>>[]),
+      ) as _i5.Future<List<Map<String, dynamic>>>);
+
+  @override
+  _i5.Future<Map<String, dynamic>> getSectionWithSubsections(
+    String? dbName,
+    String? sectionId,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getSectionWithSubsections,
+          [
+            dbName,
+            sectionId,
+          ],
+        ),
+        returnValue:
+            _i5.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i5.Future<Map<String, dynamic>>);
+
+  @override
+  _i5.Future<Map<String, dynamic>> getSpellDetails(
+    String? dbName,
+    String? sectionId,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getSpellDetails,
+          [
+            dbName,
+            sectionId,
+          ],
+        ),
+        returnValue:
+            _i5.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i5.Future<Map<String, dynamic>>);
 }

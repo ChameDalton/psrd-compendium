@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:pathfinder_athenaeum/services/database_helper.dart';
-import 'package:pathfinder_athenaeum/screens/class_details_screen.dart';
+import '../db/db_wrangler.dart';
 
 class ClassListScreen extends StatelessWidget {
-  final DatabaseHelper dbHelper;
+  final DbWrangler dbHelper;
 
   const ClassListScreen({super.key, required this.dbHelper});
 
@@ -12,14 +11,10 @@ class ClassListScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Classes')),
       body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: dbHelper.getSections(context, 'class'),
+        future: DatabaseHelper().getSections('index.db', 'class'),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No classes found'));
           }
           final classes = snapshot.data!;
           return ListView.builder(
@@ -27,17 +22,12 @@ class ClassListScreen extends StatelessWidget {
             itemBuilder: (context, index) {
               final classData = classes[index];
               return ListTile(
-                title: Text(classData['name'] ?? 'Unknown'),
-                subtitle: Text(classData['source'] ?? ''),
+                title: Text(classData['name']),
                 onTap: () {
-                  Navigator.push(
+                  Navigator.pushNamed(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => ClassDetailsScreen(
-                        classId: classData['section_id'].toString(),
-                        dbHelper: dbHelper,
-                      ),
-                    ),
+                    '/class_details',
+                    arguments: {'id': classData['_id'].toString(), 'dbName': 'book-cr.db'},
                   );
                 },
               );

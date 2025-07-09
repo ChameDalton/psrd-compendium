@@ -8,6 +8,7 @@ import 'dart:async' as _i5;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:pathfinder_athenaeum/db/db_wrangler.dart' as _i4;
 import 'package:pathfinder_athenaeum/db/user_database.dart' as _i3;
+import 'package:pathfinder_athenaeum/services/database_helper.dart' as _i6;
 import 'package:sqflite/sqflite.dart' as _i2;
 
 // ignore_for_file: type=lint
@@ -116,4 +117,64 @@ class MockDbWrangler extends _i1.Mock implements _i4.DbWrangler {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+}
+
+/// A class which mocks [DatabaseHelper].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockDatabaseHelper extends _i1.Mock implements _i6.DatabaseHelper {
+  MockDatabaseHelper() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i5.Future<List<Map<String, dynamic>>> getSections(
+    String? table,
+    String? sectionType,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getSections,
+          [
+            table,
+            sectionType,
+          ],
+        ),
+        returnValue: _i5.Future<List<Map<String, dynamic>>>.value(
+            <Map<String, dynamic>>[]),
+      ) as _i5.Future<List<Map<String, dynamic>>>);
+
+  @override
+  _i5.Future<Map<String, dynamic>> getSectionWithSubsections(
+    String? dbName,
+    String? sectionId,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getSectionWithSubsections,
+          [
+            dbName,
+            sectionId,
+          ],
+        ),
+        returnValue:
+            _i5.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i5.Future<Map<String, dynamic>>);
+
+  @override
+  _i5.Future<Map<String, dynamic>> getSpellDetails(
+    String? dbName,
+    String? sectionId,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getSpellDetails,
+          [
+            dbName,
+            sectionId,
+          ],
+        ),
+        returnValue:
+            _i5.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+      ) as _i5.Future<Map<String, dynamic>>);
 }

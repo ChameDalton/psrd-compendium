@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseHelper {
@@ -25,7 +24,8 @@ class DatabaseHelper {
         final bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
         await File(dbPath).writeAsBytes(bytes, flush: true);
       } catch (e) {
-        print('Error copying database: $e');
+        // Avoid print in production; consider logging instead
+        debugPrint('Error copying database: $e');
       }
     }
 
@@ -37,5 +37,49 @@ class DatabaseHelper {
       await _database!.close();
       _database = null;
     }
+  }
+
+  Future<List<Map<String, dynamic>>> getSections(String table, String sectionType) async {
+    final db = await getDatabase('index.db');
+    return await db.query(
+      table,
+      where: 'type = ?',
+      whereArgs: [sectionType],
+      orderBy: 'name',
+    );
+  }
+
+  Future<Map<String, dynamic>> getSectionWithSubsections(String dbName, String sectionId) async {
+    final db = await getDatabase(dbName);
+    final section = await db.query(
+      'sections',
+      where: '_id = ?',
+      whereArgs: [sectionId],
+      limit: 1,
+    );
+    if (section.isEmpty) return {};
+
+    final subsections = await db.query(
+      'sections',
+      where: 'parent_id = ?',
+      whereArgs: [sectionId],
+      orderBy: 'name',
+    );
+
+    return {
+      'section': section.first,
+      'subsections': subsections,
+    };
+  }
+
+  Future<Map<String, dynamic>> getSpellDetails(String dbName, String sectionId) async {
+    final db = await getDatabase(dbName);
+    final spell = await db.query(
+      'spells',
+      where: '_id = ?',
+      whereArgs: [sectionId],
+      limit: 1,
+    );
+    return spell.isNotEmpty ? spell.first : {};
   }
 }

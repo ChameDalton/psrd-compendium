@@ -1,48 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:pathfinder_athenaeum/services/database_helper.dart';
-import 'package:pathfinder_athenaeum/screens/spell_details_screen.dart';
+import '../db/db_wrangler.dart';
 
 class SpellListScreen extends StatelessWidget {
-  final DatabaseHelper dbHelper;
+  final DbWrangler dbHelper;
 
   const SpellListScreen({super.key, required this.dbHelper});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Spells'),
-      ),
+      appBar: AppBar(title: const Text('Spells')),
       body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: dbHelper.getSections(context, 'spell'),
+        future: DatabaseHelper().getSections('index.db', 'spell'),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          }
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No spells found'));
-          }
-
           final spells = snapshot.data!;
           return ListView.builder(
             itemCount: spells.length,
             itemBuilder: (context, index) {
               final spell = spells[index];
               return ListTile(
-                title: Text(spell['name'] ?? 'Unknown Spell'),
+                title: Text(spell['name']),
                 onTap: () {
-                  Navigator.push(
+                  Navigator.pushNamed(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => SpellDetailsScreen(
-                        dbHelper: dbHelper,
-                        sectionId: spell['section_id'].toString(),
-                        spellName: spell['name'].toString(),
-                      ),
-                    ),
+                    '/spell_details',
+                    arguments: {'id': spell['_id'].toString(), 'dbName': 'book-cr.db'},
                   );
                 },
               );

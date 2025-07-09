@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:pathfinder_athenaeum/services/database_helper.dart';
-import 'package:pathfinder_athenaeum/screens/feat_details_screen.dart';
+import '../db/db_wrangler.dart';
 
 class FeatListScreen extends StatelessWidget {
-  final DatabaseHelper dbHelper;
+  final DbWrangler dbHelper;
 
   const FeatListScreen({super.key, required this.dbHelper});
 
@@ -12,14 +11,10 @@ class FeatListScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Feats')),
       body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: dbHelper.getSections(context, 'feat'),
+        future: DatabaseHelper().getSections('index.db', 'feat'),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No feats found'));
           }
           final feats = snapshot.data!;
           return ListView.builder(
@@ -27,17 +22,12 @@ class FeatListScreen extends StatelessWidget {
             itemBuilder: (context, index) {
               final feat = feats[index];
               return ListTile(
-                title: Text(feat['name'] ?? 'Unknown'),
-                subtitle: Text(feat['source'] ?? ''),
+                title: Text(feat['name']),
                 onTap: () {
-                  Navigator.push(
+                  Navigator.pushNamed(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => FeatDetailsScreen(
-                        featId: feat['section_id'].toString(),
-                        dbHelper: dbHelper,
-                      ),
-                    ),
+                    '/feat_details',
+                    arguments: {'id': feat['_id'].toString(), 'dbName': 'book-cr.db'},
                   );
                 },
               );

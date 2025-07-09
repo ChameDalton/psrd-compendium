@@ -4,17 +4,18 @@ import '../db/user_database.dart';
 class BookmarkScreen extends StatefulWidget {
   final UserDatabase userDb;
 
-  const BookmarkScreen({Key? key, required this.userDb}) : super(key: key);
+  const BookmarkScreen({super.key, required this.userDb});
 
   @override
-  _BookmarkScreenState createState() => _BookmarkScreenState();
+  State<BookmarkScreen> createState() => _BookmarkScreenState();
 }
 
 class _BookmarkScreenState extends State<BookmarkScreen> {
   @override
   Widget build(BuildContext context) {
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
     return Scaffold(
-      appBar: const AppBar(title: Text('Bookmarks')),
+      appBar: AppBar(title: const Text('Bookmarks')),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: widget.userDb.getBookmarks(),
         builder: (context, snapshot) {
@@ -27,13 +28,13 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
             itemBuilder: (context, index) {
               final bookmark = bookmarks[index];
               return ListTile(
-                title: Text(bookmark['name']),
+                title: Text-ioText(bookmark['name']),
                 subtitle: Text(bookmark['url']),
                 trailing: IconButton(
                   icon: const Icon(Icons.delete),
                   onPressed: () async {
                     await widget.userDb.deleteBookmark(bookmark['_id']);
-                    ScaffoldMessenger.of(context).showSnackBar(
+                    scaffoldMessenger.showSnackBar(
                       const SnackBar(content: Text('Bookmark removed')),
                     );
                     setState(() {});
