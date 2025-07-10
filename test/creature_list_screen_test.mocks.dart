@@ -54,31 +54,6 @@ class MockDbWrangler extends _i1.Mock implements _i4.DbWrangler {
   }
 
   @override
-  _i5.Future<void> initializeDatabases() => (super.noSuchMethod(
-        Invocation.method(
-          #initializeDatabases,
-          [],
-        ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
-
-  @override
-  _i2.Database getBookDatabase(String? name) => (super.noSuchMethod(
-        Invocation.method(
-          #getBookDatabase,
-          [name],
-        ),
-        returnValue: _FakeDatabase_0(
-          this,
-          Invocation.method(
-            #getBookDatabase,
-            [name],
-          ),
-        ),
-      ) as _i2.Database);
-
-  @override
   _i2.Database getIndexDatabase() => (super.noSuchMethod(
         Invocation.method(
           #getIndexDatabase,
@@ -89,6 +64,21 @@ class MockDbWrangler extends _i1.Mock implements _i4.DbWrangler {
           Invocation.method(
             #getIndexDatabase,
             [],
+          ),
+        ),
+      ) as _i2.Database);
+
+  @override
+  _i2.Database getBookDatabase(String? dbName) => (super.noSuchMethod(
+        Invocation.method(
+          #getBookDatabase,
+          [dbName],
+        ),
+        returnValue: _FakeDatabase_0(
+          this,
+          Invocation.method(
+            #getBookDatabase,
+            [dbName],
           ),
         ),
       ) as _i2.Database);
@@ -109,9 +99,9 @@ class MockDbWrangler extends _i1.Mock implements _i4.DbWrangler {
       ) as _i3.UserDatabase);
 
   @override
-  _i5.Future<void> close() => (super.noSuchMethod(
+  _i5.Future<void> initializeDatabases() => (super.noSuchMethod(
         Invocation.method(
-          #close,
+          #initializeDatabases,
           [],
         ),
         returnValue: _i5.Future<void>.value(),
