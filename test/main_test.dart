@@ -6,6 +6,8 @@ import 'package:pathfinder_athenaeum/db/db_wrangler.dart';
 import 'package:pathfinder_athenaeum/db/user_database.dart';
 import 'package:pathfinder_athenaeum/services/database_helper.dart';
 import 'package:pathfinder_athenaeum/main.dart';
+import 'package:pathfinder_athenaeum/screens/class_list_screen.dart';
+import 'package:pathfinder_athenaeum/screens/spell_list_screen.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import 'main_test.mocks.dart';

@@ -20,12 +20,12 @@ class DatabaseHelper {
 
     if (!exists) {
       try {
-        debugPrint('Copying database: $dbName');
+        debugPrint('Copying database: $dbName to $dbPath');
         await Directory(dirname(dbPath)).create(recursive: true);
         final data = await rootBundle.load('assets/databases/$dbName');
         if (data.lengthInBytes == 0) {
-          debugPrint('Error: $dbName is empty');
-          throw Exception('Database asset $dbName is empty');
+          debugPrint('Error: $dbName is empty or not found');
+          throw Exception('Database asset $dbName is empty or not found');
         }
         final bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
         await File(dbPath).writeAsBytes(bytes, flush: true);
@@ -51,6 +51,7 @@ class DatabaseHelper {
     if (_database != null) {
       await _database!.close();
       _database = null;
+      debugPrint('Database closed');
     }
   }
 
@@ -63,7 +64,7 @@ class DatabaseHelper {
         whereArgs: [sectionType],
         orderBy: 'Name',
       );
-      debugPrint('Query central_index for Type $sectionType returned ${result.length} rows');
+      debugPrint('Query central_index for Type $sectionType in $dbName returned ${result.length} rows');
       return result;
     } catch (e) {
       debugPrint('Error querying central_index for $sectionType in $dbName: $e');
@@ -128,6 +129,7 @@ class DatabaseHelper {
         whereArgs: [sectionId],
         limit: 1,
       );
+      debugPrint('Query spells for id $sectionId in $dbName returned ${spell.length} rows');
       return spell.isNotEmpty ? spell.first : {};
     } catch (e) {
       debugPrint('Error querying spell $sectionId in $dbName: $e');

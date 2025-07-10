@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 import 'user_database.dart';
 import '../services/database_helper.dart';
@@ -22,9 +23,6 @@ class DbWrangler {
   Future<void> initializeDatabases() async {
     final databases = [
       'index.db',
-      'book-cr.db',
-      'book-arg.db',
-      'book-b1.db',
       'book-acg.db',
       'book-apg.db',
       'book-arg.db',
@@ -48,8 +46,14 @@ class DbWrangler {
     ];
 
     for (final dbName in databases) {
-      _databases[dbName] = await DatabaseHelper.getDatabase(dbName);
+      try {
+        debugPrint('Initializing database: $dbName');
+        _databases[dbName] = await DatabaseHelper.getDatabase(dbName);
+        debugPrint('Successfully initialized $dbName');
+      } catch (e) {
+        debugPrint('Error initializing $dbName: $e');
+        rethrow;
+      }
     }
-    _databases['user.db'] = await DatabaseHelper.getDatabase('user.db');
   }
 }

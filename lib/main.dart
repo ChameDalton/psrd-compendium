@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'db/db_wrangler.dart';
-import 'db/user_database.dart';
-import 'services/database_helper.dart';
 import 'screens/bookmark_screen.dart';
 import 'screens/class_list_screen.dart';
 import 'screens/class_details_screen.dart';
@@ -14,6 +12,7 @@ import 'screens/race_list_screen.dart';
 import 'screens/race_details_screen.dart';
 import 'screens/spell_list_screen.dart';
 import 'screens/spell_details_screen.dart';
+import 'services/database_helper.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
