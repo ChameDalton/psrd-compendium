@@ -14,21 +14,30 @@ class FeatListScreen extends StatelessWidget {
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: DatabaseHelper().getSections('index.db', 'feat'),
         builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return const Center(child: Text('Error loading feats. Please check database.'));
+          }
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
           final feats = snapshot.data!;
+          if (feats.isEmpty) {
+            return const Center(child: Text('No feats found.'));
+          }
           return ListView.builder(
             itemCount: feats.length,
             itemBuilder: (context, index) {
               final feat = feats[index];
               return ListTile(
-                title: Text(feat['name']),
+                title: Text(feat['Name']),
                 onTap: () {
                   Navigator.pushNamed(
                     context,
                     '/feat_details',
-                    arguments: {'id': feat['_id'].toString(), 'dbName': 'book-cr.db'},
+                    arguments: {
+                      'id': feat['Section_id'].toString(),
+                      'dbName': feat['Database'],
+                    },
                   );
                 },
               );

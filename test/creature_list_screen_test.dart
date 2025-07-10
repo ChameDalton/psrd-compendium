@@ -4,10 +4,10 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:pathfinder_athenaeum/db/db_wrangler.dart';
 import 'package:pathfinder_athenaeum/services/database_helper.dart';
-import 'package:pathfinder_athenaeum/screens/race_list_screen.dart';
+import 'package:pathfinder_athenaeum/screens/creature_list_screen.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-import 'race_list_screen_test.mocks.dart';
+import 'creature_list_screen_test.mocks.dart';
 
 @GenerateMocks([DbWrangler, DatabaseHelper])
 void main() {
@@ -32,37 +32,37 @@ void main() {
     ''');
     await mockDatabase.insert('central_index', {
       'Section_id': 1,
-      'Name': 'Elf',
-      'Type': 'race',
-      'Database': 'book-arg.db',
+      'Name': 'Goblin',
+      'Type': 'creature',
+      'Database': 'book-b1.db',
     });
     await mockDatabase.insert('central_index', {
       'Section_id': 2,
-      'Name': 'Dwarf',
-      'Type': 'race',
-      'Database': 'book-arg.db',
+      'Name': 'Dragon',
+      'Type': 'creature',
+      'Database': 'book-b1.db',
     });
 
     when(mockDbWrangler.getIndexDatabase()).thenReturn(mockDatabase);
     when(mockDbWrangler.getBookDatabase(any)).thenReturn(mockDatabase);
-    when(mockDbHelper.getSections('index.db', 'race')).thenAnswer(
+    when(mockDbHelper.getSections('index.db', 'creature')).thenAnswer(
       (_) => Future.value([
-        {'Section_id': 1, 'Name': 'Elf', 'Type': 'race', 'Database': 'book-arg.db'},
-        {'Section_id': 2, 'Name': 'Dwarf', 'Type': 'race', 'Database': 'book-arg.db'},
+        {'Section_id': 1, 'Name': 'Goblin', 'Type': 'creature', 'Database': 'book-b1.db'},
+        {'Section_id': 2, 'Name': 'Dragon', 'Type': 'creature', 'Database': 'book-b1.db'},
       ]),
     );
   }
 
-  testWidgets('RaceListScreen displays races', (WidgetTester tester) async {
+  testWidgets('CreatureListScreen displays creatures', (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
-        home: RaceListScreen(dbHelper: mockDbWrangler),
+        home: CreatureListScreen(dbHelper: mockDbWrangler),
       ),
     );
 
     await tester.pumpAndSettle();
 
-    expect(find.text('Elf'), findsOneWidget);
-    expect(find.text('Dwarf'), findsOneWidget);
+    expect(find.text('Goblin'), findsOneWidget);
+    expect(find.text('Dragon'), findsOneWidget);
   });
 }

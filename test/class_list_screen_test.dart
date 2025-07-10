@@ -15,21 +15,43 @@ void main() {
   late MockDatabaseHelper mockDbHelper;
   late Database mockDatabase;
 
-  setUp(() async {
+  setUp() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
     mockDbWrangler = MockDbWrangler();
     mockDbHelper = MockDatabaseHelper();
     mockDatabase = await databaseFactory.openDatabase(inMemoryDatabasePath);
 
+    await mockDatabase.execute('''
+      CREATE TABLE central_index (
+        Section_id INTEGER PRIMARY KEY,
+        Name TEXT,
+        Type TEXT,
+        Database TEXT
+      )
+    ''');
+    await mockDatabase.insert('central_index', {
+      'Section_id': 1,
+      'Name': 'Fighter',
+      'Type': 'class',
+      'Database': 'book-cr.db',
+    });
+    await mockDatabase.insert('central_index', {
+      'Section_id': 2,
+      'Name': 'Wizard',
+      'Type': 'class',
+      'Database': 'book-cr.db',
+    });
+
+    when(mockDbWrangler.getIndexDatabase()).thenReturn(mockDatabase);
     when(mockDbWrangler.getBookDatabase(any)).thenReturn(mockDatabase);
-    when(mockDbHelper.getSections(any, any)).thenAnswer(
+    when(mockDbHelper.getSections('index.db', 'class')).thenAnswer(
       (_) => Future.value([
-        {'_id': 1, 'name': 'Fighter', 'type': 'class'},
-        {'_id': 2, 'name': 'Wizard', 'type': 'class'},
+        {'Section_id': 1, 'Name': 'Fighter', 'Type': 'class', 'Database': 'book-cr.db'},
+        {'Section_id': 2, 'Name': 'Wizard', 'Type': 'class', 'Database': 'book-cr.db'},
       ]),
     );
-  });
+  }
 
   testWidgets('ClassListScreen displays classes', (WidgetTester tester) async {
     await tester.pumpWidget(

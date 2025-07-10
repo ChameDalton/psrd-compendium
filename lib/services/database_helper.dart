@@ -20,16 +20,31 @@ class DatabaseHelper {
 
     if (!exists) {
       try {
+        debugPrint('Copying database: $dbName');
         await Directory(dirname(dbPath)).create(recursive: true);
         final data = await rootBundle.load('assets/databases/$dbName');
+        if (data.lengthInBytes == 0) {
+          debugPrint('Error: $dbName is empty');
+          throw Exception('Database asset $dbName is empty');
+        }
         final bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
         await File(dbPath).writeAsBytes(bytes, flush: true);
+        debugPrint('Successfully copied $dbName to $dbPath');
       } catch (e) {
-        debugPrint('Error copying database: $e');
+        debugPrint('Error copying database $dbName: $e');
+        rethrow;
       }
+    } else {
+      debugPrint('Database $dbName already exists at $dbPath');
     }
 
-    _database = await openDatabase(dbPath);
+    try {
+      _database = await openDatabase(dbPath);
+      debugPrint('Database $dbName opened successfully');
+    } catch (e) {
+      debugPrint('Error opening database $dbName: $e');
+      rethrow;
+    }
   }
 
   static Future<void> closeDatabase() async {
@@ -40,46 +55,83 @@ class DatabaseHelper {
   }
 
   Future<List<Map<String, dynamic>>> getSections(String dbName, String sectionType) async {
-    final db = await getDatabase(dbName);
-    return await db.query(
-      'sections',
-      where: 'type = ?',
-      whereArgs: [sectionType],
-      orderBy: 'name',
-    );
+    try {
+      final db = await getDatabase(dbName);
+      final result = await db.query(
+        'central_index',
+        where: 'Type = ?',
+        whereArgs: [sectionType],
+        orderBy: 'Name',
+      );
+      debugPrint('Query central_index for Type $sectionType returned ${result.length} rows');
+      return result;
+    } catch (e) {
+      debugPrint('Error querying central_index for $sectionType in $dbName: $e');
+      return [];
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getMenuItems({int? parentMenuId}) async {
+    try {
+      final db = await getDatabase('index.db');
+      final result = await db.query(
+        'Menu',
+        where: parentMenuId == null ? 'Parent_menu_id IS NULL' : 'Parent_menu_id = ?',
+        whereArgs: parentMenuId != null ? [parentMenuId] : null,
+        orderBy: 'priority, Name',
+      );
+      debugPrint('Query Menu for Parent_menu_id ${parentMenuId ?? 'NULL'} returned ${result.length} rows');
+      return result;
+    } catch (e) {
+      debugPrint('Error querying Menu for Parent_menu_id ${parentMenuId ?? 'NULL'}: $e');
+      return [];
+    }
   }
 
   Future<Map<String, dynamic>> getSectionWithSubsections(String dbName, String sectionId) async {
-    final db = await getDatabase(dbName);
-    final section = await db.query(
-      'sections',
-      where: '_id = ?',
-      whereArgs: [sectionId],
-      limit: 1,
-    );
-    if (section.isEmpty) return {};
+    try {
+      final db = await getDatabase(dbName);
+      final section = await db.query(
+        'central_index',
+        where: 'Section_id = ?',
+        whereArgs: [sectionId],
+        limit: 1,
+      );
+      if (section.isEmpty) {
+        debugPrint('No section found for id $sectionId in $dbName');
+        return {};
+      }
 
-    final subsections = await db.query(
-      'sections',
-      where: 'parent_id = ?',
-      whereArgs: [sectionId],
-      orderBy: 'name',
-    );
+      final subsections = await db.query(
+        'central_index',
+        where: 'Parent_id = ?',
+        whereArgs: [sectionId],
+        orderBy: 'Name',
+      );
 
-    return {
-      'section': section.first,
-      'subsections': subsections,
-    };
+      return {
+        'section': section.first,
+        'subsections': subsections,
+      };
+    } catch (e) {
+      debugPrint('Error querying section $sectionId in $dbName: $e');
+      return {};
+    }
   }
 
   Future<Map<String, dynamic>> getSpellDetails(String dbName, String sectionId) async {
-    final db = await getDatabase(dbName);
-    final spell = await db.query(
-      'spells',
-      where: '_id = ?',
-      whereArgs: [sectionId],
-      limit: 1,
-    );
-    return spell.isNotEmpty ? spell.first : {};
+    try {
+      final db = await getDatabase(dbName);
+      final spell = await db.query(
+        'spells',
+        where: '_id = ?',
+        whereArgs: [sectionId],
+        limit: 1,
+      );
+      return spell.isNotEmpty ? spell.first : {};
+    } catch (e) {
+      debugPrint('Error querying spell $sectionId in $dbName: $e');
+      return {};
+    }
   }
 }

@@ -145,6 +145,18 @@ class MockDatabaseHelper extends _i1.Mock implements _i6.DatabaseHelper {
       ) as _i5.Future<List<Map<String, dynamic>>>);
 
   @override
+  _i5.Future<List<Map<String, dynamic>>> getMenuItems({int? parentMenuId}) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getMenuItems,
+          [],
+          {#parentMenuId: parentMenuId},
+        ),
+        returnValue: _i5.Future<List<Map<String, dynamic>>>.value(
+            <Map<String, dynamic>>[]),
+      ) as _i5.Future<List<Map<String, dynamic>>>);
+
+  @override
   _i5.Future<Map<String, dynamic>> getSectionWithSubsections(
     String? dbName,
     String? sectionId,

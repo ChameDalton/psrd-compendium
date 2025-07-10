@@ -14,21 +14,30 @@ class CreatureListScreen extends StatelessWidget {
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: DatabaseHelper().getSections('index.db', 'creature'),
         builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return const Center(child: Text('Error loading creatures. Please check database.'));
+          }
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
           final creatures = snapshot.data!;
+          if (creatures.isEmpty) {
+            return const Center(child: Text('No creatures found.'));
+          }
           return ListView.builder(
             itemCount: creatures.length,
             itemBuilder: (context, index) {
               final creature = creatures[index];
               return ListTile(
-                title: Text(creature['name']),
+                title: Text(creature['Name']),
                 onTap: () {
                   Navigator.pushNamed(
                     context,
                     '/creature_details',
-                    arguments: {'id': creature['_id'].toString(), 'dbName': 'book-b1.db'},
+                    arguments: {
+                      'id': creature['Section_id'].toString(),
+                      'dbName': creature['Database'],
+                    },
                   );
                 },
               );

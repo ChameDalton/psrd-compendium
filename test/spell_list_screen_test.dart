@@ -15,24 +15,66 @@ void main() {
   late MockDatabaseHelper mockDbHelper;
   late Database mockDatabase;
 
-  setUp(() async {
+  setUp() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
     mockDbWrangler = MockDbWrangler();
     mockDbHelper = MockDatabaseHelper();
     mockDatabase = await databaseFactory.openDatabase(inMemoryDatabasePath);
 
+    await mockDatabase.execute('''
+      CREATE TABLE central_index (
+        Section_id INTEGER PRIMARY KEY,
+        Name TEXT,
+        Type TEXT,
+        Database TEXT
+      )
+    ''');
+    await mockDatabase.execute('''
+      CREATE TABLE spells (
+        _id INTEGER PRIMARY KEY,
+        name TEXT,
+        description TEXT,
+        full_text TEXT
+      )
+    ''');
+    await mockDatabase.insert('central_index', {
+      'Section_id': 1,
+      'Name': 'Fireball',
+      'Type': 'spell',
+      'Database': 'book-cr.db',
+    });
+    await mockDatabase.insert('central_index', {
+      'Section_id': 2,
+      'Name': 'Magic Missile',
+      'Type': 'spell',
+      'Database': 'book-cr.db',
+    });
+    await mockDatabase.insert('spells', {
+      '_id': 1,
+      'name': 'Fireball',
+      'description': 'A fiery explosion',
+      'full_text': '<p>Boom!</p>',
+    });
+    await mockDatabase.insert('spells', {
+      '_id': 2,
+      'name': 'Magic Missile',
+      'description': 'Magic darts',
+      'full_text': '<p>Pew pew!</p>',
+    });
+
+    when(mockDbWrangler.getIndexDatabase()).thenReturn(mockDatabase);
     when(mockDbWrangler.getBookDatabase(any)).thenReturn(mockDatabase);
-    when(mockDbHelper.getSections(any, any)).thenAnswer(
+    when(mockDbHelper.getSections('index.db', 'spell')).thenAnswer(
       (_) => Future.value([
-        {'_id': 1, 'name': 'Fireball', 'type': 'spell'},
-        {'_id': 2, 'name': 'Magic Missile', 'type': 'spell'},
+        {'Section_id': 1, 'Name': 'Fireball', 'Type': 'spell', 'Database': 'book-cr.db'},
+        {'Section_id': 2, 'Name': 'Magic Missile', 'Type': 'spell', 'Database': 'book-cr.db'},
       ]),
     );
     when(mockDbHelper.getSpellDetails(any, any)).thenAnswer(
       (_) => Future.value({'description': 'A fiery explosion', 'full_text': '<p>Boom!</p>'}),
     );
-  });
+  }
 
   testWidgets('SpellListScreen displays spells', (WidgetTester tester) async {
     await tester.pumpWidget(

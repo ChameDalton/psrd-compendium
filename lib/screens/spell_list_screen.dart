@@ -14,21 +14,30 @@ class SpellListScreen extends StatelessWidget {
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: DatabaseHelper().getSections('index.db', 'spell'),
         builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return const Center(child: Text('Error loading spells. Please check database.'));
+          }
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
           final spells = snapshot.data!;
+          if (spells.isEmpty) {
+            return const Center(child: Text('No spells found.'));
+          }
           return ListView.builder(
             itemCount: spells.length,
             itemBuilder: (context, index) {
               final spell = spells[index];
               return ListTile(
-                title: Text(spell['name']),
+                title: Text(spell['Name']),
                 onTap: () {
                   Navigator.pushNamed(
                     context,
                     '/spell_details',
-                    arguments: {'id': spell['_id'].toString(), 'dbName': 'book-cr.db'},
+                    arguments: {
+                      'id': spell['Section_id'].toString(),
+                      'dbName': spell['Database'],
+                    },
                   );
                 },
               );
