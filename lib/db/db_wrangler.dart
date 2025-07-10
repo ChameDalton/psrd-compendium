@@ -56,4 +56,13 @@ class DbWrangler {
       }
     }
   }
+
+  Future<void> closeDatabases() async {
+    for (final db in _databases.values) {
+      await db.close();
+    }
+    _databases.clear();
+    _userDatabase = null;
+    debugPrint('All databases closed');
+  }
 }

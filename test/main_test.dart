@@ -66,6 +66,7 @@ void main() {
     when(mockDbWrangler.getBookDatabase(any)).thenReturn(mockDatabase);
     when(mockDbWrangler.getUserDatabase()).thenReturn(UserDatabase(mockDatabase));
     when(mockDbWrangler.initializeDatabases()).thenAnswer((_) => Future.value());
+    when(mockDbWrangler.closeDatabases()).thenAnswer((_) => Future.value());
     when(mockDbHelper.getMenuItems(parentMenuId: null)).thenAnswer(
       (_) => Future.value([
         {
@@ -114,5 +115,7 @@ void main() {
 
     expect(find.text('Classes'), findsOneWidget);
     expect(find.text('Spells'), findsOneWidget);
+
+    await mockDatabase.close();
   });
 }

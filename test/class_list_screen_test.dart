@@ -43,7 +43,6 @@ void main() {
 
     when(mockDbWrangler.getIndexDatabase()).thenReturn(mockDatabase);
     when(mockDbWrangler.getBookDatabase(any)).thenReturn(mockDatabase);
-    when(mockDbHelper.getDatabase(any)).thenAnswer((_) async => mockDatabase);
     when(mockDbHelper.getSections('index.db', 'class')).thenAnswer(
       (_) => Future.value([
         {'Section_id': 1, 'Name': 'Fighter', 'Type': 'class', 'Database': 'book-cr.db'},
@@ -61,5 +60,7 @@ void main() {
 
     expect(find.text('Fighter'), findsOneWidget);
     expect(find.text('Wizard'), findsOneWidget);
+
+    await mockDatabase.close();
   });
 }

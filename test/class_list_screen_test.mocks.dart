@@ -107,6 +107,16 @@ class MockDbWrangler extends _i1.Mock implements _i4.DbWrangler {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> closeDatabases() => (super.noSuchMethod(
+        Invocation.method(
+          #closeDatabases,
+          [],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 }
 
 /// A class which mocks [DatabaseHelper].
