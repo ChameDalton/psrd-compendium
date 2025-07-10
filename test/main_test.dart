@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:pathfinder_athenaeum/db/db_wrangler.dart';
+import 'package:pathfinder_athenaeum/db/user_database.dart';
 import 'package:pathfinder_athenaeum/services/database_helper.dart';
 import 'package:pathfinder_athenaeum/main.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -11,16 +12,14 @@ import 'main_test.mocks.dart';
 
 @GenerateMocks([DbWrangler, DatabaseHelper])
 void main() {
-  late MockDbWrangler mockDbWrangler;
-  late MockDatabaseHelper mockDbHelper;
-  late Database mockDatabase;
+  TestWidgetsFlutterBinding.ensureInitialized();
+  sqfliteFfiInit();
+  databaseFactory = databaseFactoryFfi;
 
-  setUp() async {
-    sqfliteFfiInit();
-    databaseFactory = databaseFactoryFfi;
-    mockDbWrangler = MockDbWrangler();
-    mockDbHelper = MockDatabaseHelper();
-    mockDatabase = await databaseFactory.openDatabase(inMemoryDatabasePath);
+  testWidgets('HomeScreen displays dynamic menu', (WidgetTester tester) async {
+    final mockDbWrangler = MockDbWrangler();
+    final mockDbHelper = MockDatabaseHelper();
+    final mockDatabase = await databaseFactory.openDatabase(inMemoryDatabasePath);
 
     await mockDatabase.execute('''
       CREATE TABLE Menu (
@@ -29,6 +28,14 @@ void main() {
         Name TEXT,
         Type TEXT,
         Url TEXT
+      )
+    ''');
+    await mockDatabase.execute('''
+      CREATE TABLE central_index (
+        Section_id INTEGER PRIMARY KEY,
+        Name TEXT,
+        Type TEXT,
+        Database TEXT
       )
     ''');
     await mockDatabase.insert('Menu', {
@@ -55,7 +62,7 @@ void main() {
 
     when(mockDbWrangler.getIndexDatabase()).thenReturn(mockDatabase);
     when(mockDbWrangler.getBookDatabase(any)).thenReturn(mockDatabase);
-    when(mockDbWrangler.getUserDatabase()).thenReturn(mockDatabase);
+    when(mockDbWrangler.getUserDatabase()).thenReturn(UserDatabase(mockDatabase));
     when(mockDbWrangler.initializeDatabases()).thenAnswer((_) => Future.value());
     when(mockDbHelper.getMenuItems(parentMenuId: null)).thenAnswer(
       (_) => Future.value([
@@ -86,12 +93,14 @@ void main() {
         },
       ]),
     );
-  }
 
-  testWidgets('HomeScreen displays dynamic menu', (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: HomeScreen(dbWrangler: mockDbWrangler),
+        routes: {
+          '/classes': (context) => ClassListScreen(dbHelper: mockDbWrangler),
+          '/spells': (context) => SpellListScreen(dbHelper: mockDbWrangler),
+        },
       ),
     );
 

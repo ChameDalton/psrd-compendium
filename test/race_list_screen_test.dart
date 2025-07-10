@@ -11,16 +11,14 @@ import 'race_list_screen_test.mocks.dart';
 
 @GenerateMocks([DbWrangler, DatabaseHelper])
 void main() {
-  late MockDbWrangler mockDbWrangler;
-  late MockDatabaseHelper mockDbHelper;
-  late Database mockDatabase;
+  TestWidgetsFlutterBinding.ensureInitialized();
+  sqfliteFfiInit();
+  databaseFactory = databaseFactoryFfi;
 
-  setUp() async {
-    sqfliteFfiInit();
-    databaseFactory = databaseFactoryFfi;
-    mockDbWrangler = MockDbWrangler();
-    mockDbHelper = MockDatabaseHelper();
-    mockDatabase = await databaseFactory.openDatabase(inMemoryDatabasePath);
+  testWidgets('RaceListScreen displays races', (WidgetTester tester) async {
+    final mockDbWrangler = MockDbWrangler();
+    final mockDbHelper = MockDatabaseHelper();
+    final mockDatabase = await databaseFactory.openDatabase(inMemoryDatabasePath);
 
     await mockDatabase.execute('''
       CREATE TABLE central_index (
@@ -51,9 +49,7 @@ void main() {
         {'Section_id': 2, 'Name': 'Dwarf', 'Type': 'race', 'Database': 'book-arg.db'},
       ]),
     );
-  }
 
-  testWidgets('RaceListScreen displays races', (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: RaceListScreen(dbHelper: mockDbWrangler),

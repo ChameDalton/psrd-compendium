@@ -3,12 +3,28 @@ import 'user_database.dart';
 import '../services/database_helper.dart';
 
 class DbWrangler {
-  final Map<String, Database> _bookDatabases = {};
-  Database? _indexDatabase;
+  final Map<String, Database> _databases = {};
   UserDatabase? _userDatabase;
 
+  Database getIndexDatabase() {
+    return _databases['index.db']!;
+  }
+
+  Database getBookDatabase(String dbName) {
+    return _databases[dbName]!;
+  }
+
+  UserDatabase getUserDatabase() {
+    _userDatabase ??= UserDatabase(_databases['user.db']!);
+    return _userDatabase!;
+  }
+
   Future<void> initializeDatabases() async {
-    final assets = [
+    final databases = [
+      'index.db',
+      'book-cr.db',
+      'book-arg.db',
+      'book-b1.db',
       'book-acg.db',
       'book-apg.db',
       'book-arg.db',
@@ -29,26 +45,11 @@ class DbWrangler {
       'book-ucampaign.db',
       'book-ue.db',
       'book-um.db',
-      'index.db',
     ];
 
-    for (var asset in assets) {
-      _bookDatabases[asset] = await DatabaseHelper.getDatabase(asset);
+    for (final dbName in databases) {
+      _databases[dbName] = await DatabaseHelper.getDatabase(dbName);
     }
-
-    _indexDatabase = await DatabaseHelper.getDatabase('index.db');
-    _userDatabase = UserDatabase();
-    await _userDatabase!.database;
-  }
-
-  Database getBookDatabase(String name) => _bookDatabases['$name.db']!;
-  Database getIndexDatabase() => _indexDatabase!;
-  UserDatabase getUserDatabase() => _userDatabase!;
-
-  Future<void> close() async {
-    for (var db in _bookDatabases.values) {
-      await db.close();
-    }
-    await _userDatabase?.close();
+    _databases['user.db'] = await DatabaseHelper.getDatabase('user.db');
   }
 }

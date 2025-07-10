@@ -11,16 +11,14 @@ import 'class_list_screen_test.mocks.dart';
 
 @GenerateMocks([DbWrangler, DatabaseHelper])
 void main() {
-  late MockDbWrangler mockDbWrangler;
-  late MockDatabaseHelper mockDbHelper;
-  late Database mockDatabase;
+  TestWidgetsFlutterBinding.ensureInitialized();
+  sqfliteFfiInit();
+  databaseFactory = databaseFactoryFfi;
 
-  setUp() async {
-    sqfliteFfiInit();
-    databaseFactory = databaseFactoryFfi;
-    mockDbWrangler = MockDbWrangler();
-    mockDbHelper = MockDatabaseHelper();
-    mockDatabase = await databaseFactory.openDatabase(inMemoryDatabasePath);
+  testWidgets('ClassListScreen displays classes', (WidgetTester tester) async {
+    final mockDbWrangler = MockDbWrangler();
+    final mockDbHelper = MockDatabaseHelper();
+    final mockDatabase = await databaseFactory.openDatabase(inMemoryDatabasePath);
 
     await mockDatabase.execute('''
       CREATE TABLE central_index (
@@ -51,9 +49,7 @@ void main() {
         {'Section_id': 2, 'Name': 'Wizard', 'Type': 'class', 'Database': 'book-cr.db'},
       ]),
     );
-  }
 
-  testWidgets('ClassListScreen displays classes', (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: ClassListScreen(dbHelper: mockDbWrangler),

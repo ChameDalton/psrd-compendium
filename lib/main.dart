@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
 import 'db/db_wrangler.dart';
+import 'db/user_database.dart';
 import 'services/database_helper.dart';
 import 'screens/bookmark_screen.dart';
 import 'screens/class_list_screen.dart';
@@ -20,29 +22,42 @@ void main() async {
   runApp(MainApp(dbWrangler: dbWrangler));
 }
 
-class MainApp extends StatelessWidget {
+class MainApp extends StatefulWidget {
   final DbWrangler dbWrangler;
 
   const MainApp({super.key, required this.dbWrangler});
 
   @override
+  State<MainApp> createState() => _MainAppState();
+}
+
+class _MainAppState extends State<MainApp> {
+  late Database indexDatabase;
+
+  @override
+  void initState() {
+    super.initState();
+    indexDatabase = widget.dbWrangler.getIndexDatabase();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: HomeScreen(dbWrangler: dbWrangler),
+      home: HomeScreen(dbWrangler: widget.dbWrangler),
       routes: {
-        '/bookmarks': (context) => BookmarkScreen(userDb: dbWrangler.getUserDatabase()),
-        '/classes': (context) => ClassListScreen(dbHelper: dbWrangler),
-        '/class_details': (context) => ClassDetailsScreen(dbHelper: dbWrangler),
-        '/creatures': (context) => CreatureListScreen(dbHelper: dbWrangler),
-        '/creature_details': (context) => CreatureDetailsScreen(dbHelper: dbWrangler),
-        '/feats': (context) => FeatListScreen(dbHelper: dbWrangler),
-        '/feat_details': (context) => FeatDetailsScreen(dbHelper: dbWrangler),
-        '/races': (context) => RaceListScreen(dbHelper: dbWrangler),
-        '/race_details': (context) => RaceDetailsScreen(dbHelper: dbWrangler),
-        '/spells': (context) => SpellListScreen(dbHelper: dbWrangler),
-        '/spell_details': (context) => SpellDetailsScreen(dbHelper: dbWrangler),
+        '/bookmarks': (context) => BookmarkScreen(userDb: widget.dbWrangler.getUserDatabase()),
+        '/classes': (context) => ClassListScreen(dbHelper: widget.dbWrangler),
+        '/class_details': (context) => ClassDetailsScreen(dbHelper: widget.dbWrangler),
+        '/creatures': (context) => CreatureListScreen(dbHelper: widget.dbWrangler),
+        '/creature_details': (context) => CreatureDetailsScreen(dbHelper: widget.dbWrangler),
+        '/feats': (context) => FeatListScreen(dbHelper: widget.dbWrangler),
+        '/feat_details': (context) => FeatDetailsScreen(dbHelper: widget.dbWrangler),
+        '/races': (context) => RaceListScreen(dbHelper: widget.dbWrangler),
+        '/race_details': (context) => RaceDetailsScreen(dbHelper: widget.dbWrangler),
+        '/spells': (context) => SpellListScreen(dbHelper: widget.dbWrangler),
+        '/spell_details': (context) => SpellDetailsScreen(dbHelper: widget.dbWrangler),
       },
-      onGenerateRoute: (settings) async {
+      onGenerateRoute: (settings) {
         if (settings.name?.startsWith('pfsrd://') ?? false) {
           final uri = Uri.parse(settings.name!);
           final pathSegments = uri.pathSegments;
@@ -50,21 +65,21 @@ class MainApp extends StatelessWidget {
             final type = pathSegments[0].toLowerCase();
             final name = pathSegments.length > 1 ? pathSegments[1] : '';
             String route;
-            final db = await dbWrangler.getIndexDatabase();
-            final sections = await db.query(
+            final sections = indexDatabase.query(
               'central_index',
               where: 'Type = ? AND Name = ?',
               whereArgs: [type, name],
               limit: 1,
             );
-            if (sections.isEmpty) {
+            final sectionList = sections as List<Map<String, dynamic>>;
+            if (sectionList.isEmpty) {
               return MaterialPageRoute(
                 builder: (context) => const Scaffold(
                   body: Center(child: Text('Item not found')),
                 ),
               );
             }
-            final section = sections.first;
+            final section = sectionList.first;
             final dbName = section['Database'] as String;
             final sectionId = section['Section_id'].toString();
 
@@ -88,7 +103,7 @@ class MainApp extends StatelessWidget {
                 return null;
             }
             return MaterialPageRoute(
-              builder: (context) => _getDetailScreen(route, dbWrangler),
+              builder: (context) => _getDetailScreen(route, widget.dbWrangler),
               settings: RouteSettings(
                 name: route,
                 arguments: {'id': sectionId, 'dbName': dbName},
@@ -143,7 +158,7 @@ class HomeScreen extends StatelessWidget {
             return ListView(
               children: [
                 const DrawerHeader(child: Text('Menu')),
-                ...menuItems.map((item) => _buildMenuItem(context, item)).toList(),
+                ...menuItems.map((item) => _buildMenuItem(context, item)),
               ],
             );
           },
