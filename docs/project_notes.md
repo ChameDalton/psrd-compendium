@@ -31,6 +31,10 @@ sections: section_id (INTEGER PRIMARY KEY), parent_id (INTEGER), name (TEXT), bo
 user.db: Bookmarks table (id INTEGER PRIMARY KEY, name TEXT, url TEXT, scroll INTEGER, section_id INTEGER)
 
 
+Assets Configuration:
+pubspec.yaml uses assets: - assets/databases/ to include all 21 databases, as per Flutter best practices. Individual listing avoided to reduce maintenance; database list is documented in databaselist.txt and here.
+
+
 
 Settled Code Issues
 
@@ -48,7 +52,8 @@ Updated vector_math to 2.1.4 to resolve conflict with flutter_test pinning (comm
 Updated test_api to 0.7.4 to resolve conflict with flutter_test pinning (commit d517861).
 Updated meta to 1.16.0 to resolve conflict with flutter_test pinning (commit d517861).
 Updated material_color_utilities to 0.11.1 to resolve conflict with flutter_test pinning (commit d517861).
-Updated leak_tracker_testing to 3.0.1 to resolve conflict with flutter_test pinning (commit TBD).
+Updated leak_tracker_testing to 3.0.1 to resolve conflict with flutter_test pinning (commit f3b9d87).
+Updated leak_tracker to 10.0.0 to resolve conflict with leak_tracker_testing: 3.0.1 (commit TBD).
 
 
 Compilation Errors (commit 5129bb9):
@@ -60,7 +65,7 @@ Cleaned test/mocks/database_helper.dart: Removed unused imports (sqflite, databa
 
 
 
-Known Issues (Commit d517861)
+Known Issues (Commit f3b9d87)
 
 Resolved: vm_service dependency conflict with flutter_test by setting vm_service: 15.0.0.
 Resolved: vector_math dependency conflict with flutter_test by setting vector_math: 2.1.4.
@@ -68,9 +73,11 @@ Resolved: test_api dependency conflict with flutter_test by setting test_api: 0.
 Resolved: meta dependency conflict with flutter_test by setting meta: 1.16.0.
 Resolved: material_color_utilities dependency conflict with flutter_test by setting material_color_utilities: 0.11.1.
 Resolved: leak_tracker_testing dependency conflict with flutter_test by setting leak_tracker_testing: 3.0.1.
+Resolved: leak_tracker dependency conflict with leak_tracker_testing: 3.0.1 by setting leak_tracker: 10.0.0.
 
 Next Steps
 
 Verify dependency resolution with updated pubspec.yaml.
 Run flutter analyze and flutter test --verbose to confirm compilation and test success.
 Implement search screen using central_index.Search_name.
+Run flutter pub outdated to check for compatible dependency upgrades.
