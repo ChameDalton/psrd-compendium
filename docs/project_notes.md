@@ -52,9 +52,9 @@ Updated vector_math to 2.1.4 to resolve conflict with flutter_test pinning (comm
 Updated test_api to 0.7.4 to resolve conflict with flutter_test pinning (commit d517861).
 Updated meta to 1.16.0 to resolve conflict with flutter_test pinning (commit d517861).
 Updated material_color_utilities to 0.11.1 to resolve conflict with flutter_test pinning (commit d517861).
-Updated leak_tracker to 10.0.0 to resolve conflict with leak_tracker_testing: 3.0.1 (commit f3b9d87).
-Updated leak_tracker_flutter_testing to 3.0.1 to resolve conflict with leak_tracker: 10.0.0 (commit 400ebebc).
 Updated leak_tracker_testing to 2.0.3 to resolve conflict with leak_tracker_flutter_testing: 3.0.1 (commit 0c473584).
+Updated leak_tracker_flutter_testing to 3.0.1 to resolve conflict with leak_tracker: 10.0.0 (commit 400ebebc).
+Updated leak_tracker to 10.0.5 to resolve conflict with leak_tracker_flutter_testing: 3.0.1 (commit 5796744).
 
 
 Compilation Errors (commit 5129bb9):
@@ -66,16 +66,16 @@ Cleaned test/mocks/database_helper.dart: Removed unused imports (sqflite, databa
 
 
 
-Known Issues (Commit 0c473584)
+Known Issues (Commit 5796744)
 
 Resolved: vm_service dependency conflict with flutter_test by setting vm_service: 15.0.0.
 Resolved: vector_math dependency conflict with flutter_test by setting vector_math: 2.1.4.
 Resolved: test_api dependency conflict with flutter_test by setting test_api: 0.7.4.
 Resolved: meta dependency conflict with flutter_test by setting meta: 1.16.0.
 Resolved: material_color_utilities dependency conflict with flutter_test by setting material_color_utilities: 0.11.1.
-Resolved: leak_tracker dependency conflict with leak_tracker_testing: 3.0.1 by setting leak_tracker: 10.0.0.
-Resolved: leak_tracker_flutter_testing dependency conflict with leak_tracker: 10.0.0 by setting leak_tracker_flutter_testing: 3.0.1.
 Resolved: leak_tracker_testing dependency conflict with leak_tracker_flutter_testing: 3.0.1 by setting leak_tracker_testing: 2.0.3.
+Resolved: leak_tracker_flutter_testing dependency conflict with leak_tracker: 10.0.0 by setting leak_tracker_flutter_testing: 3.0.1.
+Resolved: leak_tracker dependency conflict with leak_tracker_flutter_testing: 3.0.1 by setting leak_tracker: 10.0.5.
 
 Next Steps
 
