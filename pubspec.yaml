@@ -20,8 +20,8 @@ dev_dependencies:
   sqflite_common_ffi: ^2.3.3
   analyzer: ^7.5.6
   characters: ^1.4.1
-  leak_tracker: 10.0.7
-  leak_tracker_flutter_testing: 3.0.3
+  leak_tracker: 11.0.0
+  leak_tracker_flutter_testing: 3.0.5
   leak_tracker_testing: 3.0.1
   material_color_utilities: 0.11.1
   meta: 1.16.0

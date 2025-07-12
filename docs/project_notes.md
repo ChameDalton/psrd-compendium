@@ -58,6 +58,7 @@ Updated vm_service to 14.2.4 to resolve conflict with leak_tracker: 10.0.5 (comm
 Reverted vm_service to 15.0.0, updated leak_tracker to 11.0.0 and leak_tracker_flutter_testing to 3.0.5 (commit 1dbd9f8).
 Updated leak_tracker to 10.0.7, leak_tracker_flutter_testing to 3.0.3, leak_tracker_testing to 2.0.3 to resolve version unavailability (commit a16d8aa).
 Updated leak_tracker_testing to 3.0.1 to resolve conflict with leak_tracker_flutter_testing: 3.0.3 (commit 8fc78d0).
+Reverted leak_tracker to 11.0.0, leak_tracker_flutter_testing to 3.0.5 to resolve conflict with vm_service: 15.0.0 (commit bf8e35f).
 
 
 Compilation Errors (commit 5129bb9):
@@ -69,7 +70,7 @@ Cleaned test/mocks/database_helper.dart: Removed unused imports (sqflite, databa
 
 
 
-Known Issues (Commit 8fc78d0)
+Known Issues (Commit bf8e35f)
 
 Resolved: vector_math dependency conflict with flutter_test by setting vector_math: 2.1.4.
 Resolved: test_api dependency conflict with flutter_test by setting test_api: 0.7.4.
@@ -82,6 +83,7 @@ Resolved: vm_service dependency conflict with leak_tracker: 10.0.5 by setting vm
 Resolved: vm_service dependency conflict with flutter_test by reverting to vm_service: 15.0.0, updating leak_tracker to 11.0.0 and leak_tracker_flutter_testing to 3.0.5.
 Resolved: leak_tracker version unavailability by setting leak_tracker: 10.0.7, leak_tracker_flutter_testing: 3.0.3, leak_tracker_testing: 2.0.3.
 Resolved: leak_tracker_testing conflict with leak_tracker_flutter_testing: 3.0.3 by setting leak_tracker_testing: 3.0.1.
+Resolved: vm_service conflict with leak_tracker: 10.0.7 by reverting leak_tracker to 11.0.0, leak_tracker_flutter_testing to 3.0.5.
 
 Next Steps
 
@@ -91,3 +93,4 @@ Implement search screen using central_index.Search_name.
 Run flutter pub outdated to check for compatible dependency upgrades.
 Run flutter doctor to verify Flutter SDK version consistency.
 Clear pub cache with flutter pub cache repair if dependency issues persist.
+If targeting Windows, install Visual Studio with "Desktop development with C++" workload.
