@@ -41,25 +41,32 @@ main.dart: Synchronous onGenerateRoute, MainApp state management, fixed _TypeErr
 List Screens: Use central_index queries (Type = 'class', 'creature', etc.).
 Navigation: Dynamic menu via Menu table, routes for list/detail screens.
 Imports: database_helper.dart is in lib/services/ (commit 2ee2efe).
-Dependencies: Updated mockito to ^5.4.4 due to version resolution failure with ^6.0.0 (commit 5129bb9).
+Dependencies:
+Updated mockito to ^5.4.4 due to version resolution failure with ^6.0.0 (commit 5129bb9).
+Updated vm_service to 15.0.0 to resolve conflict with flutter_test pinning (commit 8701282).
+Updated vector_math to 2.1.4 to resolve conflict with flutter_test pinning (commit TBD).
+Updated test_api to 0.7.4 to resolve conflict with flutter_test pinning (commit TBD).
+Updated meta to 1.16.0 to resolve conflict with flutter_test pinning (commit TBD).
+
+
 Compilation Errors (commit 5129bb9):
 Fixed main.dart: Removed incorrect userDb parameter, used dbWrangler for HomeScreen.
 Fixed database_helper.dart: Replaced DefaultAssetBundle.of(PlatformDispatcher.instance.views.first) with rootBundle for asset loading.
 Fixed test files: Used mockDbHelper.closeDatabase() instead of DatabaseHelper().closeDatabase() in tearDown.
-Updated pubspec.yaml: Added latest compatible dependency versions (e.g., analyzer: ^7.5.6, meta: ^1.17.0).
+Updated pubspec.yaml: Added latest compatible dependency versions (e.g., analyzer: ^7.5.6).
 Cleaned test/mocks/database_helper.dart: Removed unused imports (sqflite, database_helper.mocks.dart).
 
 
 
-Known Issues (Commit 5129bb9)
+Known Issues (Commit 8701282)
 
-Resolved: userDb and dbWrangler parameter errors in main.dart.
-Resolved: DefaultAssetBundle and PlatformDispatcher errors in database_helper.dart.
-Resolved: DatabaseHelper undefined errors in test files.
-Resolved: Unused imports in test/mocks/database_helper.dart.
+Resolved: vm_service dependency conflict with flutter_test by setting vm_service: 15.0.0.
+Resolved: vector_math dependency conflict with flutter_test by setting vector_math: 2.1.4.
+Resolved: test_api dependency conflict with flutter_test by setting test_api: 0.7.4.
+Resolved: meta dependency conflict with flutter_test by setting meta: 1.16.0.
 
 Next Steps
 
-Verify compilation and test success with updated files.
-Run flutter analyze and flutter test to confirm no remaining errors.
+Verify dependency resolution with updated pubspec.yaml.
+Run flutter analyze and flutter test --verbose to confirm compilation and test success.
 Implement search screen using central_index.Search_name.
