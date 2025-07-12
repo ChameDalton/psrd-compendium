@@ -1,66 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:pathfinder_athenaeum/db/db_wrangler.dart';
-import 'package:pathfinder_athenaeum/services/database_helper.dart';
-import 'package:pathfinder_athenaeum/screens/creature_list_screen.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:pathfinder_athenaeum/screens/creature_list_screen.dart'; // Adjust import
+import 'mocks/database_helper.dart';
+import 'mocks/database_helper.mocks.dart';
 
-import 'creature_list_screen_test.mocks.dart';
-
-@GenerateMocks([DbWrangler, DatabaseHelper])
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
-  sqfliteFfiInit();
-  databaseFactory = databaseFactoryFfi;
+  late MockDatabase mockDatabase;
+  late MockDatabaseHelper mockDatabaseHelper;
+
+  setUp(() async {
+    mockDatabase = MockDatabase();
+    mockDatabaseHelper = MockDatabaseHelper(mockDatabase);
+
+    // Mock the sections query for creatures
+    when(mockDatabase.query(
+      'sections',
+      where: 'type = ?',
+      whereArgs: ['creature'],
+      columns: anyNamed('columns'),
+    )).thenAnswer(
+      (_) async => [
+        {
+          'id': '1',
+          'name': 'Goblin',
+          'type': 'creature',
+          'parent_id': null,
+          'body': 'A small, vicious creature'
+        },
+        {
+          'id': '2',
+          'name': 'Dragon',
+          'type': 'creature',
+          'parent_id': null,
+          'body': 'A large, fire-breathing beast'
+        },
+      ],
+    );
+  });
 
   testWidgets('CreatureListScreen displays creatures', (WidgetTester tester) async {
-    final mockDbWrangler = MockDbWrangler();
-    final mockDbHelper = MockDatabaseHelper();
-    final mockDatabase = await databaseFactory.openDatabase(inMemoryDatabasePath);
-
-    await mockDatabase.execute('''
-      CREATE TABLE central_index (
-        Section_id INTEGER PRIMARY KEY,
-        Name TEXT,
-        Type TEXT,
-        Database TEXT
-      )
-    ''');
-    await mockDatabase.insert('central_index', {
-      'Section_id': 1,
-      'Name': 'Goblin',
-      'Type': 'creature',
-      'Database': 'book-b1.db',
-    });
-    await mockDatabase.insert('central_index', {
-      'Section_id': 2,
-      'Name': 'Dragon',
-      'Type': 'creature',
-      'Database': 'book-b1.db',
-    });
-
-    when(mockDbWrangler.getIndexDatabase()).thenReturn(mockDatabase);
-    when(mockDbWrangler.getBookDatabase(any)).thenReturn(mockDatabase);
-    when(mockDbHelper.getSections('index.db', 'creature')).thenAnswer(
-      (_) => Future.value([
-        {'Section_id': 1, 'Name': 'Goblin', 'Type': 'creature', 'Database': 'book-b1.db'},
-        {'Section_id': 2, 'Name': 'Dragon', 'Type': 'creature', 'Database': 'book-b1.db'},
-      ]),
-    );
-
     await tester.pumpWidget(
       MaterialApp(
-        home: CreatureListScreen(dbHelper: mockDbWrangler),
+        home: CreatureListScreen(databaseHelper: mockDatabaseHelper),
       ),
     );
 
-    await tester.pumpAndSettle();
+    // Allow async operations to complete
+    await tester.pumpAndSettle(Duration(seconds: 1));
 
+    // Verify creature names are displayed
     expect(find.text('Goblin'), findsOneWidget);
     expect(find.text('Dragon'), findsOneWidget);
-
-    await mockDatabase.close();
   });
 }

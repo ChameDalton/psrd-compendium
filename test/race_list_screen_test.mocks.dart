@@ -6,6 +6,7 @@
 import 'dart:async' as _i5;
 
 import 'package:mockito/mockito.dart' as _i1;
+import 'package:mockito/src/dummies.dart' as _i7;
 import 'package:pathfinder_athenaeum/db/db_wrangler.dart' as _i4;
 import 'package:pathfinder_athenaeum/db/user_database.dart' as _i3;
 import 'package:pathfinder_athenaeum/services/database_helper.dart' as _i6;
@@ -128,65 +129,42 @@ class MockDatabaseHelper extends _i1.Mock implements _i6.DatabaseHelper {
   }
 
   @override
-  _i5.Future<List<Map<String, dynamic>>> getSections(
-    String? dbName,
-    String? sectionType,
-  ) =>
+  String get databaseName => (super.noSuchMethod(
+        Invocation.getter(#databaseName),
+        returnValue: _i7.dummyValue<String>(
+          this,
+          Invocation.getter(#databaseName),
+        ),
+      ) as String);
+
+  @override
+  _i5.Future<_i2.Database> get database => (super.noSuchMethod(
+        Invocation.getter(#database),
+        returnValue: _i5.Future<_i2.Database>.value(_FakeDatabase_0(
+          this,
+          Invocation.getter(#database),
+        )),
+      ) as _i5.Future<_i2.Database>);
+
+  @override
+  _i5.Future<List<Map<String, dynamic>>> querySections(String? type) =>
       (super.noSuchMethod(
         Invocation.method(
-          #getSections,
-          [
-            dbName,
-            sectionType,
-          ],
+          #querySections,
+          [type],
         ),
         returnValue: _i5.Future<List<Map<String, dynamic>>>.value(
             <Map<String, dynamic>>[]),
       ) as _i5.Future<List<Map<String, dynamic>>>);
 
   @override
-  _i5.Future<List<Map<String, dynamic>>> getMenuItems({int? parentMenuId}) =>
+  _i5.Future<List<Map<String, dynamic>>> queryDetails(String? parentId) =>
       (super.noSuchMethod(
         Invocation.method(
-          #getMenuItems,
-          [],
-          {#parentMenuId: parentMenuId},
+          #queryDetails,
+          [parentId],
         ),
         returnValue: _i5.Future<List<Map<String, dynamic>>>.value(
             <Map<String, dynamic>>[]),
       ) as _i5.Future<List<Map<String, dynamic>>>);
-
-  @override
-  _i5.Future<Map<String, dynamic>> getSectionWithSubsections(
-    String? dbName,
-    String? sectionId,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getSectionWithSubsections,
-          [
-            dbName,
-            sectionId,
-          ],
-        ),
-        returnValue:
-            _i5.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i5.Future<Map<String, dynamic>>);
-
-  @override
-  _i5.Future<Map<String, dynamic>> getSpellDetails(
-    String? dbName,
-    String? sectionId,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getSpellDetails,
-          [
-            dbName,
-            sectionId,
-          ],
-        ),
-        returnValue:
-            _i5.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i5.Future<Map<String, dynamic>>);
 }

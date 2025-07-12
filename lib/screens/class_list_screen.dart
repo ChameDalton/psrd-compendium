@@ -1,44 +1,32 @@
 import 'package:flutter/material.dart';
-import '../db/db_wrangler.dart';
-import '../services/database_helper.dart';
+import '../database_helper.dart';
 
-class ClassListScreen extends StatelessWidget {
-  final DbWrangler dbHelper;
+class CreatureListScreen extends StatelessWidget {
+  final DatabaseHelper databaseHelper;
 
-  const ClassListScreen({super.key, required this.dbHelper});
+  const CreatureListScreen({Key? key, required this.databaseHelper}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Classes')),
+      appBar: AppBar(title: Text('Creatures')),
       body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: DatabaseHelper().getSections('index.db', 'class'),
+        future: databaseHelper.querySections('creature'),
         builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
           if (snapshot.hasError) {
-            return const Center(child: Text('Error loading classes. Please check database.'));
+            return Center(child: Text('Error: ${snapshot.error}'));
           }
-          if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          final classes = snapshot.data!;
-          if (classes.isEmpty) {
-            return const Center(child: Text('No classes found.'));
-          }
+          final creatures = snapshot.data ?? [];
           return ListView.builder(
-            itemCount: classes.length,
+            itemCount: creatures.length,
             itemBuilder: (context, index) {
-              final classData = classes[index];
               return ListTile(
-                title: Text(classData['Name']),
+                title: Text(creatures[index]['name']),
                 onTap: () {
-                  Navigator.pushNamed(
-                    context,
-                    '/class_details',
-                    arguments: {
-                      'id': classData['Section_id'].toString(),
-                      'dbName': classData['Database'],
-                    },
-                  );
+                  // Navigate to details screen with parent_id if needed
                 },
               );
             },

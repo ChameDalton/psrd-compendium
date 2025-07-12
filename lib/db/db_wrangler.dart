@@ -21,7 +21,7 @@ class DbWrangler {
   }
 
   Future<void> initializeDatabases() async {
-    final databases = [
+    final assetDatabases = [
       'index.db',
       'book-acg.db',
       'book-apg.db',
@@ -44,11 +44,35 @@ class DbWrangler {
       'book-ue.db',
       'book-um.db',
     ];
+    await compute(_initializeAssetDatabases, assetDatabases);
+    for (final dbName in assetDatabases) {
+      _databases[dbName] = await DatabaseHelper.getDatabase(dbName);
+    }
+    // Initialize user.db separately
+    final userDbPath = join(await getDatabasesPath(), 'user.db');
+    _databases['user.db'] = await openDatabase(
+      userDbPath,
+      version: 1,
+      onCreate: (db, version) async {
+        await db.execute('''
+          CREATE TABLE Bookmarks (
+            id INTEGER PRIMARY KEY,
+            name TEXT,
+            url TEXT,
+            scroll INTEGER,
+            section_id INTEGER
+          )
+        ''');
+      },
+    );
+    debugPrint('Successfully initialized user.db');
+  }
 
+  static Future<void> _initializeAssetDatabases(List<String> databases) async {
     for (final dbName in databases) {
       try {
         debugPrint('Initializing database: $dbName');
-        _databases[dbName] = await DatabaseHelper.getDatabase(dbName);
+        await DatabaseHelper.getDatabase(dbName);
         debugPrint('Successfully initialized $dbName');
       } catch (e) {
         debugPrint('Error initializing $dbName: $e');
