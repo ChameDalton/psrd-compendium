@@ -1,7 +1,8 @@
 import 'package:flutter/foundation.dart';
+import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'user_database.dart';
-import '../services/database_helper.dart';
+import 'package:pathfinder_athenaeum/services/database_helper.dart';
+import 'package:pathfinder_athenaeum/db/user_database.dart';
 
 class DbWrangler {
   final Map<String, Database> _databases = {};
@@ -46,7 +47,7 @@ class DbWrangler {
     ];
     await compute(_initializeAssetDatabases, assetDatabases);
     for (final dbName in assetDatabases) {
-      _databases[dbName] = await DatabaseHelper.getDatabase(dbName);
+      _databases[dbName] = await DatabaseHelper().getDatabase(dbName);
     }
     // Initialize user.db separately
     final userDbPath = join(await getDatabasesPath(), 'user.db');
@@ -72,7 +73,7 @@ class DbWrangler {
     for (final dbName in databases) {
       try {
         debugPrint('Initializing database: $dbName');
-        await DatabaseHelper.getDatabase(dbName);
+        await DatabaseHelper().getDatabase(dbName);
         debugPrint('Successfully initialized $dbName');
       } catch (e) {
         debugPrint('Error initializing $dbName: $e');

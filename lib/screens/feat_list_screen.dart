@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../db/db_wrangler.dart';
-import '../services/database_helper.dart';
+import 'package:pathfinder_athenaeum/services/database_helper.dart';
+import 'package:pathfinder_athenaeum/db/db_wrangler.dart';
 
 class FeatListScreen extends StatelessWidget {
   final DbWrangler dbHelper;
@@ -15,29 +15,22 @@ class FeatListScreen extends StatelessWidget {
         future: DatabaseHelper().getSections('index.db', 'feat'),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return const Center(child: Text('Error loading feats. Please check database.'));
+            return const Center(child: Text('Error loading feats'));
           }
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
-          final feats = snapshot.data!;
-          if (feats.isEmpty) {
-            return const Center(child: Text('No feats found.'));
-          }
+          final sections = snapshot.data!;
           return ListView.builder(
-            itemCount: feats.length,
+            itemCount: sections.length,
             itemBuilder: (context, index) {
-              final feat = feats[index];
+              final section = sections[index];
               return ListTile(
-                title: Text(feat['Name']),
+                title: Text(section['Name'] ?? 'Unknown'),
                 onTap: () {
                   Navigator.pushNamed(
                     context,
-                    '/feat_details',
-                    arguments: {
-                      'id': feat['Section_id'].toString(),
-                      'dbName': feat['Database'],
-                    },
+                    '/feat/${section['Section_id']}?db=${section['Database']}§ion_id=${section['Section_id']}',
                   );
                 },
               );

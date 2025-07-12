@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../db/db_wrangler.dart';
-import '../services/database_helper.dart';
+import 'package:pathfinder_athenaeum/services/database_helper.dart';
+import 'package:pathfinder_athenaeum/db/db_wrangler.dart';
 
 class SpellListScreen extends StatelessWidget {
   final DbWrangler dbHelper;
@@ -15,29 +15,22 @@ class SpellListScreen extends StatelessWidget {
         future: DatabaseHelper().getSections('index.db', 'spell'),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return const Center(child: Text('Error loading spells. Please check database.'));
+            return const Center(child: Text('Error loading spells'));
           }
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
-          final spells = snapshot.data!;
-          if (spells.isEmpty) {
-            return const Center(child: Text('No spells found.'));
-          }
+          final sections = snapshot.data!;
           return ListView.builder(
-            itemCount: spells.length,
+            itemCount: sections.length,
             itemBuilder: (context, index) {
-              final spell = spells[index];
+              final section = sections[index];
               return ListTile(
-                title: Text(spell['Name']),
+                title: Text(section['Name'] ?? 'Unknown'),
                 onTap: () {
                   Navigator.pushNamed(
                     context,
-                    '/spell_details',
-                    arguments: {
-                      'id': spell['Section_id'].toString(),
-                      'dbName': spell['Database'],
-                    },
+                    '/spell/${section['Section_id']}?db=${section['Database']}&spell_id=${section['Section_id']}',
                   );
                 },
               );

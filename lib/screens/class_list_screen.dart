@@ -1,32 +1,37 @@
 import 'package:flutter/material.dart';
-import '../database_helper.dart';
+import 'package:pathfinder_athenaeum/services/database_helper.dart';
+import 'package:pathfinder_athenaeum/db/db_wrangler.dart';
 
-class CreatureListScreen extends StatelessWidget {
-  final DatabaseHelper databaseHelper;
+class ClassListScreen extends StatelessWidget {
+  final DbWrangler dbHelper;
 
-  const CreatureListScreen({Key? key, required this.databaseHelper}) : super(key: key);
+  const ClassListScreen({super.key, required this.dbHelper});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Creatures')),
+      appBar: AppBar(title: const Text('Classes')),
       body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: databaseHelper.querySections('creature'),
+        future: DatabaseHelper().getSections('index.db', 'class'),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          }
           if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return const Center(child: Text('Error loading classes'));
           }
-          final creatures = snapshot.data ?? [];
+          if (!snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          final sections = snapshot.data!;
           return ListView.builder(
-            itemCount: creatures.length,
+            itemCount: sections.length,
             itemBuilder: (context, index) {
+              final section = sections[index];
               return ListTile(
-                title: Text(creatures[index]['name']),
+                title: Text(section['Name'] ?? 'Unknown'),
                 onTap: () {
-                  // Navigate to details screen with parent_id if needed
+                  Navigator.pushNamed(
+                    context,
+                    '/class/${section['Section_id']}?db=${section['Database']}§ion_id=${section['Section_id']}',
+                  );
                 },
               );
             },

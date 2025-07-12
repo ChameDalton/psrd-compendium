@@ -1,52 +1,38 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
-import '../db/db_wrangler.dart';
-import '../services/database_helper.dart';
+import 'package:pathfinder_athenaeum/services/database_helper.dart';
 
 class SpellDetailsScreen extends StatelessWidget {
-  final DbWrangler dbHelper;
+  final int spellId;
+  final String dbName;
 
-  const SpellDetailsScreen({super.key, required this.dbHelper});
+  const SpellDetailsScreen({super.key, required this.spellId, required this.dbName});
 
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    final sectionId = args['id'] as String;
-    final dbName = args['dbName'] as String;
-
     return Scaffold(
       appBar: AppBar(title: const Text('Spell Details')),
-      body: FutureBuilder<Map<String, dynamic>>(
-        future: DatabaseHelper().getSpellDetails(dbName, sectionId),
+      body: FutureBuilder<Map<String, dynamic>?>(
+        future: DatabaseHelper().getSpellDetails(dbName, spellId),
         builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return const Center(child: Text('Error loading spell details'));
+          }
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
           final spell = snapshot.data!;
-          return ListView(
-            children: [
-              Html(
-                data: spell['description'] ?? '',
-                style: {
-                  'p': Style(
-                    fontSize: FontSize.medium,
-                    margin: Margins.all(8.0),
-                  ),
-                  'b': Style(fontWeight: FontWeight.bold),
-                },
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(spell['name'] ?? 'Unknown', style: Theme.of(context).textTheme.headlineSmall),
+                  const SizedBox(height: 8),
+                  Text(spell['description'] ?? ''),
+                ],
               ),
-              if (spell['full_text'] != null)
-                Html(
-                  data: spell['full_text'],
-                  style: {
-                    'p': Style(
-                      fontSize: FontSize.medium,
-                      margin: Margins.all(8.0),
-                    ),
-                    'b': Style(fontWeight: FontWeight.bold),
-                  },
-                ),
-            ],
+            ),
           );
         },
       ),
