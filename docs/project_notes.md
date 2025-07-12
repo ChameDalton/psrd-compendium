@@ -55,19 +55,12 @@ Updated leak_tracker_testing to 2.0.3 to resolve conflict with leak_tracker_flut
 Updated leak_tracker_flutter_testing to 3.0.1 to resolve conflict with leak_tracker: 10.0.0 (commit 400ebebc).
 Updated leak_tracker to 10.0.5 to resolve conflict with leak_tracker_flutter_testing: 3.0.1 (commit 5796744).
 Updated vm_service to 14.2.4 to resolve conflict with leak_tracker: 10.0.5 (commit 32e80c2).
-Reverted vm_service to 15.0.0 to align with flutter_test pinning, updated leak_tracker to 11.0.0 and leak_tracker_flutter_testing to 3.0.5 to resolve conflicts (commit 1dbd9f8).
-
-
-Compilation Errors (commit 5129bb9):
-Fixed main.dart: Removed incorrect userDb parameter, used dbWrangler for HomeScreen.
-Fixed database_helper.dart: Replaced DefaultAssetBundle.of(PlatformDispatcher.instance.views.first) with rootBundle for asset loading.
-Fixed test files: Used mockDbHelper.closeDatabase() instead of DatabaseHelper().closeDatabase() in tearDown.
-Updated pubspec.yaml: Added compatible dependency versions (e.g., analyzer: ^7.5.6).
-Cleaned test/mocks/database_helper.dart: Removed unused imports (sqflite, database_helper.mocks.dart).
+Reverted vm_service to 15.0.0, updated leak_tracker to 11.0.0 and leak_tracker_flutter_testing to 3.0.5 (commit 1dbd9f8).
+Updated leak_tracker to 10.0.7, leak_tracker_flutter_testing to 3.0.3, leak_tracker_testing to 2.0.3 to resolve version unavailability (commit a16d8aa).
 
 
 
-Known Issues (Commit 1dbd9f8)
+Known Issues (Commit a16d8aa)
 
 Resolved: vector_math dependency conflict with flutter_test by setting vector_math: 2.1.4.
 Resolved: test_api dependency conflict with flutter_test by setting test_api: 0.7.4.
@@ -78,6 +71,7 @@ Resolved: leak_tracker_flutter_testing dependency conflict with leak_tracker: 10
 Resolved: leak_tracker dependency conflict with leak_tracker_flutter_testing: 3.0.1 by setting leak_tracker: 10.0.5.
 Resolved: vm_service dependency conflict with leak_tracker: 10.0.5 by setting vm_service: 14.2.4.
 Resolved: vm_service dependency conflict with flutter_test by reverting to vm_service: 15.0.0, updating leak_tracker to 11.0.0 and leak_tracker_flutter_testing to 3.0.5.
+Resolved: leak_tracker version unavailability by setting leak_tracker: 10.0.7, leak_tracker_flutter_testing: 3.0.3, leak_tracker_testing: 2.0.3.
 
 Next Steps
 
@@ -86,3 +80,4 @@ Run flutter analyze and flutter test --verbose to confirm compilation and test s
 Implement search screen using central_index.Search_name.
 Run flutter pub outdated to check for compatible dependency upgrades.
 Run flutter doctor to verify Flutter SDK version consistency.
+Clear pub cache with flutter pub cache repair if dependency issues persist.
