@@ -24,20 +24,21 @@ void main() {
         {'Section_id': 2, 'Name': 'Cleave', 'Database': 'book-cr.db'},
       ],
     );
+    when(mockDbHelper.closeDatabase()).thenAnswer((_) async {});
   });
 
   tearDown(() async {
-    await DatabaseHelper().closeDatabase();
+    await mockDbHelper.closeDatabase();
   });
 
   testWidgets('displays feats', (WidgetTester tester) async {
     await tester.pumpWidget(
-      MaterialApp(
-        home: FeatListScreen(dbHelper: mockDbWrangler),
+      const MaterialApp(
+        home: FeatListScreen(dbHelper: DbWrangler()),
       ),
     );
     await tester.pumpAndSettle();
     expect(find.text('Power Attack'), findsOneWidget);
     expect(find.text('Cleave'), findsOneWidget);
-  }, timeout: Timeout(Duration(seconds: 30)));
+  }, timeout: const Timeout(Duration(seconds: 30)));
 }

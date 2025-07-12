@@ -27,20 +27,21 @@ void main() {
     when(mockDbHelper.getSpellDetails('book-cr.db', any)).thenAnswer(
       (_) async => {'_id': 1, 'name': 'Magic Missile', 'description': 'A missile of magical energy'},
     );
+    when(mockDbHelper.closeDatabase()).thenAnswer((_) async {});
   });
 
   tearDown(() async {
-    await DatabaseHelper().closeDatabase();
+    await mockDbHelper.closeDatabase();
   });
 
   testWidgets('displays spells', (WidgetTester tester) async {
     await tester.pumpWidget(
-      MaterialApp(
-        home: SpellListScreen(dbHelper: mockDbWrangler),
+      const MaterialApp(
+        home: SpellListScreen(dbHelper: DbWrangler()),
       ),
     );
     await tester.pumpAndSettle();
     expect(find.text('Magic Missile'), findsOneWidget);
     expect(find.text('Fireball'), findsOneWidget);
-  }, timeout: Timeout(Duration(seconds: 30)));
+  }, timeout: const Timeout(Duration(seconds: 30)));
 }

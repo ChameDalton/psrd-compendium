@@ -22,7 +22,7 @@ class DatabaseHelper {
     // Copy database from assets if it doesn't exist
     if (!await File(path).exists()) {
       await Directory(dirname(path)).create(recursive: true);
-      final bytes = await DefaultAssetBundle.of(PlatformDispatcher.instance.views.first).load('assets/databases/$dbName');
+      final bytes = await rootBundle.load('assets/databases/$dbName');
       await File(path).writeAsBytes(bytes.buffer.asUint8List(), flush: true);
     }
 

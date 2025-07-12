@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:pathfinder_athenaeum/db/db_wrangler.dart';
-import 'package:pathfinder_athenaeum/screens/spell_list_screen.dart';
+import 'package:pathfinder_athenaeum/main.dart';
+import 'package:pathfinder_athenaeum/screens/class_list_screen.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'mocks/database_helper.mocks.dart';
 
@@ -18,29 +19,35 @@ void main() {
   setUp(() async {
     mockDbHelper = MockDatabaseHelper();
     mockDbWrangler = DbWrangler();
-    when(mockDbHelper.getSections('index.db', 'spell')).thenAnswer(
+    when(mockDbHelper.getMenuItems(parentMenuId: null)).thenAnswer(
       (_) async => [
-        {'Section_id': 1, 'Name': 'Magic Missile', 'Database': 'book-cr.db'},
-        {'Section_id': 2, 'Name': 'Fireball', 'Database': 'book-cr.db'},
+        {'Menu_id': 1, 'Name': 'Classes', 'Type': '', 'Url': '/classes'},
+        {'Menu_id': 2, 'Name': 'Spells', 'Type': '', 'Url': '/spells'},
       ],
     );
-    when(mockDbHelper.getSpellDetails('book-cr.db', any)).thenAnswer(
-      (_) async => {'_id': 1, 'name': 'Magic Missile', 'description': 'A missile of magical energy'},
+    when(mockDbHelper.getMenuItems(parentMenuId: 1)).thenAnswer(
+      (_) async => [
+        {'Menu_id': 3, 'Name': 'Fighter', 'Type': 'class', 'Url': '/class/1?db=book-cr.db§ion_id=1'},
+      ],
     );
+    when(mockDbHelper.closeDatabase()).thenAnswer((_) async {});
   });
 
   tearDown(() async {
-    await DatabaseHelper().closeDatabase();
+    await mockDbHelper.closeDatabase();
   });
 
-  testWidgets('displays spells', (WidgetTester tester) async {
+  testWidgets('displays menu items', (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
-        home: SpellListScreen(dbHelper: mockDbWrangler),
+        home: HomeScreen(dbWrangler: mockDbWrangler),
+        routes: {
+          '/classes': (context) => const ClassListScreen(dbHelper: DbWrangler()),
+        },
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('Magic Missile'), findsOneWidget);
-    expect(find.text('Fireball'), findsOneWidget);
-  }, timeout: Timeout(Duration(seconds: 30)));
+    expect(find.text('Classes'), findsOneWidget);
+    expect(find.text('Spells'), findsOneWidget);
+  }, timeout: const Timeout(Duration(seconds: 30)));
 }

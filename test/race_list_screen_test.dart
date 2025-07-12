@@ -24,20 +24,21 @@ void main() {
         {'Section_id': 2, 'Name': 'Dwarf', 'Database': 'book-cr.db'},
       ],
     );
+    when(mockDbHelper.closeDatabase()).thenAnswer((_) async {});
   });
 
   tearDown(() async {
-    await DatabaseHelper().closeDatabase();
+    await mockDbHelper.closeDatabase();
   });
 
   testWidgets('displays races', (WidgetTester tester) async {
     await tester.pumpWidget(
-      MaterialApp(
-        home: RaceListScreen(dbHelper: mockDbWrangler),
+      const MaterialApp(
+        home: RaceListScreen(dbHelper: DbWrangler()),
       ),
     );
     await tester.pumpAndSettle();
     expect(find.text('Elf'), findsOneWidget);
     expect(find.text('Dwarf'), findsOneWidget);
-  }, timeout: Timeout(Duration(seconds: 30)));
+  }, timeout: const Timeout(Duration(seconds: 30)));
 }

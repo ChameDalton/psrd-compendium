@@ -41,17 +41,25 @@ main.dart: Synchronous onGenerateRoute, MainApp state management, fixed _TypeErr
 List Screens: Use central_index queries (Type = 'class', 'creature', etc.).
 Navigation: Dynamic menu via Menu table, routes for list/detail screens.
 Imports: database_helper.dart is in lib/services/ (commit 2ee2efe).
-Dependencies: Updated mockito to ^5.4.4 due to version resolution failure with ^6.0.0 (commit TBD).
+Dependencies: Updated mockito to ^5.4.4 due to version resolution failure with ^6.0.0 (commit 5129bb9).
+Compilation Errors (commit 5129bb9):
+Fixed main.dart: Removed incorrect userDb parameter, used dbWrangler for HomeScreen.
+Fixed database_helper.dart: Replaced DefaultAssetBundle.of(PlatformDispatcher.instance.views.first) with rootBundle for asset loading.
+Fixed test files: Used mockDbHelper.closeDatabase() instead of DatabaseHelper().closeDatabase() in tearDown.
+Updated pubspec.yaml: Added latest compatible dependency versions (e.g., analyzer: ^7.5.6, meta: ^1.17.0).
+Cleaned test/mocks/database_helper.dart: Removed unused imports (sqflite, database_helper.mocks.dart).
 
-Known Issues (Commit 2ee2efe)
 
-Import Errors: Incorrect ../database_helper.dart in screen files, fixed to ../services/database_helper.dart.
-Test Failures: Undefined methods in MockDatabaseHelper (getSections, getMenuItems, getSpellDetails), fixed in test files.
-Flutter Imports: Missing in main.dart (Widget, BuildContext, etc.), fixed.
-Dependency Error: mockito: ^6.0.0 not found, resolved with mockito: ^5.4.4.
+
+Known Issues (Commit 5129bb9)
+
+Resolved: userDb and dbWrangler parameter errors in main.dart.
+Resolved: DefaultAssetBundle and PlatformDispatcher errors in database_helper.dart.
+Resolved: DatabaseHelper undefined errors in test files.
+Resolved: Unused imports in test/mocks/database_helper.dart.
 
 Next Steps
 
-Verify dependency resolution with updated pubspec.yaml.
-Run tests and analyze to confirm fixes.
+Verify compilation and test success with updated files.
+Run flutter analyze and flutter test to confirm no remaining errors.
 Implement search screen using central_index.Search_name.

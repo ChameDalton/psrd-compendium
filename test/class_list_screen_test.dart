@@ -24,20 +24,21 @@ void main() {
         {'Section_id': 2, 'Name': 'Wizard', 'Database': 'book-cr.db'},
       ],
     );
+    when(mockDbHelper.closeDatabase()).thenAnswer((_) async {});
   });
 
   tearDown(() async {
-    await DatabaseHelper().closeDatabase();
+    await mockDbHelper.closeDatabase();
   });
 
   testWidgets('displays classes', (WidgetTester tester) async {
     await tester.pumpWidget(
-      MaterialApp(
-        home: ClassListScreen(dbHelper: mockDbWrangler),
+      const MaterialApp(
+        home: ClassListScreen(dbHelper: DbWrangler()),
       ),
     );
     await tester.pumpAndSettle();
     expect(find.text('Fighter'), findsOneWidget);
     expect(find.text('Wizard'), findsOneWidget);
-  }, timeout: Timeout(Duration(seconds: 30)));
+  }, timeout: const Timeout(Duration(seconds: 30)));
 }
