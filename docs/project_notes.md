@@ -44,26 +44,30 @@ Imports: database_helper.dart is in lib/services/ (commit 2ee2efe).
 Dependencies:
 Updated mockito to ^5.4.4 due to version resolution failure with ^6.0.0 (commit 5129bb9).
 Updated vm_service to 15.0.0 to resolve conflict with flutter_test pinning (commit 8701282).
-Updated vector_math to 2.1.4 to resolve conflict with flutter_test pinning (commit TBD).
-Updated test_api to 0.7.4 to resolve conflict with flutter_test pinning (commit TBD).
-Updated meta to 1.16.0 to resolve conflict with flutter_test pinning (commit TBD).
+Updated vector_math to 2.1.4 to resolve conflict with flutter_test pinning (commit d517861).
+Updated test_api to 0.7.4 to resolve conflict with flutter_test pinning (commit d517861).
+Updated meta to 1.16.0 to resolve conflict with flutter_test pinning (commit d517861).
+Updated material_color_utilities to 0.11.1 to resolve conflict with flutter_test pinning (commit d517861).
+Updated leak_tracker_testing to 3.0.1 to resolve conflict with flutter_test pinning (commit TBD).
 
 
 Compilation Errors (commit 5129bb9):
 Fixed main.dart: Removed incorrect userDb parameter, used dbWrangler for HomeScreen.
 Fixed database_helper.dart: Replaced DefaultAssetBundle.of(PlatformDispatcher.instance.views.first) with rootBundle for asset loading.
 Fixed test files: Used mockDbHelper.closeDatabase() instead of DatabaseHelper().closeDatabase() in tearDown.
-Updated pubspec.yaml: Added latest compatible dependency versions (e.g., analyzer: ^7.5.6).
+Updated pubspec.yaml: Added compatible dependency versions (e.g., analyzer: ^7.5.6).
 Cleaned test/mocks/database_helper.dart: Removed unused imports (sqflite, database_helper.mocks.dart).
 
 
 
-Known Issues (Commit 8701282)
+Known Issues (Commit d517861)
 
 Resolved: vm_service dependency conflict with flutter_test by setting vm_service: 15.0.0.
 Resolved: vector_math dependency conflict with flutter_test by setting vector_math: 2.1.4.
 Resolved: test_api dependency conflict with flutter_test by setting test_api: 0.7.4.
 Resolved: meta dependency conflict with flutter_test by setting meta: 1.16.0.
+Resolved: material_color_utilities dependency conflict with flutter_test by setting material_color_utilities: 0.11.1.
+Resolved: leak_tracker_testing dependency conflict with flutter_test by setting leak_tracker_testing: 3.0.1.
 
 Next Steps
 
