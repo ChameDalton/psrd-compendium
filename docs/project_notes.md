@@ -59,6 +59,8 @@ Reverted vm_service to 15.0.0, updated leak_tracker to 11.0.0 and leak_tracker_f
 Updated leak_tracker to 10.0.7, leak_tracker_flutter_testing to 3.0.3, leak_tracker_testing to 2.0.3 to resolve version unavailability (commit a16d8aa).
 Updated leak_tracker_testing to 3.0.1 to resolve conflict with leak_tracker_flutter_testing: 3.0.3 (commit 8fc78d0).
 Reverted leak_tracker to 11.0.0, leak_tracker_flutter_testing to 3.0.5 to resolve conflict with vm_service: 15.0.0 (commit bf8e35f).
+Removed leak_tracker, leak_tracker_testing, leak_tracker_flutter_testing due to unavailability of leak_tracker: 11.0.0 and lack of need for memory leak tracking at this stage (commit 68c21a09).
+Updated characters to 1.4.0 to resolve conflict with flutter_test pinning (commit 68c21a09).
 
 
 Compilation Errors (commit 5129bb9):
@@ -70,7 +72,7 @@ Cleaned test/mocks/database_helper.dart: Removed unused imports (sqflite, databa
 
 
 
-Known Issues (Commit bf8e35f)
+Known Issues (Commit 68c21a09)
 
 Resolved: vector_math dependency conflict with flutter_test by setting vector_math: 2.1.4.
 Resolved: test_api dependency conflict with flutter_test by setting test_api: 0.7.4.
@@ -84,6 +86,8 @@ Resolved: vm_service dependency conflict with flutter_test by reverting to vm_se
 Resolved: leak_tracker version unavailability by setting leak_tracker: 10.0.7, leak_tracker_flutter_testing: 3.0.3, leak_tracker_testing: 2.0.3.
 Resolved: leak_tracker_testing conflict with leak_tracker_flutter_testing: 3.0.3 by setting leak_tracker_testing: 3.0.1.
 Resolved: vm_service conflict with leak_tracker: 10.0.7 by reverting leak_tracker to 11.0.0, leak_tracker_flutter_testing to 3.0.5.
+Resolved: leak_tracker version unavailability by removing leak_tracker, leak_tracker_testing, leak_tracker_flutter_testing.
+Resolved: characters conflict with flutter_test by setting characters: 1.4.0.
 
 Next Steps
 
