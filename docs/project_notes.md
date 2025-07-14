@@ -61,18 +61,25 @@ Updated leak_tracker_testing to 3.0.1 to resolve conflict with leak_tracker_flut
 Reverted leak_tracker to 11.0.0, leak_tracker_flutter_testing to 3.0.5 to resolve conflict with vm_service: 15.0.0 (commit bf8e35f).
 Removed leak_tracker, leak_tracker_testing, leak_tracker_flutter_testing due to unavailability of leak_tracker: 11.0.0 and lack of need for memory leak tracking at this stage (commit 68c21a09).
 Updated characters to 1.4.0 to resolve conflict with flutter_test pinning (commit 68c21a09).
+Downgraded analyzer to 6.8.0 to resolve mockito: 5.4.5 type errors in build_runner (commit 282da6de).
+Reverted mockito to 5.4.4 and removed leak_tracker packages to resolve build_runner and test issues (commit 282da6de).
 
 
 Compilation Errors (commit 5129bb9):
 Fixed main.dart: Removed incorrect userDb parameter, used dbWrangler for HomeScreen.
 Fixed database_helper.dart: Replaced DefaultAssetBundle.of(PlatformDispatcher.instance.views.first) with rootBundle for asset loading.
 Fixed test files: Used mockDbHelper.closeDatabase() instead of DatabaseHelper().closeDatabase() in tearDown.
-Updated pubspec.yaml: Added compatible dependency versions (e.g., analyzer: ^7.5.6).
+Updated pubspec.yaml: Added compatible dependency versions (e.g., analyzer: ^6.8.0).
 Cleaned test/mocks/database_helper.dart: Removed unused imports (sqflite, database_helper.mocks.dart).
 
 
+Test Errors (commit 282da6de):
+Fixed test files: Removed const from MaterialApp to resolve non-const DbWrangler constructor errors.
+Fixed main.dart: Updated BookmarkScreen to use dbWrangler.userDb instead of dbWrangler.
 
-Known Issues (Commit 68c21a09)
+
+
+Known Issues (Commit 282da6de)
 
 Resolved: vector_math dependency conflict with flutter_test by setting vector_math: 2.1.4.
 Resolved: test_api dependency conflict with flutter_test by setting test_api: 0.7.4.
@@ -88,10 +95,12 @@ Resolved: leak_tracker_testing conflict with leak_tracker_flutter_testing: 3.0.3
 Resolved: vm_service conflict with leak_tracker: 10.0.7 by reverting leak_tracker to 11.0.0, leak_tracker_flutter_testing to 3.0.5.
 Resolved: leak_tracker version unavailability by removing leak_tracker, leak_tracker_testing, leak_tracker_flutter_testing.
 Resolved: characters conflict with flutter_test by setting characters: 1.4.0.
+Resolved: mockito: 5.4.5 type errors in build_runner by downgrading analyzer to 6.8.0 and reverting mockito to 5.4.4.
+Resolved: Test errors by removing const from MaterialApp and fixing BookmarkScreen parameter in main.dart.
 
 Next Steps
 
-Verify dependency resolution with updated pubspec.yaml.
+Verify dependency resolution and test compilation with updated pubspec.yaml and test files.
 Run flutter analyze and flutter test --verbose to confirm compilation and test success.
 Implement search screen using central_index.Search_name.
 Run flutter pub outdated to check for compatible dependency upgrades.

@@ -1,53 +1,69 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:pathfinder_athenaeum/db/db_wrangler.dart';
 import 'package:pathfinder_athenaeum/main.dart';
 import 'package:pathfinder_athenaeum/screens/class_list_screen.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'mocks/database_helper.mocks.dart';
+import 'package:pathfinder_athenaeum/screens/bookmark_screen.dart';
+import 'package:pathfinder_athenaeum/services/database_helper.dart';
+import 'package:sqflite_common/sqlite_api.dart';
+import 'main_test.mocks.dart';
 
+@GenerateMocks([DbWrangler, Database])
 void main() {
-  late MockDatabaseHelper mockDbHelper;
-  late DbWrangler mockDbWrangler;
-
-  setUpAll(() async {
-    sqfliteFfiInit();
-    databaseFactory = databaseFactoryFfi;
-  });
+  late MockDbWrangler mockDbWrangler;
+  late MockDatabase mockDatabase;
 
   setUp(() async {
-    mockDbHelper = MockDatabaseHelper();
-    mockDbWrangler = DbWrangler();
-    when(mockDbHelper.getMenuItems(parentMenuId: null)).thenAnswer(
-      (_) async => [
-        {'Menu_id': 1, 'Name': 'Classes', 'Type': '', 'Url': '/classes'},
-        {'Menu_id': 2, 'Name': 'Spells', 'Type': '', 'Url': '/spells'},
-      ],
-    );
-    when(mockDbHelper.getMenuItems(parentMenuId: 1)).thenAnswer(
-      (_) async => [
-        {'Menu_id': 3, 'Name': 'Fighter', 'Type': 'class', 'Url': '/class/1?db=book-cr.db§ion_id=1'},
-      ],
-    );
-    when(mockDbHelper.closeDatabase()).thenAnswer((_) async {});
+    mockDbWrangler = MockDbWrangler();
+    mockDatabase = MockDatabase();
+    when(mockDbWrangler.getDatabase(any)).thenAnswer((_) async => mockDatabase);
+    when(mockDbWrangler.userDb).thenReturn(mockDatabase);
   });
 
   tearDown(() async {
-    await mockDbHelper.closeDatabase();
+    await mockDbWrangler.closeDatabase();
   });
 
-  testWidgets('displays menu items', (WidgetTester tester) async {
+  testWidgets('MainApp navigates to ClassListScreen', (WidgetTester tester) async {
+    when(mockDatabase.query(
+      'central_index',
+      columns: ['Name', 'Section_id'],
+      where: 'Type = ?',
+      whereArgs: ['class'],
+      orderBy: 'Name',
+    )).thenAnswer((_) async => [
+          {'Name': 'Fighter', 'Section_id': 1},
+          {'Name': 'Wizard', 'Section_id': 2},
+        ]);
+
+    await tester.pumpWidget(
+      MainApp(dbWrangler: mockDbWrangler),
+    );
+
+    await tester.pumpAndSettle();
+
+    expect(find.text('Fighter'), findsOneWidget);
+    expect(find.text('Wizard'), findsOneWidget);
+  });
+
+  testWidgets('MainApp navigates to BookmarkScreen', (WidgetTester tester) async {
+    when(mockDatabase.query(
+      'Bookmarks',
+      columns: ['name', 'url', 'scroll', 'section_id'],
+    )).thenAnswer((_) async => [
+          {'name': 'Fighter', 'url': '/classes/1', 'scroll': 0, 'section_id': 1},
+        ]);
+
     await tester.pumpWidget(
       MaterialApp(
-        home: HomeScreen(dbWrangler: mockDbWrangler),
-        routes: {
-          '/classes': (context) => const ClassListScreen(dbHelper: DbWrangler()),
-        },
+        onGenerateRoute: MainApp.generateRoute(mockDbWrangler),
+        initialRoute: '/bookmarks',
       ),
     );
+
     await tester.pumpAndSettle();
-    expect(find.text('Classes'), findsOneWidget);
-    expect(find.text('Spells'), findsOneWidget);
-  }, timeout: const Timeout(Duration(seconds: 30)));
+
+    expect(find.text('Fighter'), findsOneWidget);
+  });
 }

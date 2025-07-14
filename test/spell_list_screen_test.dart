@@ -1,47 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:pathfinder_athenaeum/db/db_wrangler.dart';
+import 'package:pathfinder_athenaeum/services/database_helper.dart';
 import 'package:pathfinder_athenaeum/screens/spell_list_screen.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'mocks/database_helper.mocks.dart';
+import 'package:sqflite_common/sqlite_api.dart';
+import 'spell_list_screen_test.mocks.dart';
 
+@GenerateMocks([DbWrangler])
 void main() {
-  late MockDatabaseHelper mockDbHelper;
-  late DbWrangler mockDbWrangler;
-
-  setUpAll(() async {
-    sqfliteFfiInit();
-    databaseFactory = databaseFactoryFfi;
-  });
+  late MockDbWrangler mockDbWrangler;
+  late Database mockDatabase;
 
   setUp(() async {
-    mockDbHelper = MockDatabaseHelper();
-    mockDbWrangler = DbWrangler();
-    when(mockDbHelper.getSections('index.db', 'spell')).thenAnswer(
-      (_) async => [
-        {'Section_id': 1, 'Name': 'Magic Missile', 'Database': 'book-cr.db'},
-        {'Section_id': 2, 'Name': 'Fireball', 'Database': 'book-cr.db'},
-      ],
-    );
-    when(mockDbHelper.getSpellDetails('book-cr.db', any)).thenAnswer(
-      (_) async => {'_id': 1, 'name': 'Magic Missile', 'description': 'A missile of magical energy'},
-    );
-    when(mockDbHelper.closeDatabase()).thenAnswer((_) async {});
+    mockDbWrangler = MockDbWrangler();
+    mockDatabase = MockDatabase();
+    when(mockDbWrangler.getDatabase(any)).thenAnswer((_) async => mockDatabase);
   });
 
   tearDown(() async {
-    await mockDbHelper.closeDatabase();
+    await mockDbWrangler.closeDatabase();
   });
 
-  testWidgets('displays spells', (WidgetTester tester) async {
+  testWidgets('SpellListScreen displays spells', (WidgetTester tester) async {
+    when(mockDatabase.query(
+      'central_index',
+      columns: ['Name', 'Section_id'],
+      where: 'Type = ?',
+      whereArgs: ['spell'],
+      orderBy: 'Name',
+    )).thenAnswer((_) async => [
+          {'Name': 'Magic Missile', 'Section_id': 1},
+          {'Name': 'Fireball', 'Section_id': 2},
+        ]);
+
     await tester.pumpWidget(
-      const MaterialApp(
-        home: SpellListScreen(dbHelper: DbWrangler()),
+      MaterialApp(
+        home: SpellListScreen(dbHelper: mockDbWrangler),
       ),
     );
+
     await tester.pumpAndSettle();
+
     expect(find.text('Magic Missile'), findsOneWidget);
     expect(find.text('Fireball'), findsOneWidget);
-  }, timeout: const Timeout(Duration(seconds: 30)));
+  });
 }

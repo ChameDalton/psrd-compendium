@@ -1,44 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:pathfinder_athenaeum/db/db_wrangler.dart';
+import 'package:pathfinder_athenaeum/services/database_helper.dart';
 import 'package:pathfinder_athenaeum/screens/feat_list_screen.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'mocks/database_helper.mocks.dart';
+import 'package:sqflite_common/sqlite_api.dart';
+import 'feat_list_screen_test.mocks.dart';
 
+@GenerateMocks([DbWrangler])
 void main() {
-  late MockDatabaseHelper mockDbHelper;
-  late DbWrangler mockDbWrangler;
-
-  setUpAll(() async {
-    sqfliteFfiInit();
-    databaseFactory = databaseFactoryFfi;
-  });
+  late MockDbWrangler mockDbWrangler;
+  late Database mockDatabase;
 
   setUp(() async {
-    mockDbHelper = MockDatabaseHelper();
-    mockDbWrangler = DbWrangler();
-    when(mockDbHelper.getSections('index.db', 'feat')).thenAnswer(
-      (_) async => [
-        {'Section_id': 1, 'Name': 'Power Attack', 'Database': 'book-cr.db'},
-        {'Section_id': 2, 'Name': 'Cleave', 'Database': 'book-cr.db'},
-      ],
-    );
-    when(mockDbHelper.closeDatabase()).thenAnswer((_) async {});
+    mockDbWrangler = MockDbWrangler();
+    mockDatabase = MockDatabase();
+    when(mockDbWrangler.getDatabase(any)).thenAnswer((_) async => mockDatabase);
   });
 
   tearDown(() async {
-    await mockDbHelper.closeDatabase();
+    await mockDbWrangler.closeDatabase();
   });
 
-  testWidgets('displays feats', (WidgetTester tester) async {
+  testWidgets('FeatListScreen displays feats', (WidgetTester tester) async {
+    when(mockDatabase.query(
+      'central_index',
+      columns: ['Name', 'Section_id'],
+      where: 'Type = ?',
+      whereArgs: ['feat'],
+      orderBy: 'Name',
+    )).thenAnswer((_) async => [
+          {'Name': 'Power Attack', 'Section_id': 1},
+          {'Name': 'Cleave', 'Section_id': 2},
+        ]);
+
     await tester.pumpWidget(
-      const MaterialApp(
-        home: FeatListScreen(dbHelper: DbWrangler()),
+      MaterialApp(
+        home: FeatListScreen(dbHelper: mockDbWrangler),
       ),
     );
+
     await tester.pumpAndSettle();
+
     expect(find.text('Power Attack'), findsOneWidget);
     expect(find.text('Cleave'), findsOneWidget);
-  }, timeout: const Timeout(Duration(seconds: 30)));
+  });
 }
