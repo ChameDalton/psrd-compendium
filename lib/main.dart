@@ -17,7 +17,7 @@ class MainApp extends StatelessWidget {
 
   const MainApp({super.key, required this.dbWrangler});
 
-  static Route<dynamic> generateRoute(DbWrangler dbWrangler) {
+  static Route<dynamic>? generateRoute(DbWrangler dbWrangler) {
     return (RouteSettings settings) {
       final uri = Uri.parse(settings.name ?? '/');
       final pathSegments = uri.pathSegments;
