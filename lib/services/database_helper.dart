@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/services.dart';
+import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -7,7 +8,7 @@ import 'package:sqflite/sqflite.dart';
 class DbWrangler {
   final Map<String, Database> _databases = {};
 
-  Future<Database> getDatabase(String dbName) async {
+  Future<Database> getDatabase(BuildContext context, String dbName) async {
     if (_databases.containsKey(dbName)) {
       return _databases[dbName]!;
     }
@@ -16,7 +17,7 @@ class DbWrangler {
     final path = join(databasesPath, dbName);
 
     if (!await File(path).exists()) {
-      final data = await DefaultAssetBundle.of(rootBundle).load('assets/databases/$dbName');
+      final data = await DefaultAssetBundle.of(context).load('assets/databases/$dbName');
       final bytes = data.buffer.asUint8List();
       await File(path).writeAsBytes(bytes);
     }
@@ -52,8 +53,8 @@ class DbWrangler {
     return database;
   }
 
-  Future<List<Map<String, dynamic>>> getSections(String type) async {
-    final db = await getDatabase('index.db');
+  Future<List<Map<String, dynamic>>> getSections(BuildContext context, String type) async {
+    final db = await getDatabase(context, 'index.db');
     return db.query(
       'central_index',
       columns: ['name', 'url'],

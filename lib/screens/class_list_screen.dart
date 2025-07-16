@@ -11,7 +11,7 @@ class ClassListScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Classes')),
       body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: dbWrangler.getSections('class'),
+        future: dbWrangler.getSections(context, 'class'),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());

@@ -5,8 +5,9 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i3;
 
+import 'package:flutter/material.dart' as _i5;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i5;
+import 'package:mockito/src/dummies.dart' as _i6;
 import 'package:pathfinder_athenaeum/services/database_helper.dart' as _i4;
 import 'package:sqflite/sqflite.dart' as _i2;
 
@@ -53,11 +54,17 @@ class MockDbWrangler extends _i1.Mock implements _i4.DbWrangler {
   }
 
   @override
-  _i3.Future<_i2.Database> getDatabase(String? dbName) =>
+  _i3.Future<_i2.Database> getDatabase(
+    _i5.BuildContext? context,
+    String? dbName,
+  ) =>
       (super.noSuchMethod(
-            Invocation.method(#getDatabase, [dbName]),
+            Invocation.method(#getDatabase, [context, dbName]),
             returnValue: _i3.Future<_i2.Database>.value(
-              _FakeDatabase_0(this, Invocation.method(#getDatabase, [dbName])),
+              _FakeDatabase_0(
+                this,
+                Invocation.method(#getDatabase, [context, dbName]),
+              ),
             ),
           )
           as _i3.Future<_i2.Database>);
@@ -73,9 +80,12 @@ class MockDbWrangler extends _i1.Mock implements _i4.DbWrangler {
           as _i3.Future<_i2.Database>);
 
   @override
-  _i3.Future<List<Map<String, dynamic>>> getSections(String? type) =>
+  _i3.Future<List<Map<String, dynamic>>> getSections(
+    _i5.BuildContext? context,
+    String? type,
+  ) =>
       (super.noSuchMethod(
-            Invocation.method(#getSections, [type]),
+            Invocation.method(#getSections, [context, type]),
             returnValue: _i3.Future<List<Map<String, dynamic>>>.value(
               <Map<String, dynamic>>[],
             ),
@@ -123,7 +133,7 @@ class MockDatabase extends _i1.Mock implements _i2.Database {
   String get path =>
       (super.noSuchMethod(
             Invocation.getter(#path),
-            returnValue: _i5.dummyValue<String>(this, Invocation.getter(#path)),
+            returnValue: _i6.dummyValue<String>(this, Invocation.getter(#path)),
           )
           as String);
 
@@ -157,8 +167,8 @@ class MockDatabase extends _i1.Mock implements _i2.Database {
       (super.noSuchMethod(
             Invocation.method(#transaction, [action], {#exclusive: exclusive}),
             returnValue:
-                _i5.ifNotNull(
-                  _i5.dummyValueOrNull<T>(
+                _i6.ifNotNull(
+                  _i6.dummyValueOrNull<T>(
                     this,
                     Invocation.method(
                       #transaction,
@@ -186,8 +196,8 @@ class MockDatabase extends _i1.Mock implements _i2.Database {
       (super.noSuchMethod(
             Invocation.method(#readTransaction, [action]),
             returnValue:
-                _i5.ifNotNull(
-                  _i5.dummyValueOrNull<T>(
+                _i6.ifNotNull(
+                  _i6.dummyValueOrNull<T>(
                     this,
                     Invocation.method(#readTransaction, [action]),
                   ),
@@ -205,8 +215,8 @@ class MockDatabase extends _i1.Mock implements _i2.Database {
       (super.noSuchMethod(
             Invocation.method(#devInvokeMethod, [method, arguments]),
             returnValue:
-                _i5.ifNotNull(
-                  _i5.dummyValueOrNull<T>(
+                _i6.ifNotNull(
+                  _i6.dummyValueOrNull<T>(
                     this,
                     Invocation.method(#devInvokeMethod, [method, arguments]),
                   ),
@@ -228,8 +238,8 @@ class MockDatabase extends _i1.Mock implements _i2.Database {
       (super.noSuchMethod(
             Invocation.method(#devInvokeSqlMethod, [method, sql, arguments]),
             returnValue:
-                _i5.ifNotNull(
-                  _i5.dummyValueOrNull<T>(
+                _i6.ifNotNull(
+                  _i6.dummyValueOrNull<T>(
                     this,
                     Invocation.method(#devInvokeSqlMethod, [
                       method,

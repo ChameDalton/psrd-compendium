@@ -11,7 +11,7 @@ class RaceListScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Races')),
       body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: dbWrangler.getSections('race'),
+        future: dbWrangler.getSections(context, 'race'),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());

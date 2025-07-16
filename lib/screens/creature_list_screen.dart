@@ -11,7 +11,7 @@ class CreatureListScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Creatures')),
       body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: dbWrangler.getSections('creature'),
+        future: dbWrangler.getSections(context, 'creature'),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());

@@ -5,6 +5,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i4;
 
+import 'package:flutter/material.dart' as _i5;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:pathfinder_athenaeum/services/database_helper.dart' as _i3;
 import 'package:sqflite/sqflite.dart' as _i2;
@@ -37,11 +38,17 @@ class MockDbWrangler extends _i1.Mock implements _i3.DbWrangler {
   }
 
   @override
-  _i4.Future<_i2.Database> getDatabase(String? dbName) =>
+  _i4.Future<_i2.Database> getDatabase(
+    _i5.BuildContext? context,
+    String? dbName,
+  ) =>
       (super.noSuchMethod(
-            Invocation.method(#getDatabase, [dbName]),
+            Invocation.method(#getDatabase, [context, dbName]),
             returnValue: _i4.Future<_i2.Database>.value(
-              _FakeDatabase_0(this, Invocation.method(#getDatabase, [dbName])),
+              _FakeDatabase_0(
+                this,
+                Invocation.method(#getDatabase, [context, dbName]),
+              ),
             ),
           )
           as _i4.Future<_i2.Database>);
@@ -57,9 +64,12 @@ class MockDbWrangler extends _i1.Mock implements _i3.DbWrangler {
           as _i4.Future<_i2.Database>);
 
   @override
-  _i4.Future<List<Map<String, dynamic>>> getSections(String? type) =>
+  _i4.Future<List<Map<String, dynamic>>> getSections(
+    _i5.BuildContext? context,
+    String? type,
+  ) =>
       (super.noSuchMethod(
-            Invocation.method(#getSections, [type]),
+            Invocation.method(#getSections, [context, type]),
             returnValue: _i4.Future<List<Map<String, dynamic>>>.value(
               <Map<String, dynamic>>[],
             ),
