@@ -1,37 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:pathfinder_athenaeum/services/database_helper.dart';
-import 'package:pathfinder_athenaeum/db/db_wrangler.dart';
 
 class ClassListScreen extends StatelessWidget {
-  final DbWrangler dbHelper;
+  final DbWrangler dbWrangler;
 
-  const ClassListScreen({super.key, required this.dbHelper});
+  const ClassListScreen({required this.dbWrangler, super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Classes')),
       body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: DatabaseHelper().getSections('index.db', 'class'),
+        future: dbWrangler.getSections('class'),
         builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
           if (snapshot.hasError) {
             return const Center(child: Text('Error loading classes'));
           }
-          if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          final sections = snapshot.data!;
+          final classes = snapshot.data ?? [];
           return ListView.builder(
-            itemCount: sections.length,
+            itemCount: classes.length,
             itemBuilder: (context, index) {
-              final section = sections[index];
+              final classItem = classes[index];
               return ListTile(
-                title: Text(section['Name'] ?? 'Unknown'),
+                title: Text(classItem['name']),
                 onTap: () {
-                  Navigator.pushNamed(
-                    context,
-                    '/class/${section['Section_id']}?db=${section['Database']}§ion_id=${section['Section_id']}',
-                  );
+                  // Navigate to class details (TBD)
                 },
               );
             },

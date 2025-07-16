@@ -3,46 +3,22 @@ import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:sqflite_common/sqlite_api.dart';
 
 class DbWrangler {
   final Map<String, Database> _databases = {};
-  late Database _userDb;
-
-  Database get userDb => _userDb;
-
-  Future<void> initializeUserDb() async {
-    final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'user.db');
-    _userDb = await openDatabase(
-      path,
-      version: 1,
-      onCreate: (db, version) async {
-        await db.execute('''
-          CREATE TABLE Bookmarks (
-            id INTEGER PRIMARY KEY,
-            name TEXT,
-            url TEXT,
-            scroll INTEGER,
-            section_id INTEGER
-          )
-        ''');
-      },
-    );
-  }
 
   Future<Database> getDatabase(String dbName) async {
     if (_databases.containsKey(dbName)) {
       return _databases[dbName]!;
     }
 
-    final dbPath = await getDatabasesPath();
-    final path = join(dbPath, dbName);
+    final databasesPath = await getDatabasesPath();
+    final path = join(databasesPath, dbName);
 
-    if (!await databaseExists(path)) {
-      final data = await rootBundle.load('assets/databases/$dbName');
+    if (!await File(path).exists()) {
+      final data = await DefaultAssetBundle.of(rootBundle).load('assets/databases/$dbName');
       final bytes = data.buffer.asUint8List();
-      await writeFile(path, bytes);
+      await File(path).writeAsBytes(bytes);
     }
 
     final database = await openDatabase(path);
@@ -50,16 +26,56 @@ class DbWrangler {
     return database;
   }
 
-  Future<void> closeDatabase() async {
-    for (final db in _databases.values) {
-      await db.close();
+  Future<Database> initializeUserDb() async {
+    if (_databases.containsKey('user.db')) {
+      return _databases['user.db']!;
     }
-    await _userDb.close();
-    _databases.clear();
+
+    final databasesPath = await getDatabasesPath();
+    final path = join(databasesPath, 'user.db');
+
+    final database = await openDatabase(
+      path,
+      version: 1,
+      onCreate: (db, version) async {
+        await db.execute('''
+          CREATE TABLE Bookmarks (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT,
+            url TEXT
+          )
+        ''');
+      },
+    );
+
+    _databases['user.db'] = database;
+    return database;
   }
 
-  Future<void> writeFile(String path, List<int> bytes) async {
-    final file = File(path);
-    await file.write(bytes);
+  Future<List<Map<String, dynamic>>> getSections(String type) async {
+    final db = await getDatabase('index.db');
+    return db.query(
+      'central_index',
+      columns: ['name', 'url'],
+      where: 'type = ?',
+      whereArgs: [type],
+    );
+  }
+
+  Future<List<Map<String, dynamic>>> getBookmarks() async {
+    final db = await initializeUserDb();
+    return db.query('Bookmarks');
+  }
+
+  Future<void> addBookmark(String name, String url) async {
+    final db = await initializeUserDb();
+    await db.insert('Bookmarks', {'name': name, 'url': url});
+  }
+
+  Future<void> closeDatabase(String dbName) async {
+    if (_databases.containsKey(dbName)) {
+      await _databases[dbName]!.close();
+      _databases.remove(dbName);
+    }
   }
 }

@@ -4,39 +4,33 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:pathfinder_athenaeum/services/database_helper.dart';
 import 'package:pathfinder_athenaeum/screens/spell_list_screen.dart';
-import 'package:sqflite_common/sqlite_api.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'spell_list_screen_test.mocks.dart';
 
-@GenerateMocks([DbWrangler])
+@GenerateMocks([DbWrangler, Database])
 void main() {
-  late MockDbWrangler mockDbWrangler;
-  late Database mockDatabase;
-
-  setUp(() async {
-    mockDbWrangler = MockDbWrangler();
-    mockDatabase = MockDatabase();
-    when(mockDbWrangler.getDatabase(any)).thenAnswer((_) async => mockDatabase);
-  });
-
-  tearDown(() async {
-    await mockDbWrangler.closeDatabase();
+  setUpAll(() {
+    sqfliteFfiInit();
   });
 
   testWidgets('SpellListScreen displays spells', (WidgetTester tester) async {
+    final mockDbWrangler = MockDbWrangler();
+    final mockDatabase = MockDatabase();
+
+    when(mockDbWrangler.getDatabase('index.db')).thenAnswer((_) async => mockDatabase);
     when(mockDatabase.query(
       'central_index',
-      columns: ['Name', 'Section_id'],
-      where: 'Type = ?',
+      columns: ['name', 'url'],
+      where: 'type = ?',
       whereArgs: ['spell'],
-      orderBy: 'Name',
     )).thenAnswer((_) async => [
-          {'Name': 'Magic Missile', 'Section_id': 1},
-          {'Name': 'Fireball', 'Section_id': 2},
+          {'name': 'Magic Missile', 'url': 'magic_missile_url'},
+          {'name': 'Fireball', 'url': 'fireball_url'},
         ]);
 
     await tester.pumpWidget(
       MaterialApp(
-        home: SpellListScreen(dbHelper: mockDbWrangler),
+        home: SpellListScreen(dbWrangler: mockDbWrangler),
       ),
     );
 

@@ -1,59 +1,36 @@
 import 'package:flutter/material.dart';
-import '../db/user_database.dart';
+import 'package:pathfinder_athenaeum/services/database_helper.dart';
 
 class BookmarkScreen extends StatelessWidget {
-  final UserDatabase userDb;
+  final DbWrangler dbWrangler;
 
-  const BookmarkScreen({super.key, required this.userDb});
+  const BookmarkScreen({required this.dbWrangler, super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Bookmarks'),
-      ),
+      appBar: AppBar(title: const Text('Bookmarks')),
       body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: userDb.getBookmarks(),
+        future: dbWrangler.getBookmarks(),
         builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
           if (snapshot.hasError) {
             return const Center(child: Text('Error loading bookmarks'));
           }
-          if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          final bookmarks = snapshot.data!;
-          if (bookmarks.isEmpty) {
-            return const Center(child: Text('No bookmarks found'));
-          }
+          final bookmarks = snapshot.data ?? [];
           return ListView.builder(
             itemCount: bookmarks.length,
             itemBuilder: (context, index) {
               final bookmark = bookmarks[index];
               return ListTile(
-                title: Text(bookmark['name'] ?? 'Unknown'),
-                onTap: () {
-                  Navigator.pushNamed(context, bookmark['url']);
-                },
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete),
-                  onPressed: () async {
-                    await userDb.removeBookmark(bookmark['url']);
-                    // ignore: invalid_use_of_protected_member
-                    (context as Element).markNeedsBuild();
-                  },
-                ),
+                title: Text(bookmark['name']),
+                subtitle: Text(bookmark['url']),
               );
             },
           );
         },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          await userDb.addBookmark('pfsrd://Spells/Fireball', 'Fireball');
-          // ignore: invalid_use_of_protected_member
-          (context as Element).markNeedsBuild();
-        },
-        child: const Icon(Icons.add),
       ),
     );
   }

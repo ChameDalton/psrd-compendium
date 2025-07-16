@@ -1,37 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:pathfinder_athenaeum/services/database_helper.dart';
-import 'package:pathfinder_athenaeum/db/db_wrangler.dart';
 
 class RaceListScreen extends StatelessWidget {
-  final DbWrangler dbHelper;
+  final DbWrangler dbWrangler;
 
-  const RaceListScreen({super.key, required this.dbHelper});
+  const RaceListScreen({required this.dbWrangler, super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Races')),
       body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: DatabaseHelper().getSections('index.db', 'race'),
+        future: dbWrangler.getSections('race'),
         builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
           if (snapshot.hasError) {
             return const Center(child: Text('Error loading races'));
           }
-          if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          final sections = snapshot.data!;
+          final races = snapshot.data ?? [];
           return ListView.builder(
-            itemCount: sections.length,
+            itemCount: races.length,
             itemBuilder: (context, index) {
-              final section = sections[index];
+              final race = races[index];
               return ListTile(
-                title: Text(section['Name'] ?? 'Unknown'),
+                title: Text(race['name']),
                 onTap: () {
-                  Navigator.pushNamed(
-                    context,
-                    '/race/${section['Section_id']}?db=${section['Database']}§ion_id=${section['Section_id']}',
-                  );
+                  // Navigate to race details (TBD)
                 },
               );
             },

@@ -1,37 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:pathfinder_athenaeum/services/database_helper.dart';
-import 'package:pathfinder_athenaeum/db/db_wrangler.dart';
 
 class CreatureListScreen extends StatelessWidget {
-  final DbWrangler dbHelper;
+  final DbWrangler dbWrangler;
 
-  const CreatureListScreen({super.key, required this.dbHelper});
+  const CreatureListScreen({required this.dbWrangler, super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Creatures')),
       body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: DatabaseHelper().getSections('index.db', 'creature'),
+        future: dbWrangler.getSections('creature'),
         builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
           if (snapshot.hasError) {
             return const Center(child: Text('Error loading creatures'));
           }
-          if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          final sections = snapshot.data!;
+          final creatures = snapshot.data ?? [];
           return ListView.builder(
-            itemCount: sections.length,
+            itemCount: creatures.length,
             itemBuilder: (context, index) {
-              final section = sections[index];
+              final creature = creatures[index];
               return ListTile(
-                title: Text(section['Name'] ?? 'Unknown'),
+                title: Text(creature['name']),
                 onTap: () {
-                  Navigator.pushNamed(
-                    context,
-                    '/creature/${section['Section_id']}?db=${section['Database']}§ion_id=${section['Section_id']}',
-                  );
+                  // Navigate to creature details (TBD)
                 },
               );
             },
