@@ -7,7 +7,7 @@ import 'package:pathfinder_athenaeum/screens/spell_list_screen.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'spell_list_screen_test.mocks.dart';
 
-@GenerateMocks([DbWrangler, Database])
+@GenerateMocks([DbWrangler, Database, BuildContext])
 void main() {
   setUpAll(() {
     sqfliteFfiInit();
@@ -16,8 +16,9 @@ void main() {
   testWidgets('SpellListScreen displays spells', (WidgetTester tester) async {
     final mockDbWrangler = MockDbWrangler();
     final mockDatabase = MockDatabase();
+    final mockContext = MockBuildContext();
 
-    when(mockDbWrangler.getDatabase('index.db')).thenAnswer((_) async => mockDatabase);
+    when(mockDbWrangler.getDatabase(mockContext, 'index.db')).thenAnswer((_) async => mockDatabase);
     when(mockDatabase.query(
       'central_index',
       columns: ['name', 'url'],

@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -17,6 +16,7 @@ class DbWrangler {
     final path = join(databasesPath, dbName);
 
     if (!await File(path).exists()) {
+      if (!context.mounted) return Future.error('Context not mounted');
       final data = await DefaultAssetBundle.of(context).load('assets/databases/$dbName');
       final bytes = data.buffer.asUint8List();
       await File(path).writeAsBytes(bytes);
