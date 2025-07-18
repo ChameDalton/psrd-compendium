@@ -27,6 +27,7 @@ class SplashScreenState extends State<SplashScreen> {
       await prefs.setBool('firstRun', false);
     }
 
+    // ignore: use_build_context_synchronously
     if (mounted) {
       Navigator.pushReplacementNamed(context, '/main');
     }

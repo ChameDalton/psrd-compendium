@@ -46,7 +46,7 @@ class MyApp extends StatelessWidget {
       title: 'Pathfinder Athenaeum',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        tabBarTheme: TabBarTheme(
+        tabBarTheme: TabBarThemeData(
           labelColor: Colors.blue,
           unselectedLabelColor: Colors.grey,
         ),

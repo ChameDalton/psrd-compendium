@@ -23,6 +23,7 @@ class DetailScreen extends StatelessWidget {
             icon: const Icon(Icons.bookmark_add),
             onPressed: () async {
               await dbWrangler.addBookmark(name, url);
+              // ignore: use_build_context_synchronously
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Bookmark added')),
               );

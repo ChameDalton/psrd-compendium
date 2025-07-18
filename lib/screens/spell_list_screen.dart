@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pathfinder_athenaeum/services/database_helper.dart';
-import 'package:pathfinder_athenaeum/screens/detail_screen.dart';
 
 class SpellListScreen extends StatelessWidget {
   final DbWrangler dbWrangler;
@@ -10,7 +9,7 @@ class SpellListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Map<String, dynamic>>>(
-      future: dbWrangler.getSections(context, 'race'),
+      future: dbWrangler.getSections(context, 'spell'),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());

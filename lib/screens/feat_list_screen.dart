@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pathfinder_athenaeum/services/database_helper.dart';
-import 'package:pathfinder_athenaeum/screens/detail_screen.dart';
 
 class FeatListScreen extends StatelessWidget {
   final DbWrangler dbWrangler;
