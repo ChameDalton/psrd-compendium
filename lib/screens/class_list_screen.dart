@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pathfinder_athenaeum/services/database_helper.dart';
+import 'package:pathfinder_athenaeum/screens/detail_screen.dart';
 
 class ClassListScreen extends StatelessWidget {
   final DbWrangler dbWrangler;
@@ -8,32 +9,35 @@ class ClassListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Classes')),
-      body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: dbWrangler.getSections(context, 'class'),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            return const Center(child: Text('Error loading classes'));
-          }
-          final classes = snapshot.data ?? [];
-          return ListView.builder(
-            itemCount: classes.length,
-            itemBuilder: (context, index) {
-              final classItem = classes[index];
-              return ListTile(
-                title: Text(classItem['name']),
-                onTap: () {
-                  // Navigate to class details (TBD)
-                },
-              );
-            },
-          );
-        },
-      ),
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: dbWrangler.getSections(context, 'class'),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text('No classes found'));
+        }
+
+        final sections = snapshot.data!;
+        return ListView.builder(
+          itemCount: sections.length,
+          itemBuilder: (context, index) {
+            final section = sections[index];
+            return ListTile(
+              title: Text(section['name'] ?? 'Unknown'),
+              onTap: () {
+                Navigator.pushNamed(
+                  context,
+                  '/details',
+                  arguments: {'name': section['name'], 'url': section['url']},
+                );
+              },
+            );
+          },
+        );
+      },
     );
   }
 }

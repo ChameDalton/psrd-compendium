@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pathfinder_athenaeum/services/database_helper.dart';
-import 'package:pathfinder_athenaeum/screens/bookmark_screen.dart';
-import 'package:pathfinder_athenaeum/screens/class_list_screen.dart';
-import 'package:pathfinder_athenaeum/screens/creature_list_screen.dart';
-import 'package:pathfinder_athenaeum/screens/feat_list_screen.dart';
-import 'package:pathfinder_athenaeum/screens/race_list_screen.dart';
-import 'package:pathfinder_athenaeum/screens/spell_list_screen.dart';
+import 'package:pathfinder_athenaeum/screens/splash_screen.dart';
+import 'package:pathfinder_athenaeum/screens/main_screen.dart';
+import 'package:pathfinder_athenaeum/screens/detail_screen.dart';
 
 void main() {
   runApp(MyApp(dbWrangler: DbWrangler()));
@@ -18,30 +15,26 @@ class MyApp extends StatelessWidget {
 
   Route<dynamic>? generateRoute(RouteSettings settings) {
     switch (settings.name) {
-      case '/classes':
+      case '/splash':
         return MaterialPageRoute(
-          builder: (_) => ClassListScreen(dbWrangler: dbWrangler),
+          builder: (_) => SplashScreen(dbWrangler: dbWrangler),
         );
-      case '/creatures':
+      case '/main':
         return MaterialPageRoute(
-          builder: (_) => CreatureListScreen(dbWrangler: dbWrangler),
+          builder: (_) => MainScreen(dbWrangler: dbWrangler),
         );
-      case '/feats':
-        return MaterialPageRoute(
-          builder: (_) => FeatListScreen(dbWrangler: dbWrangler),
-        );
-      case '/races':
-        return MaterialPageRoute(
-          builder: (_) => RaceListScreen(dbWrangler: dbWrangler),
-        );
-      case '/spells':
-        return MaterialPageRoute(
-          builder: (_) => SpellListScreen(dbWrangler: dbWrangler),
-        );
-      case '/bookmarks':
-        return MaterialPageRoute(
-          builder: (_) => BookmarkScreen(dbWrangler: dbWrangler),
-        );
+      case '/details':
+        final args = settings.arguments as Map<String, dynamic>?;
+        if (args != null) {
+          return MaterialPageRoute(
+            builder: (_) => DetailScreen(
+              dbWrangler: dbWrangler,
+              name: args['name'] ?? 'Unknown',
+              url: args['url'] ?? '',
+            ),
+          );
+        }
+        return null;
       default:
         return null;
     }
@@ -53,8 +46,12 @@ class MyApp extends StatelessWidget {
       title: 'Pathfinder Athenaeum',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        tabBarTheme: TabBarTheme(
+          labelColor: Colors.blue,
+          unselectedLabelColor: Colors.grey,
+        ),
       ),
-      initialRoute: '/classes',
+      initialRoute: '/splash',
       onGenerateRoute: generateRoute,
     );
   }

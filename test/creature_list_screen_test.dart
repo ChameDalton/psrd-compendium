@@ -19,12 +19,7 @@ void main() {
     final mockContext = MockBuildContext();
 
     when(mockDbWrangler.getDatabase(mockContext, 'index.db')).thenAnswer((_) async => mockDatabase);
-    when(mockDatabase.query(
-      'central_index',
-      columns: ['name', 'url'],
-      where: 'type = ?',
-      whereArgs: ['creature'],
-    )).thenAnswer((_) async => [
+    when(mockDbWrangler.getSections(any, 'creature')).thenAnswer((_) async => [
           {'name': 'Dragon', 'url': 'dragon_url'},
           {'name': 'Goblin', 'url': 'goblin_url'},
         ]);

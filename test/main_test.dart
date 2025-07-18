@@ -1,24 +1,37 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
-import 'package:pathfinder_athenaeum/main.dart';
-import 'package:pathfinder_athenaeum/services/database_helper.dart';
-import 'package:pathfinder_athenaeum/screens/class_list_screen.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'main_test.mocks.dart';
+  import 'package:mockito/annotations.dart';
+  import 'package:mockito/mockito.dart';
+  import 'package:pathfinder_athenaeum/main.dart';
+  import 'package:pathfinder_athenaeum/services/database_helper.dart';
+  import 'package:pathfinder_athenaeum/screens/splash_screen.dart';
+  import 'package:pathfinder_athenaeum/screens/main_screen.dart';
+  import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+  import 'package:shared_preferences/shared_preferences.dart';
+  import 'main_test.mocks.dart';
 
-@GenerateMocks([DbWrangler])
-void main() {
-  setUpAll(() {
-    sqfliteFfiInit();
-  });
+  @GenerateMocks([DbWrangler, BuildContext])
+  void main() {
+    setUpAll(() {
+      sqfliteFfiInit();
+      SharedPreferences.setMockInitialValues({'firstRun': true});
+    });
 
-  testWidgets('App navigates to ClassListScreen', (WidgetTester tester) async {
-    final mockDbWrangler = MockDbWrangler();
-    await tester.pumpWidget(MyApp(dbWrangler: mockDbWrangler));
+    testWidgets('App navigates from SplashScreen to MainScreen', (WidgetTester tester) async {
+      final mockDbWrangler = MockDbWrangler();
+      final mockContext = MockBuildContext();
 
-    await tester.pumpAndSettle();
+      when(mockDbWrangler.initializeDatabases(mockContext)).thenAnswer((_) async {});
+      when(mockDbWrangler.getSections(any, 'class')).thenAnswer((_) async => [
+            {'name': 'Wizard', 'url': 'wizard_url'},
+            {'name': 'Fighter', 'url': 'fighter_url'},
+          ]);
 
-    expect(find.byType(ClassListScreen), findsOneWidget);
-  });
-}
+      await tester.pumpWidget(MyApp(dbWrangler: mockDbWrangler));
+
+      expect(find.byType(SplashScreen), findsOneWidget);
+      await tester.pumpAndSettle(const Duration(seconds: 1));
+
+      expect(find.byType(MainScreen), findsOneWidget);
+      expect(find.text('Classes'), findsOneWidget);
+    });
+  }
