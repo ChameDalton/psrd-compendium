@@ -44,7 +44,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Pathfinder Athenaeum',
-      theme: ThemeData(
+      theme: const ThemeData(
         primarySwatch: Colors.blue,
         tabBarTheme: TabBarThemeData(
           labelColor: Colors.blue,

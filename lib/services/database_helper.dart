@@ -44,6 +44,7 @@ class DbWrangler {
   }
 
   Future<void> _copyDbFromAssets(BuildContext context, String dbName, String dbPath) async {
+    // ignore: use_build_context_synchronously
     final data = await DefaultAssetBundle.of(context).load('assets/databases/$dbName');
     final bytes = data.buffer.asUint8List();
     await File(dbPath).writeAsBytes(bytes);
