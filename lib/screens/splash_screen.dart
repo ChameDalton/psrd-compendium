@@ -1,46 +1,44 @@
 import 'package:flutter/material.dart';
-import 'package:pathfinder_athenaeum/services/database_helper.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:pathfinder_athenaeum/screens/home_screen.dart';
 
 class SplashScreen extends StatefulWidget {
-  final DbWrangler dbWrangler;
-
-  const SplashScreen({required this.dbWrangler, super.key});
+  const SplashScreen({super.key});
 
   @override
-  SplashScreenState createState() => SplashScreenState();
+  _SplashScreenState createState() => _SplashScreenState();
 }
 
-class SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _initializeAndNavigate();
+    _navigateToHome();
   }
 
-  Future<void> _initializeAndNavigate() async {
-    final prefs = await SharedPreferences.getInstance();
-    final isFirstRun = prefs.getBool('firstRun') ?? true;
-
-    if (isFirstRun) {
-      await widget.dbWrangler.initializeDatabases(context);
-      await prefs.setBool('firstRun', false);
-    }
-
-    // ignore: use_build_context_synchronously
+  Future<void> _navigateToHome() async {
+    await Future.delayed(const Duration(seconds: 2));
     if (mounted) {
-      Navigator.pushReplacementNamed(context, '/main');
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: Center(
-        child: Image.asset(
-          'assets/images/app_icon.png',
-          width: 200,
-          height: 200,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Pathfinder Athenaeum',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 20),
+            CircularProgressIndicator(),
+          ],
         ),
       ),
     );
