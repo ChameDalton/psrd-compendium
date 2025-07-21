@@ -1,6 +1,8 @@
-import 'package:flutter/services.dart';
+import 'dart:io';
+import 'package:flutter/services.dart' show ByteData, rootBundle;
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._init();
@@ -15,26 +17,21 @@ class DatabaseHelper {
   }
 
   Future<Database> _initDB(String fileName) async {
-    final dbPath = await getDatabasesPath();
-    final path = join(dbPath, fileName);
+    final directory = await getApplicationDocumentsDirectory();
+    final path = join(directory.path, fileName);
 
     final exist = await databaseExists(path);
     if (!exist) {
       try {
-        ByteData data = await DefaultAssetBundle.of(context).load('assets/databases/$fileName');
+        ByteData data = await rootBundle.load('assets/databases/$fileName');
         List<int> bytes = data.buffer.asUint8List();
-        await writeToFile(path, bytes);
+        await File(path).writeAsBytes(bytes);
       } catch (e) {
         print('Error copying database: $e');
       }
     }
 
     return await openDatabase(path, readOnly: true);
-  }
-
-  Future<void> writeToFile(String path, List<int> bytes) async {
-    // Implementation for writing database file
-    // Assuming this doesn't use BuildContext
   }
 
   Future<List<Map<String, dynamic>>> getSections() async {
