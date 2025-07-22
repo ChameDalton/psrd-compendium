@@ -27,7 +27,8 @@ class DatabaseHelper {
         List<int> bytes = data.buffer.asUint8List();
         await File(path).writeAsBytes(bytes);
       } catch (e) {
-        print('Error copying database: $e');
+        // TODO: Replace with proper logging in production
+        debugPrint('Error copying database: $e');
       }
     }
 

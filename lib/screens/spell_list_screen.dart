@@ -1,42 +1,60 @@
 import 'package:flutter/material.dart';
 import 'package:pathfinder_athenaeum/services/database_helper.dart';
+import 'package:pathfinder_athenaeum/screens/detail_screen.dart';
 
-class SpellListScreen extends StatelessWidget {
-  final DbWrangler dbWrangler;
+class SpellListScreen extends StatefulWidget {
+  const SpellListScreen({super.key});
 
-  const SpellListScreen({required this.dbWrangler, super.key});
+  @override
+  State<SpellListScreen> createState() => _SpellListScreenState();
+}
+
+class _SpellListScreenState extends State<SpellListScreen> {
+  final DatabaseHelper _dbHelper = DatabaseHelper.instance;
+  List<Map<String, dynamic>> _spells = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSpells();
+  }
+
+  Future<void> _loadSpells() async {
+    final db = await _dbHelper.database;
+    final spells = await db.query('spells');
+    setState(() {
+      _spells = spells;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Map<String, dynamic>>>(
-      future: dbWrangler.getSections(context, 'spell'),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text('No spells found'));
-        }
-
-        final sections = snapshot.data!;
-        return ListView.builder(
-          itemCount: sections.length,
-          itemBuilder: (context, index) {
-            final section = sections[index];
-            return ListTile(
-              title: Text(section['name'] ?? 'Unknown'),
-              onTap: () {
-                Navigator.pushNamed(
-                  context,
-                  '/details',
-                  arguments: {'name': section['name'], 'url': section['url']},
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Spells'),
+      ),
+      body: _spells.isEmpty
+          ? const Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              itemCount: _spells.length,
+              itemBuilder: (context, index) {
+                final spell = _spells[index];
+                return ListTile(
+                  title: Text(spell['name'] ?? 'Unknown Spell'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DetailScreen(
+                          id: spell['id'],
+                          type: 'spell',
+                        ),
+                      ),
+                    );
+                  },
                 );
               },
-            );
-          },
-        );
-      },
+            ),
     );
   }
 }
